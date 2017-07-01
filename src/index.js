@@ -4,5 +4,21 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+if (window.location.protocol === 'http:' && window.location.host.match(/editor|app|mopaint/)) {
+	window.location.protocol = 'https:';
+}
+
+const goToDocument = (documentID)=> {
+	window.location.hash = `document=${documentID}`;
+};
+
+const render = ()=> {
+	const container = document.getElementById('root');
+	const documentID = (window.location.hash.match(/document=([\w\-./]*)/) || [null, 'default'])[1];
+	ReactDOM.render(<App key={documentID} documentID={documentID} goToDocument={goToDocument}></App>, container);
+};
+
+window.addEventListener('hashchange', render);
+render();
+
 registerServiceWorker();
