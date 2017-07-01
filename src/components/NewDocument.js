@@ -20,24 +20,24 @@ const createNewDocument = (documentsRef, uid, callback)=> {
 };
 
 class NewDocument extends Component {
-  render() {
-	const {documentsRef, goToDocument, authData} = this.props;
-	const createAndGoToNewDocument = ()=> {
-		createNewDocument(documentsRef, authData.uid, (err, newDocumentID)=> {
-			if (err) {
-				// TODO: visible error
-				console.error('Failed to create new document', err);
-			} else {
-				goToDocument(newDocumentID);
-			}
-		});
-	};
-	return (
-		<button className="NewDocument" onClick={createAndGoToNewDocument}>
-			New Document
-		</button>
-	);
-  }
+	render() {
+		const {documentsRef, goToDocument, authData} = this.props;
+		const createAndGoToNewDocument = ()=> {
+			createNewDocument(documentsRef, authData.uid, (err, newDocumentID)=> {
+				if (err) {
+					// TODO: visible error
+					console.error('Failed to create new document', err);
+				} else {
+					goToDocument(newDocumentID);
+				}
+			});
+		};
+		return (
+			<button className="NewDocument" onClick={createAndGoToNewDocument}>
+				New Document
+			</button>
+		);
+	}
 }
 
 export default NewDocument;
