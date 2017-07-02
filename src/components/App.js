@@ -3,6 +3,7 @@ import Login from './Login.js';
 import User from './User.js';
 import DocumentTitle from './DocumentTitle.js';
 import NewDocument from './NewDocument.js';
+import DrawingCanvas from './DrawingCanvas.js';
 import './App.css';
 
 const {firebase} = window;
@@ -45,9 +46,7 @@ class App extends Component {
 				<main>
 					<div className="Toolbox">Toolbox</div>
 					<div className="Palette">Palette</div>
-					<div className="Canvas">
-					<canvas></canvas>
-					</div>
+					<DrawingCanvas></DrawingCanvas>
 				</main>
 			</div>
 		);

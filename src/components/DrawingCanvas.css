@@ -1,0 +1,9 @@
+.DrawingCanvas {
+	border: 1px solid black;
+	margin: 1rem;
+}
+
+.DrawingCanvas,
+.cursor-override-DrawingCanvas {
+	cursor: crosshair;
+}
