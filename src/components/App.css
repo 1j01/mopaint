@@ -9,8 +9,7 @@
 	justify-content: space-between;
 }
 
-.Toolbox,
-.Palette {
+.toolbox-placeholder {
 	font-size: 2em;
 	opacity: 0.2;
 	margin: 1rem;

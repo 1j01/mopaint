@@ -29,15 +29,17 @@ class DrawingCanvas extends Component {
 		const ctx = canvas.getContext("2d");
 		const lastPos = this.gesture.lastPos;
 		const pos = this.toCanvasCoords(event);
+		const {swatch} = this.gesture;
 		this.gesture.lastPos = pos;
 		// TODO: smoothing
-		line(ctx, lastPos.x, lastPos.y, pos.x, pos.y);
+		line(ctx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
 		// TODO: collaborative sync with undo/redo
 	}
 	onMouseDown(event) {
 		event.preventDefault();
+		const {selectedSwatch} = this.props;
 		const pos = this.toCanvasCoords(event);
-		this.gesture = {startPos: pos, lastPos: pos};
+		this.gesture = {startPos: pos, lastPos: pos, swatch: selectedSwatch};
 		if (event.target.setCapture) {
 			event.target.setCapture();
 		} else {
