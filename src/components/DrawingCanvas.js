@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './DrawingCanvas.css';
-import line from '../tools/line.js';
 
 class DrawingCanvas extends Component {
 	constructor() {
@@ -27,19 +26,24 @@ class DrawingCanvas extends Component {
 		event.preventDefault();
 		const canvas = ReactDOM.findDOMNode(this);
 		const ctx = canvas.getContext("2d");
-		const lastPos = this.gesture.lastPos;
+		const {startPos, lastPos, tool, swatch} = this.gesture;
 		const pos = this.toCanvasCoords(event);
-		const {swatch} = this.gesture;
 		this.gesture.lastPos = pos;
-		// TODO: smoothing
-		line(ctx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
+		
+		if (tool.drawShape) {
+			tool.drawShape(ctx, startPos.x, startPos.y, pos.x, pos.y, swatch);
+		} else {
+			// TODO: smoothing
+			tool.drawSegmentOfPath(ctx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
+		}
+		
 		// TODO: collaborative sync with undo/redo
 	}
 	onMouseDown(event) {
 		event.preventDefault();
-		const {selectedSwatch} = this.props;
+		const {selectedSwatch, selectedTool} = this.props;
 		const pos = this.toCanvasCoords(event);
-		this.gesture = {startPos: pos, lastPos: pos, swatch: selectedSwatch};
+		this.gesture = {startPos: pos, lastPos: pos, tool: selectedTool, swatch: selectedSwatch};
 		if (event.target.setCapture) {
 			event.target.setCapture();
 		} else {

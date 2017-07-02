@@ -1,0 +1,9 @@
+.Toolbox {
+	margin: 1rem;
+}
+
+.Toolbox-tool.selected {
+	outline: 3px solid black;
+	position: relative;
+	z-index: 1;
+}
