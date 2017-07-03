@@ -1,5 +1,6 @@
 import line from "./line.js"
 import circle from "./circle.js"
+import rectangle from "./rectangle.js"
 
 const tools = {
 	"Freeform Line": {
@@ -7,17 +8,18 @@ const tools = {
 		// from: "lastPos", to: "pos", draw: (...)=>
 		drawSegmentOfPath: line
 	},
-	"Line Fan": {
-		// TODO: actual basic Line tool
+	"Line": {
 		drawShape: line
 	},
 	"Freeform Circles": {
 		drawSegmentOfPath: circle
 	},
-	// TODO: actual basic Circle tool
-	// "Circle Fan": {
-	// 	drawShape: circle
-	// }
+	"Circle": {
+		drawShape: circle
+	},
+	"Rectangle": {
+		drawShape: rectangle
+	}
 };
 
 const toolsArray = Object.keys(tools).map((key)=> {

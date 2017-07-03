@@ -7,6 +7,16 @@ class DrawingCanvas extends Component {
 		super();
 		// this.state = {gesture: null};
 		this.gesture = null;
+		
+		this.opCanvas = document.createElement("canvas");
+		this.opCtx = this.opCanvas.getContext("2d");
+		this.docCanvas = document.createElement("canvas");
+		this.docCtx = this.docCanvas.getContext("2d");
+
+		this.opCanvas.width = 640;
+		this.opCanvas.height = 480;
+		this.docCanvas.width = 640;
+		this.docCanvas.height = 480;
 	}
 	render() {
 		return (
@@ -24,18 +34,26 @@ class DrawingCanvas extends Component {
 	// TODO: touch support
 	onMouseMoveWhileDown(event) {
 		event.preventDefault();
+
 		const canvas = ReactDOM.findDOMNode(this);
 		const ctx = canvas.getContext("2d");
+		const {opCanvas, opCtx, docCanvas, docCtx} = this;
+
 		const {startPos, lastPos, tool, swatch} = this.gesture;
 		const pos = this.toCanvasCoords(event);
 		this.gesture.lastPos = pos;
-		
+
 		if (tool.drawShape) {
-			tool.drawShape(ctx, startPos.x, startPos.y, pos.x, pos.y, swatch);
+			opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
+			tool.drawShape(opCtx, startPos.x, startPos.y, pos.x, pos.y, swatch);
 		} else {
 			// TODO: smoothing
-			tool.drawSegmentOfPath(ctx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
+			tool.drawSegmentOfPath(opCtx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
 		}
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(docCanvas, 0, 0);
+		ctx.drawImage(opCanvas, 0, 0);
 		
 		// TODO: collaborative sync with undo/redo
 	}
@@ -55,6 +73,10 @@ class DrawingCanvas extends Component {
 		this.gesture.lastPos = pos;
 		this.gesture.endPos = pos;
 		document.body.classList.remove("cursor-override-DrawingCanvas");
+
+		const {opCanvas, opCtx, docCanvas, docCtx} = this;
+		docCtx.drawImage(opCanvas, 0, 0);
+		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 	}
 	componentDidMount() {
 		const canvas = ReactDOM.findDOMNode(this);
