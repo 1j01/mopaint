@@ -9,14 +9,16 @@ class Toolbox extends Component {
 			<div className="Toolbox">
 				{tools.map((tool)=> {
 					const selected = selectedTool === tool;
-					return <RaisedButton
-						key={tool.name}
-						className={"Toolbox-tool" + (selected ? " selected" : "")}
-						// disabled would be more meaningful, but it doesn't transition well
-						primary={selected}
-						onClick={()=> {selectTool(tool)}}
-						label={tool.name}
-					></RaisedButton>;
+					return (
+						<RaisedButton
+							key={tool.name}
+							className={"Toolbox-tool" + (selected ? " selected" : "")}
+							// disabled would be more meaningful, but it doesn't transition well
+							primary={selected}
+							onClick={()=> {selectTool(tool)}}
+							label={tool.name}
+						/>
+					);
 				})}
 			</div>
 		);

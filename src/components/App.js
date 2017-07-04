@@ -23,7 +23,7 @@ const UserMenu = (props) => {
 		<IconMenu
 			iconButtonElement={
 				<IconButton style={{width: 50, height: 50, padding: 10}}>
-					<User authData={authData}></User>
+					<User authData={authData} />
 				</IconButton>
 			}
 			targetOrigin={{horizontal: 'right', vertical: 'top'}}
@@ -56,7 +56,7 @@ class App extends Component {
 		const {authData, selectedSwatch, selectedTool} = this.state;
 
 		if (!authData) {
-			return <Login></Login>;
+			return <Login />;
 		}
 		const signOut = ()=> {
 			auth.signOut();
@@ -87,16 +87,16 @@ class App extends Component {
 				<Toolbar>
 					<ToolbarGroup firstChild={true}>
 						<FlatButton onClick={createAndGoToNewDocument} label="New Document"/>
-						<DocumentTitle documentTitleRef={documentTitleRef}></DocumentTitle>
+						<DocumentTitle documentTitleRef={documentTitleRef} />
 					</ToolbarGroup>
 					<ToolbarGroup>
-						<UserMenu authData={authData} signOut={signOut}></UserMenu>
+						<UserMenu authData={authData} signOut={signOut} />
 					</ToolbarGroup>
 				</Toolbar>
 				<main>
-					<Toolbox tools={tools} selectedTool={selectedTool} selectTool={selectTool}></Toolbox>
-					<Palette palette={defaultPalette} selectedSwatch={selectedSwatch} selectSwatch={selectSwatch}></Palette>
-					<DrawingCanvas selectedSwatch={selectedSwatch} selectedTool={selectedTool}></DrawingCanvas>
+					<Toolbox tools={tools} selectedTool={selectedTool} selectTool={selectTool} />
+					<Palette palette={defaultPalette} selectedSwatch={selectedSwatch} selectSwatch={selectSwatch} />
+					<DrawingCanvas selectedSwatch={selectedSwatch} selectedTool={selectedTool} />
 				</main>
 			</div>
 		);

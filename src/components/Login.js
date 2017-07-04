@@ -25,8 +25,8 @@ class Login extends Component {
 
 		return (
 			<div className="Login">
-				<RaisedButton className="Login-button" onClick={sign_in} label="Sign In with Google" primary></RaisedButton>
-				<ErrorMessage error={this.state.error}></ErrorMessage>
+				<RaisedButton className="Login-button" onClick={sign_in} label="Sign In with Google" primary />
+				<ErrorMessage error={this.state.error} />
 			</div>
 		);
 	}

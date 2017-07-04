@@ -8,7 +8,7 @@ class User extends Component {
 		const {authData} = this.props;
 		return (
 			<div className="User">
-				<Avatar src={authData.photoURL} backgroundColor="transparent" size={30}></Avatar>
+				<Avatar src={authData.photoURL} backgroundColor="transparent" size={30} />
 			</div>
 		);
 	}

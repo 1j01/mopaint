@@ -10,12 +10,15 @@ class Palette extends Component {
 				{palette.map((swatch)=> {
 					const selected = selectedSwatch === swatch;
 					// TODO: try to remove hover style and ripple effect to keep the color clear?
-					return <RaisedButton
-						key={swatch}
-						className={"Palette-swatch" + (selected ? " selected" : "")}
-						backgroundColor={swatch}
-						onClick={()=> {selectSwatch(swatch)}}
-					></RaisedButton>;
+					return (
+						<RaisedButton
+							key={swatch}
+							className={"Palette-swatch" + (selected ? " selected" : "")}
+							backgroundColor={swatch}
+							onClick={()=> {selectSwatch(swatch)}}
+							label=" " // HACK to avoid warning
+						/>
+					);
 				})}
 			</div>
 		);

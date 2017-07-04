@@ -6,7 +6,9 @@ class ErrorMessage extends Component {
 		const {error} = this.props;
 		if (error) {
 			return (
-				<div className="ErrorMessage" role="alert">{error.toString()}</div>
+				<div className="ErrorMessage" role="alert">
+					{error.toString()}
+				</div>
 			);
 		} else {
 			return null;

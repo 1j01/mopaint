@@ -41,7 +41,12 @@ const render = ()=> {
 	const documentID = (window.location.hash.match(/document=([\w\-./]*)/) || [null, 'default'])[1];
 	ReactDOM.render(
 		<MuiThemeProvider>
-			<App key={documentID} documentID={documentID} goToDocument={goToDocument} createNewDocument={createNewDocument}></App>
+			<App
+				key={documentID}
+				documentID={documentID}
+				goToDocument={goToDocument}
+				createNewDocument={createNewDocument}
+			/>
 		</MuiThemeProvider>,
 		container
 	);

@@ -36,7 +36,7 @@ class DocumentTitle extends Component {
 				onChange={onChange}
 				hintText="Document Title"
 				errorText={this.state.error && this.state.error.toString()}
-			></TextField>
+			/>
 		);
 	}
 }

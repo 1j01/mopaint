@@ -22,7 +22,7 @@ class DrawingCanvas extends Component {
 	render() {
 		return (
 			<Paper className="DrawingCanvas" style={{width: 640, height: 480}}>
-				<canvas width="640" height="480" ref={(canvas)=> { this.canvas = canvas; }}></canvas>
+				<canvas width="640" height="480" ref={(canvas)=> { this.canvas = canvas; }}/>
 			</Paper>
 		);
 	}
