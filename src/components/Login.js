@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ErrorMessage from './ErrorMessage.js';
+import RaisedButton from 'material-ui/RaisedButton';
 import './Login.css';
 
 const {firebase} = window;
@@ -24,7 +25,7 @@ class Login extends Component {
 
 		return (
 			<div className="Login">
-				<button className="Login-button" onClick={sign_in}>Sign In with Google</button>
+				<RaisedButton className="Login-button" onClick={sign_in} label="Sign In with Google" primary></RaisedButton>
 				<ErrorMessage error={this.state.error}></ErrorMessage>
 			</div>
 		);

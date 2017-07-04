@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import TextField from 'material-ui/TextField';
 import ErrorMessage from './ErrorMessage.js';
 import './DocumentTitle.css';
 
@@ -30,10 +31,13 @@ class DocumentTitle extends Component {
 		};
 
 		return (
-			<div className="DocumentTitle">
-				<input className="DocumentTitle-input" value={this.state.title} onChange={onChange} placeholder="Document Title"></input>
-				<ErrorMessage error={this.state.error}></ErrorMessage>
-			</div>
+			<TextField
+				className="DocumentTitle"
+				value={this.state.title}
+				onChange={onChange}
+				hintText="Document Title"
+				errorText={this.state.error && this.state.error.toString()}
+			></TextField>
 		);
 	}
 }

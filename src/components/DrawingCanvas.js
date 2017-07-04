@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import Paper from 'material-ui/Paper';
 import './DrawingCanvas.css';
 
 class DrawingCanvas extends Component {
@@ -20,11 +21,13 @@ class DrawingCanvas extends Component {
 	}
 	render() {
 		return (
-			<canvas className="DrawingCanvas" width="640" height="480"></canvas>
+			<Paper className="DrawingCanvas" style={{width: 640, height: 480}}>
+				<canvas width="640" height="480" ref={(canvas)=> { this.canvas = canvas; }}></canvas>
+			</Paper>
 		);
 	}
 	toCanvasCoords(event) {
-		const canvas = ReactDOM.findDOMNode(this);
+		const {canvas} = this;
 		const rect = canvas.getBoundingClientRect();
 		return {
 			x: event.clientX - rect.left,
@@ -35,7 +38,7 @@ class DrawingCanvas extends Component {
 	onMouseMoveWhileDown(event) {
 		event.preventDefault();
 
-		const canvas = ReactDOM.findDOMNode(this);
+		const {canvas} = this;
 		const ctx = canvas.getContext("2d");
 		const {opCanvas, opCtx, docCanvas, docCtx} = this;
 

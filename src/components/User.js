@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
+import Avatar from 'material-ui/Avatar';
+
 import './User.css';
 
 class User extends Component {
 	render() {
-		const {authData, children} = this.props;
+		const {authData, showName} = this.props;
 		return (
 			<div className="User">
-				<img className="User-image" src={authData.photoURL} alt=""></img>
-				<div className="User-name">{authData.displayName}</div>
-				{children}
+				<Avatar src={authData.photoURL} backgroundColor="transparent" size={30}></Avatar>
+				{showName && <div className="User-name">{authData.displayName}</div>}
 			</div>
 		);
 	}

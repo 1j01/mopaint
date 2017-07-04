@@ -3,11 +3,14 @@
 }
 
 .Palette-swatch {
-	width: 40px;
-	height: 40px;
-	outline: 1px solid black;
+	margin: 2px;
+	width: 36px;
+	min-width: 0 !important;
 }
 
+/* TODO: just show the selected color(s) externally, like in most image editors */
 .Palette-swatch.selected {
-	transform: scale(1.2);
+	position: relative;
+	z-index: 2;
+	transform: scale(1.3);
 }

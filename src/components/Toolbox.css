@@ -2,8 +2,11 @@
 	margin: 1rem;
 }
 
-.Toolbox-tool.selected {
-	outline: 3px solid black;
-	position: relative;
-	z-index: 1;
+/*
+.Toolbox-tool {
+	outline: 1px solid rgba(33, 150, 243, 0);
 }
+.Toolbox-tool.selected {
+	outline: 1px solid #2196F3;
+}
+*/
