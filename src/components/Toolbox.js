@@ -12,8 +12,9 @@ class Toolbox extends Component {
 					return (
 						<RaisedButton
 							key={tool.name}
-							className={"Toolbox-tool" + (selected ? " selected" : "")}
+							className="Toolbox-tool"
 							// disabled would be more meaningful, but it doesn't transition well
+							// TODO: disabled and/or aria-pressed
 							primary={selected}
 							onClick={()=> {selectTool(tool)}}
 							label={tool.name}

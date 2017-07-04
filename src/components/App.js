@@ -9,7 +9,7 @@ import User from './User.js';
 import DocumentTitle from './DocumentTitle.js';
 import DrawingCanvas from './DrawingCanvas.js';
 import Toolbox from './Toolbox.js';
-import Palette from './Palette.js';
+import Colorbox from './Colorbox.js';
 import defaultPalette from '../db32-palette.js';
 import tools from '../tools/';
 import './App.css';
@@ -95,7 +95,7 @@ class App extends Component {
 				</Toolbar>
 				<main>
 					<Toolbox tools={tools} selectedTool={selectedTool} selectTool={selectTool} />
-					<Palette palette={defaultPalette} selectedSwatch={selectedSwatch} selectSwatch={selectSwatch} />
+					<Colorbox palette={defaultPalette} selectedSwatch={selectedSwatch} selectSwatch={selectSwatch} />
 					<DrawingCanvas selectedSwatch={selectedSwatch} selectedTool={selectedTool} />
 				</main>
 			</div>

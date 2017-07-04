@@ -1,17 +1,7 @@
-.Palette {
-	margin: 1rem;
-}
 
 .Palette-swatch {
 	margin: 2px;
 	width: 36px;
 	height: 36px;
 	min-width: 0 !important;
-}
-
-/* TODO: just show the selected color(s) externally, like in most image editors */
-.Palette-swatch.selected {
-	position: relative;
-	z-index: 2;
-	transform: scale(1.3);
 }

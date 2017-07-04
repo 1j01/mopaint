@@ -1,0 +1,20 @@
+.Colorbox {
+	display: flex;
+	flex-direction: row;
+	/*justify-content: center;*/
+	align-items: center;
+	margin: 1rem;
+}
+
+.Colorbox-divider {
+	border-left: 1px solid rgba(0, 0, 0, 0.5);
+	margin: 0 8px;
+	height: 42px;
+}
+
+.Colorbox-selected-swatch {
+	margin: 2px;
+	width: 42px;
+	height: 42px;
+	min-width: 0 !important;
+}
