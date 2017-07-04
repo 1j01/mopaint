@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-// import Paper from 'material-ui/Paper';
 import './Palette.css';
 
 class Palette extends Component {
@@ -10,20 +9,13 @@ class Palette extends Component {
 			<div className="Palette">
 				{palette.map((swatch)=> {
 					const selected = selectedSwatch === swatch;
+					// TODO: try to remove hover style and ripple effect to keep the color clear?
 					return <RaisedButton
 						key={swatch}
 						className={"Palette-swatch" + (selected ? " selected" : "")}
-						// style={{backgroundColor: swatch}}
 						backgroundColor={swatch}
 						onClick={()=> {selectSwatch(swatch)}}
-						label=" "
 					></RaisedButton>;
-					// return <Paper style={{
-					// 	backgroundColor: swatch,
-					// 	display: "inline-block",
-					// 	width: 36, height: 36,
-					// 	margin: 2
-					// }}></Paper>;
 				})}
 			</div>
 		);

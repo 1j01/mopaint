@@ -12,10 +12,8 @@ class Toolbox extends Component {
 					return <RaisedButton
 						key={tool.name}
 						className={"Toolbox-tool" + (selected ? " selected" : "")}
-						// overlayStyle={selected ? {backgroundColor: "rgba(0, 155, 255, 0.1)"} : {}}
-						// disabled would be more meaningful, but doesn't look as good
+						// disabled would be more meaningful, but it doesn't transition well
 						primary={selected}
-						// disabled={selected}
 						onClick={()=> {selectTool(tool)}}
 						label={tool.name}
 					></RaisedButton>;

@@ -1,9 +1,3 @@
-.User {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-}
-
 .User img {
 	pointer-events: none;
 }

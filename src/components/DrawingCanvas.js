@@ -40,7 +40,7 @@ class DrawingCanvas extends Component {
 
 		const {canvas} = this;
 		const ctx = canvas.getContext("2d");
-		const {opCanvas, opCtx, docCanvas, docCtx} = this;
+		const {opCanvas, opCtx, docCanvas} = this;
 
 		const {startPos, lastPos, tool, swatch} = this.gesture;
 		const pos = this.toCanvasCoords(event);
@@ -77,7 +77,7 @@ class DrawingCanvas extends Component {
 		this.gesture.endPos = pos;
 		document.body.classList.remove("cursor-override-DrawingCanvas");
 
-		const {opCanvas, opCtx, docCanvas, docCtx} = this;
+		const {opCanvas, opCtx, docCtx} = this;
 		docCtx.drawImage(opCanvas, 0, 0);
 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 	}
