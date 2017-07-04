@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './ErrorMessage.css';
 
 class ErrorMessage extends Component {

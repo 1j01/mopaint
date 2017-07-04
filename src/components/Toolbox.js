@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import './Toolbox.css';
 
@@ -16,7 +16,7 @@ class Toolbox extends Component {
 							// disabled would be more meaningful, but it doesn't transition well
 							// TODO: disabled and/or aria-pressed
 							primary={selected}
-							onClick={()=> {selectTool(tool)}}
+							onClick={()=> { selectTool(tool); }}
 							label={tool.name}
 						/>
 					);

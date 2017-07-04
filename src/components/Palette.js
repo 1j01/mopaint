@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import './Palette.css';
 
@@ -14,7 +14,7 @@ class Palette extends Component {
 							key={swatch}
 							className="Palette-swatch"
 							backgroundColor={swatch}
-							onClick={()=> {selectSwatch(swatch)}}
+							onClick={()=> { selectSwatch(swatch); }}
 							label=" " // HACK to avoid warning
 						/>
 					);

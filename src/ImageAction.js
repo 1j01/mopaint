@@ -15,7 +15,7 @@ export default class ImageAction {
 	apply(ctx) {
 		ctx.putImageData(this.x, this.y, this.patchImageData);
 	}
-	unapply(ctx){
+	unapply(ctx) {
 		ctx.putImageData(this.x, this.y, this.reversePatchImageData);
 	}
 }

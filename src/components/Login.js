@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import ErrorMessage from './ErrorMessage.js';
 import RaisedButton from 'material-ui/RaisedButton';
 import './Login.css';

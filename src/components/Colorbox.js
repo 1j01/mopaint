@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Paper from 'material-ui/Paper';
 import Palette from './Palette.js';
 import './Colorbox.css';

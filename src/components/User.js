@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Avatar from 'material-ui/Avatar';
 import './User.css';
 
