@@ -1,3 +1,4 @@
+import {List} from 'immutable';
 import React, {Component} from 'react';
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
@@ -40,17 +41,69 @@ class App extends Component {
 		this.state = {
 			authData: null,
 			selectedSwatch: defaultPalette[0],
-			selectedTool: tools[0]
+			selectedTool: tools[0],
+			undos: new List(),
+			redos: new List(),
 		};
+		this.documentCanvas = document.createElement("canvas");
+		this.documentContext = this.documentCanvas.getContext("2d");
+		this.documentCanvas.width = 640;
+		this.documentCanvas.height = 480;
 	}
 	componentDidMount() {
 		this.unsubscribeAuthStateChanged = auth.onAuthStateChanged((authData)=> {
 			this.setState({authData});
 		});
+		window.addEventListener("keydown", this.keyDownListener = (event)=> {
+			if (event.ctrlKey) {
+				if (event.key === "z") {
+					this.undo();
+					this.drawingCanvasComponent.draw();
+				} else if (event.key === "Z" || event.key === "y") {
+					this.redo();
+					this.drawingCanvasComponent.draw();
+				}
+			}
+		});
 	}
 	componentWillUnmount() {
 		this.unsubscribeAuthStateChanged();
+		window.removeEventListener("keydown", this.keyDownListener);
 	}
+
+	undo () {
+		const {undos, redos} = this.state;
+		const {documentContext} = this;
+
+		if (undos.size < 1 ) {
+			return false;
+		}
+
+		const action = undos.last();
+		this.setState({
+			undos: undos.slice(0, undos.size - 1),
+			redos: redos.push(action)
+		});
+
+		action.applyReverse(documentContext);
+	}
+	redo () {
+		const {undos, redos} = this.state;
+		const {documentContext} = this;
+
+		if (redos.size < 1 ) {
+			return false;
+		}
+
+		const action = redos.last();
+		this.setState({
+			undos: undos.push(action),
+			redos: redos.slice(0, redos.size - 1)
+		});
+
+		action.apply(documentContext);
+	}
+
 	render() {
 		const {documentID, goToDocument, createNewDocument} = this.props;
 		const {authData, selectedSwatch, selectedTool} = this.state;
@@ -82,6 +135,17 @@ class App extends Component {
 		const selectTool = (tool)=> {
 			this.setState({selectedTool: tool});
 		};
+
+		const undoable = (action)=> {
+			const {undos} = this.state;
+			const {documentContext} = this;
+			this.setState({
+				undos: undos.push(action)
+			});
+			action.apply(documentContext);
+		};
+
+		const {documentContext, documentCanvas} = this;
 		return (
 			<div className="App">
 				<Toolbar>
@@ -96,7 +160,14 @@ class App extends Component {
 				<main>
 					<Toolbox tools={tools} selectedTool={selectedTool} selectTool={selectTool} />
 					<Colorbox palette={defaultPalette} selectedSwatch={selectedSwatch} selectSwatch={selectSwatch} />
-					<DrawingCanvas selectedSwatch={selectedSwatch} selectedTool={selectedTool} />
+					<DrawingCanvas
+						selectedSwatch={selectedSwatch}
+						selectedTool={selectedTool}
+						undoable={undoable}
+						documentContext={documentContext}
+						documentCanvas={documentCanvas}
+						ref={(component) => { this.drawingCanvasComponent = component; }}
+					/>
 				</main>
 			</div>
 		);

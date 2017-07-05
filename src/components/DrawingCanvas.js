@@ -1,28 +1,36 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import Paper from 'material-ui/Paper';
+import ImageAction from '../ImageAction.js';
 import './DrawingCanvas.css';
 
 class DrawingCanvas extends Component {
-	constructor() {
+	constructor(props) {
 		super();
-		// this.state = {gesture: null};
+
 		this.gesture = null;
+		// TODO: show gestures of other users in realtime
+		// this.state = {gestures: new List()]};
+
+		// NOTE: should be able to support time-based tools
+		// with timestamps and periodic updates to the lastest timestamp
+		// and support psuedorandomness by seeding from the gesture data
+		// or including a seed with each update, or whatever
 		
 		this.opCanvas = document.createElement("canvas");
 		this.opCtx = this.opCanvas.getContext("2d");
-		this.docCanvas = document.createElement("canvas");
-		this.docCtx = this.docCanvas.getContext("2d");
 
-		this.opCanvas.width = 640;
-		this.opCanvas.height = 480;
-		this.docCanvas.width = 640;
-		this.docCanvas.height = 480;
+		const {width, height} = props.documentCanvas;
+		this.opCanvas.width = width;
+		this.opCanvas.height = height;
 	}
 	render() {
+		const {width, height} = this.props.documentCanvas;
+		// TODO: put documentCanvas directly in the DOM,
+		// with canvases representing gestures/operations on top
 		return (
-			<Paper className="DrawingCanvas" style={{width: 640, height: 480}}>
-				<canvas width="640" height="480" ref={(canvas)=> { this.canvas = canvas; }}/>
+			<Paper className="DrawingCanvas" style={{width, height}}>
+				<canvas width={width} height={height} ref={(canvas)=> { this.canvas = canvas; }}/>
 			</Paper>
 		);
 	}
@@ -34,13 +42,20 @@ class DrawingCanvas extends Component {
 			y: event.clientY - rect.top
 		};
 	}
+	draw() {
+		const {canvas, opCanvas} = this;
+		const {documentCanvas} = this.props;
+		const ctx = canvas.getContext("2d");
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(documentCanvas, 0, 0);
+		ctx.drawImage(opCanvas, 0, 0);
+	}
 	// TODO: touch support
 	onMouseMoveWhileDown(event) {
 		event.preventDefault();
 
-		const {canvas} = this;
-		const ctx = canvas.getContext("2d");
-		const {opCanvas, opCtx, docCanvas} = this;
+		const {opCanvas, opCtx} = this;
 
 		const {startPos, lastPos, tool, swatch} = this.gesture;
 		const pos = this.toCanvasCoords(event);
@@ -54,11 +69,8 @@ class DrawingCanvas extends Component {
 			tool.drawSegmentOfPath(opCtx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
 		}
 
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.drawImage(docCanvas, 0, 0);
-		ctx.drawImage(opCanvas, 0, 0);
-		
-		// TODO: collaborative sync with undo/redo
+		this.draw();
+		// TODO: collaborative sync with undo/redo...
 	}
 	onMouseDown(event) {
 		event.preventDefault();
@@ -77,8 +89,11 @@ class DrawingCanvas extends Component {
 		this.gesture.endPos = pos;
 		document.body.classList.remove("cursor-override-DrawingCanvas");
 
-		const {opCanvas, opCtx, docCtx} = this;
-		docCtx.drawImage(opCanvas, 0, 0);
+		const {opCanvas, opCtx} = this;
+		const {undoable} = this.props;
+		// TODO: create action from subsection of the canvas
+		const action = new ImageAction(opCtx, 0, 0, opCanvas.width, opCanvas.height);
+		undoable(action);
 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 	}
 	componentDidMount() {

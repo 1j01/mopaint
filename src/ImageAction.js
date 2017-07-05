@@ -1,21 +1,32 @@
 
-// TODO: undo/redo using something like this
-// NOTE: would need to handle resizing the canvas at some point
+const copyCanvas = (canvas)=> {
+	const newCanvas = document.createElement("canvas");
+	newCanvas.width = canvas.width;
+	newCanvas.height = canvas.width;
+	const newCtx = newCanvas.getContext("2d");
+	newCtx.drawImage(canvas, 0, 0);
+	return newCanvas;
+};
+
+// TODO: handle resizing the image as part of an action
 
 export default class ImageAction {
-	constructor(sourceCanvas, patchCanvas, x, y) {
-		const {width, height} = patchCanvas;
+	constructor(patchContext, x, y) {
+		const {width, height} = patchContext.canvas;
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.reversePatchImageData = sourceCanvas.getImageData(x, y, width, height);
-		this.patchImageData = patchCanvas.getImageData(0, 0, width, height);
+		this.reversePatchImageData = null;
+		this.patchCanvas = copyCanvas(patchContext.canvas);
+		// TODO: probably copyCanvas(patchContext.canvas, x, y, width, height);
 	}
-	apply(ctx) {
-		ctx.putImageData(this.x, this.y, this.patchImageData);
+	apply(documentContext) {
+		const {x, y, width, height} = this;
+		this.reversePatchImageData = documentContext.getImageData(x, y, width, height);
+		documentContext.drawImage(this.patchCanvas, this.x, this.y);
 	}
-	unapply(ctx) {
-		ctx.putImageData(this.x, this.y, this.reversePatchImageData);
+	applyReverse(documentContext) {
+		documentContext.putImageData(this.reversePatchImageData, this.x, this.y);
 	}
 }
