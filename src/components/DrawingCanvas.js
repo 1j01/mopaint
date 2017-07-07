@@ -98,7 +98,12 @@ class DrawingCanvas extends Component {
 	}
 	componentDidMount() {
 		const canvas = ReactDOM.findDOMNode(this);
+		let mouseIsDown = false;
 		canvas.addEventListener("mousedown", this.mouseDownListener = (event)=> {
+			if (mouseIsDown) {
+				return;
+			}
+			mouseIsDown = true;
 			this.onMouseDown(event);
 			window.addEventListener("mousemove", this.mouseMoveListener = (event)=> {
 				this.onMouseMoveWhileDown(event);
@@ -106,6 +111,7 @@ class DrawingCanvas extends Component {
 			window.addEventListener("mouseup", this.mouseUpListener = (event)=> {
 				window.removeEventListener("mousemove", this.mouseMoveListener);
 				window.removeEventListener("mouseup", this.mouseUpListener);
+				mouseIsDown = false;
 				this.onMouseUp(event);
 			});
 		});
