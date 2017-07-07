@@ -5,6 +5,7 @@ import App from './components/App';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import registerServiceWorker from './registerServiceWorker';
+import './simulate-gestures.js';
  
 // Needed for onTouchTap used by Material UI
 // http://stackoverflow.com/a/34015469/988941 
