@@ -70,6 +70,12 @@ class App extends Component {
 		this.unsubscribeAuthStateChanged();
 		window.removeEventListener("keydown", this.keyDownListener);
 	}
+	componentWillReceiveProps(nextProps) {
+		console.assert(
+			nextProps.documentID === this.props.documentID,
+			"App component is not designed to handle switching documents without reconstruction"
+		);
+	}
 
 	undo () {
 		const {undos, redos} = this.state;
