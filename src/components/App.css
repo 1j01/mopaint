@@ -1,1 +1,14 @@
+html,
+body,
+#root,
+.App {
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
 
+.App > main {
+	overflow: auto;
+	flex: 1;
+}
