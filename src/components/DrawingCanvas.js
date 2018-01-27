@@ -64,8 +64,9 @@ class DrawingCanvas extends Component {
 		if (tool.drawShape) {
 			opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 			tool.drawShape(opCtx, startPos.x, startPos.y, pos.x, pos.y, swatch);
-		} else {
-			// TODO: smoothing
+		}
+		if (tool.drawSegmentOfPath) {
+			// TODO: smoothing (instead of just segments)
 			tool.drawSegmentOfPath(opCtx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
 		}
 
@@ -81,6 +82,12 @@ class DrawingCanvas extends Component {
 			event.target.setCapture();
 		} else {
 			document.body.classList.add("cursor-override-DrawingCanvas");
+		}
+		const {opCtx} = this;
+		const {documentContext} = this.props;
+		if(selectedTool.click){		
+			selectedTool.click(opCtx, pos.x, pos.y, selectedSwatch, documentContext);
+			this.draw();
 		}
 	}
 	onMouseUp(event) {
