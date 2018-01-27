@@ -33,7 +33,7 @@ const palette = `\
 	143 151 74
 	138 111 48\
 `.split("\n").map((line)=> {
-	const rgb = line.split(" ");
+	const rgb = line.trim().split(" ");
 	return `rgb(${rgb.join(", ")})`;
 });
 
