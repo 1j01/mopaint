@@ -103,6 +103,9 @@ class DrawingCanvas extends Component {
 			if (mouseIsDown) {
 				return;
 			}
+			if (event.button !== 0) {
+				return;
+			}
 			mouseIsDown = true;
 			this.onMouseDown(event);
 			window.addEventListener("mousemove", this.mouseMoveListener = (event)=> {
