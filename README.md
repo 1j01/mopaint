@@ -3,7 +3,7 @@
 
 Mopaint is a sort of rewrite of, or successor to [JS Paint],  
 without the limiting factor of being first and foremost a recreation of MS Paint from Windows 98,  
-on more solid foundations (e.g. [React] instead of jQuery, [Webpack] instead of a bunch of scripts, probably [Redux]... instead of just a bunch of mutable global variables),  
+on more solid foundations (e.g. [React] (or [Preact] or [Vue]) instead of [jQuery], [Webpack] (or [Rollup]) instead of a bunch of scripts, probably [Redux]... instead of just a bunch of mutable global variables),  
 where I plan to implement things that I feel would be too difficult to implement in that codebase,  
 starting first with collaborative image editing.
 
@@ -18,7 +18,7 @@ I may backport some things to JS Paint, and may eventually rewrite JS Paint to u
 What if selections were just layers?  
 (what if selections were just layers in a mode? and would it *have* to be a mode?)  
 what if you could have hierarchial selections? selections within selections, sublayers of layers?  
-what if layers, frames of an animation, selections, copy-pastes/duplicates, "smart objects", [recursive fractal references], shapes and brush strokes, from you other other users, were all the same thing?  
+what if layers, layer groups, frames of an animation, selections, copy-pastes/duplicates, "smart objects", [recursive fractal references], shapes and brush strokes and other operations - from you or other users, were all the same thing?  
 what about masking? that could be the same as a selection, right?
 
 [recursive fractal references]: http://dood.al/
@@ -44,18 +44,16 @@ What if you could rearrange it just the same?
 Both layers and history would cache the latest image.  
 And maybe other points within the stack.  
 
-#### (A Poem?)
-
-What if life was a poem?  
-what if every step was a move in a dance?  
-what if every breath, a groovy chance?  
+#### Interlude Poem
 
 what if questions questioned *you*?  
 what if questions were people *too*?  
 what if your quest for questions was quenched?  
 what if mine was, would I be benched?  
 
-what if software worked  
+also what if software worked  
+like, what if it was good  
+tho  
 
 #### Programmability / Generativity
 
@@ -66,7 +64,9 @@ and all the operations that created it?
 
 What if you could make your own tools really easily?  
 what if all the tools were *fully* configurable in their behavior?  
-what if most of them were just presets of more general tools/functions?  
+what if most of them were just *presets* of more general tools/functions?  
+what if they were *composible*?  
+what if there was a *community* of people creating and remixing tools?  
 
 #### Modularity of Document Types
 
@@ -107,7 +107,15 @@ THREE SIXTY
 NO  
 SCOPE  
 
+Actually, I'm combining this idea with [Pixelweaver](https://github.com/1j01/pixelweaver) (another project of mine, focused on reprodubibility), and writing a manifesto. Make **Making** Better.
+Yes, that sounds even broader (probably) (or ridiculously broad), but really, I *am* going to try to figure out what the scope is.
+
 [JS Paint]: https://github.com/1j01/jspaint/
 [React]: https://facebook.github.io/react/
+[Preact]: https://preactjs.com/
+[Vue]: https://vuejs.org/
+[jQuery]: https://jquery.com/
 [Webpack]: https://webpack.github.io/
 [Redux]: http://redux.js.org/
+[Rollup]: https://rollupjs.org/
+
