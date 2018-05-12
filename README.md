@@ -1,15 +1,14 @@
-
 # Mopaint
 
 Mopaint is a sort of rewrite of, or successor to [JS Paint],  
 without the limiting factor of being first and foremost a recreation of MS Paint from Windows 98,  
 on more solid foundations (e.g. [React] (or [Preact] or [Vue]) instead of [jQuery], [Webpack] (or [Rollup]) instead of a bunch of scripts, probably [Redux]... instead of just a bunch of mutable global variables),  
 where I plan to implement things that I feel would be too difficult to implement in that codebase,  
-starting first with collaborative image editing.
+such as collaborative image editing.
 
 I want it to be a *modern*, *modular*, *multi-user* painting app, and *more!*
 
-I may backport some things to JS Paint, and may eventually rewrite JS Paint to use a core editing engine of Mopaint.
+(I may backport some things to JS Paint, and may eventually rewrite JS Paint to use a core editing engine of Mopaint.)
 
 ## Crazy (or at least Kooky) Ideas
 
@@ -29,22 +28,28 @@ are they fundamentally different? (the objects/concepts, or the relationships be
 how many of these concepts could feasibly be *merged*, and made more *powerful*?  
 what if *anything that works with one thing* worked with the others?  
 
-Frames as the same thing as layers I think would be "pushing it",  
-with animation support, it's an invitation for fancy features like tweening and stuff, of objects that persist between frames,  
-but 
+Frames *could* be the same thing as layers. It can be nice to be limited to drawing individual frames, like a flipbook.  
+But I don't think that should be the main way that animation works. (You could do that if you wanted, probably.)  
+With animation support, it's inevitable to want features like tweening, objects that persist between frames.  
+If you're drawing everything in a form that interpolates between frames, and you record movement thru direct manipulation over time, you don't necessarily need to think about frames.  
+(You also might have an animation that plays back at different rates, like for slowmo in a game.)  
+If you zoom in to edit motion finely in the context of an object, the basic level of defining motion / variance over time *could* be keyframes, or it *could* be a *function*.  
+what if it was a *function*?  
 
-If you're doing frames of an animation, why not go all out, and...  
-why not make it nonlinear? why not make it a *nonlinear* animation program?  
+Also, you might want onion skinning over time, as well as over operations or layers.  
+
+If you're doing animation, why not go all out, and allow for *nonlinear* animation?  
 (like for games and stuff? interactive stories or whatever?)  
 (sprites within games, with state machines, for sure could use a nonlinear timeline)  
-(um, timegraph? timey-wimey... timey-wimey graph, okay?)
+(or would it be a time*graph*?)  
+Time could be a parameter, and then you could simply have more parameters. Or different parameters.  
 
 What if history was the same thing as layers?  
 What if you could rearrange it just the same?  
 Both layers and history would cache the latest image.  
 And maybe other points within the stack.  
 
-#### Interlude Poem
+#### Interlude
 
 what if questions questioned *you*?  
 what if questions were people *too*?  
@@ -53,7 +58,6 @@ what if mine was, would I be benched?
 
 also what if software worked  
 like, what if it was good  
-tho  
 
 #### Programmability / Generativity
 
@@ -73,9 +77,15 @@ what if there was a *community* of people creating and remixing tools?
 What if you could paint on tessalated/wrapping canvases, infinite canvases, 3D models, etc., all with the same toolset?  
 
 If we implement 3D documents  
-(i.e. editing textures on a 3D model),  
-and it can handle wrapping seamlessly around a cylinder,  
-we should be able to do tessalation (and simple wrapping and symetry) pretty easily.  
+(i.e. editing textures on a 3D model,
+like [Chameleon](http://www-ui.is.s.u-tokyo.ac.jp/~takeo/chameleon/chameleon.htm),
+[Chameleon.js](https://github.com/tomtung/chameleon.js),
+[Paint 3D](https://www.microsoft.com/en-us/store/p/paint-3d/9nblggh5fv99),
+[SculptGL](https://stephaneginier.com/sculptgl/),
+etc.),
+(actually probably not like Chameleon with its dynamic re-UV-mapping,)
+if it can handle wrapping seamlessly around a cylinder (across triangles, drawing multiply),  
+we should be able to do tessalation, wrapping and symetry pretty easily.  
 For instance, here's an infinitely zooming set of patterns, in 2D, but made with Three.js:  
 http://www.infinitezoom.net/ (or [backup link](https://web.archive.org/web/20180127023916/http://www.infinitezoom.net/))  
 (just imagine texture on those shapes)  
@@ -107,8 +117,8 @@ THREE SIXTY
 NO  
 SCOPE  
 
-Actually, I'm combining this idea with [Pixelweaver](https://github.com/1j01/pixelweaver) (another project of mine, focused on reprodubibility), and writing a manifesto. Make **Making** Better.
-Yes, that sounds even broader (probably) (or ridiculously broad), but really, I *am* going to try to figure out what the scope is.
+Actually, I'm combining this idea with [Pixelweaver](https://github.com/1j01/pixelweaver) (another project of mine, focused on reprodubibility), and writing a manifesto. [Make **Making** Better](http://isaiahodhner.ml/make-making-better).
+Yes, that probably sounds rather broad, but I *am* trying to figure out what the scope is.
 
 [JS Paint]: https://github.com/1j01/jspaint/
 [React]: https://facebook.github.io/react/
