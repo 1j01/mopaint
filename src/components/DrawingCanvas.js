@@ -74,6 +74,9 @@ class DrawingCanvas extends Component {
 		// TODO: collaborative sync with undo/redo...
 	}
 	onMouseDown(event) {
+		if(event.which !== 1){
+			return;
+		}
 		event.preventDefault();
 		const {selectedSwatch, selectedTool} = this.props;
 		const pos = this.toCanvasCoords(event);
