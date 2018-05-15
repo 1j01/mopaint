@@ -5,7 +5,6 @@ import React, {Component} from 'react';
 // import IconMenu from 'material-ui/IconMenu';
 // import MenuItem from 'material-ui/MenuItem';
 // import FlatButton from 'material-ui/FlatButton';
-import DocumentTitle from './DocumentTitle.js';
 import DrawingCanvas from './DrawingCanvas.js';
 import Toolbox from './Toolbox.js';
 import Colorbox from './Colorbox.js';
