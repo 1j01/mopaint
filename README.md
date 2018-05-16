@@ -7,8 +7,14 @@ where I plan to implement things that I feel would be too difficult to implement
 such as collaborative image editing.
 
 I want it to be a *modern*, *modular*, *multi-user* painting app, and *more!*
+(It should also support *mobile*!)
 
 (I may backport some things to JS Paint, and may eventually rewrite JS Paint to use a core editing engine of Mopaint.)
+
+**Update:**
+It's actually going to be more of a testing ground for new ideas about image editors and editors in general.
+[Make **Making** Better](https://isaiahodhner.ml/make-making-better).
+But also hopefully a really nice image editor. And more!
 
 ## Crazy (or at least Kooky) Ideas
 
@@ -87,7 +93,7 @@ etc.),
 if it can handle wrapping seamlessly around a cylinder (across triangles, drawing multiply),  
 we should be able to do tessalation, wrapping and symetry pretty easily.  
 For instance, here's an infinitely zooming set of patterns, in 2D, but made with Three.js:  
-http://www.infinitezoom.net/ (or [backup link](https://web.archive.org/web/20180127023916/http://www.infinitezoom.net/))  
+https://www.infinitezoom.net/ (or [backup link](https://web.archive.org/web/20180127023916/http://www.infinitezoom.net/))  
 (just imagine texture on those shapes)  
 
 What about 3D painting not just *on* 3D, but *in* 3D?  
@@ -117,7 +123,7 @@ THREE SIXTY
 NO  
 SCOPE  
 
-Actually, I'm combining this idea with [Pixelweaver](https://github.com/1j01/pixelweaver) (another project of mine, focused on reprodubibility), and writing a manifesto. [Make **Making** Better](http://isaiahodhner.ml/make-making-better).
+Actually, I'm combining this idea with [Pixelweaver](https://github.com/1j01/pixelweaver) (another project of mine, focused on reprodubibility), and writing a manifesto. [Make **Making** Better](https://isaiahodhner.ml/make-making-better).
 Yes, that probably sounds rather broad, but I *am* trying to figure out what the scope is.
 
 [JS Paint]: https://github.com/1j01/jspaint/
@@ -126,6 +132,6 @@ Yes, that probably sounds rather broad, but I *am* trying to figure out what the
 [Vue]: https://vuejs.org/
 [jQuery]: https://jquery.com/
 [Webpack]: https://webpack.github.io/
-[Redux]: http://redux.js.org/
+[Redux]: https://redux.js.org/
 [Rollup]: https://rollupjs.org/
 

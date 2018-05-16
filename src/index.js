@@ -8,7 +8,7 @@ import registerServiceWorker from './registerServiceWorker';
 import './simulate-gestures.js';
  
 // Needed for onTouchTap used by Material UI
-// http://stackoverflow.com/a/34015469/988941 
+// https://stackoverflow.com/a/34015469/988941 
 injectTapEventPlugin();
 
 if (window.location.protocol === 'http:' && window.location.host.match(/editor|app|mopaint/)) {
