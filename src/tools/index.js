@@ -2,6 +2,8 @@ import line from "./line.js"
 import circle from "./circle.js"
 import rectangle from "./rectangle.js"
 import fill from "./fill.js"
+import mirrorReflect from "./mirror-symmetry.js";
+import rotationallyReflect from "./rotational-symmetry.js";
 
 const tools = {
 	"Freeform Line": {
@@ -35,9 +37,43 @@ const tools = {
 	}
 };
 
+// TODO: allow the USER to compose tools (dynamically)
+const modifiers = [
+	{
+		prefix: "Mirror Symmetric ",
+		metaTool: mirrorReflect,
+	},
+	{
+		prefix: "Rotationally Symmetric ",
+		metaTool: rotationallyReflect,
+	}
+];
+// TODO: for now I've gone with relying on a generic/shared API for tools that take certain kinds of geometry
+// something better might involve streams of events / geometry
+// maybe something like
+// var normalGesture = new Gesture
+// var mirrorGesture = new Gesture
+// events --> normalGesture
+// events.map(mirrorPoint) --> mirrorGesture
+// (maybe "gesture" should be reserved for direct-from-user gestures; maybe it should be called ToolOperation or something)
+
+Object.keys(tools).forEach((key)=> {
+	const originalTool = tools[key];
+	if (originalTool.drawSegmentOfPath) {
+		modifiers.forEach((modifier)=> {
+			const newKey = modifier.prefix + key;
+			tools[newKey] = {
+				drawSegmentOfPath: (ctx, x1, y1, x2, y2, swatch)=>{
+					modifier.metaTool(ctx, x1, y1, x2, y2, swatch, originalTool.drawSegmentOfPath);
+				}
+			};
+		});
+	}
+});
+
 const toolsArray = Object.keys(tools).map((key)=> {
 	const tool = tools[key];
-	return {name: key, ...tool}
-})
+	return {name: key, ...tool};
+});
 
 export default toolsArray;
