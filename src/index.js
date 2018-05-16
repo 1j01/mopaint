@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import registerServiceWorker from './registerServiceWorker';
 import './simulate-gestures.js';
@@ -41,14 +40,12 @@ const render = ()=> {
 	const container = document.getElementById('root');
 	const documentID = (window.location.hash.match(/document=([\w\-./]*)/) || [null, 'default'])[1];
 	ReactDOM.render(
-		<MuiThemeProvider>
-			<App
-				key={documentID}
-				documentID={documentID}
-				goToDocument={goToDocument}
-				createNewDocument={createNewDocument}
-			/>
-		</MuiThemeProvider>,
+		<App
+			key={documentID}
+			documentID={documentID}
+			goToDocument={goToDocument}
+			createNewDocument={createNewDocument}
+		/>,
 		container
 	);
 };

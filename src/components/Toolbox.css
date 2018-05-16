@@ -1,3 +1,23 @@
 .Toolbox {
 	margin: 1rem;
 }
+
+.Toolbox-tool {
+	border: none;
+	padding: 8px 20px;
+	background: lightgray;
+	color: black;
+}
+.Toolbox-tool:hover:not([aria-checked]),
+.Toolbox-tool:focus:not([aria-checked]) {
+	background: #CBDBFC;
+	color: black;
+}
+.Toolbox-tool:active:not([aria-checked]) {
+	background: rgb(214, 228, 255);
+	color: black;
+}
+.Toolbox-tool[aria-checked] {
+	background: #639BFF;
+	color: white;
+}

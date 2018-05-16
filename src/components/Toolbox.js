@@ -1,24 +1,26 @@
 import React, {Component} from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
 import './Toolbox.css';
 
 class Toolbox extends Component {
 	render() {
 		const {tools, selectedTool, selectTool} = this.props;
 		return (
-			<div className="Toolbox">
+			<div className="Toolbox" role="radiogroup">
 				{tools.map((tool)=> {
 					const selected = selectedTool === tool;
 					return (
-						<RaisedButton
+						<button
 							key={tool.name}
 							className="Toolbox-tool"
 							// disabled would be more meaningful, but it doesn't transition well
-							// TODO: disabled and/or aria-pressed
-							primary={selected}
+							// TODO: disabled when selected?
+							role="radio"
+							aria-checked={selected ? "aria-checked" : null}
 							onClick={()=> { selectTool(tool); }}
-							label={tool.name}
-						/>
+							// title={tool.name}
+						>
+							{tool.name}
+						</button>
 					);
 				})}
 			</div>

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import Paper from 'material-ui/Paper';
 import ImageAction from '../ImageAction.js';
 import './DrawingCanvas.css';
 
@@ -29,9 +28,9 @@ class DrawingCanvas extends Component {
 		// TODO: put documentCanvas directly in the DOM,
 		// with canvases representing gestures/operations on top
 		return (
-			<Paper className="DrawingCanvas" style={{width, height}}>
+			<div className="DrawingCanvas" style={{width, height}}>
 				<canvas width={width} height={height} ref={(canvas)=> { this.canvas = canvas; }}/>
-			</Paper>
+			</div>
 		);
 	}
 	toCanvasCoords(event) {

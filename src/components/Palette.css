@@ -2,5 +2,6 @@
 	margin: 2px;
 	width: 36px;
 	height: 36px;
-	min-width: 0 !important;
 }
+
+/* see .swatch in ColorBox.css */

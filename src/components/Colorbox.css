@@ -16,5 +16,14 @@
 	margin: 2px;
 	width: 42px;
 	height: 42px;
+}
+
+/* TODO: maybe move to a swatch.css? included by both components that use the class? assuming it won't duplicate the css? */
+/* oh, or use imports (assuming it won't duplicate the css) */
+.swatch {
 	min-width: 0 !important;
+	border: none;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px black;
+	border: 1px solid white;
 }

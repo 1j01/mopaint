@@ -1,21 +1,23 @@
 import React, {Component} from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
 import './Palette.css';
 
 class Palette extends Component {
 	render() {
-		const {palette, selectSwatch} = this.props;
+		const {palette, selectedSwatch, selectSwatch} = this.props;
 		return (
-			<div className="Palette">
+			<div className="Palette"
+				role="radiogroup"
+			>
 				{palette.map((swatch)=> {
-					// TODO: try to remove hover style and ripple effect to keep the color clear?
+					const selected = selectedSwatch === swatch;
 					return (
-						<RaisedButton
+						<button
 							key={swatch}
-							className="Palette-swatch"
-							backgroundColor={swatch}
+							className="Palette-swatch swatch"
+							style={{backgroundColor: swatch}}
+							role="radio"
+							aria-checked={selected ? "aria-checked" : null}
 							onClick={()=> { selectSwatch(swatch); }}
-							label=" " // HACK to avoid warning
 						/>
 					);
 				})}
