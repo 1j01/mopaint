@@ -25,5 +25,10 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "prettier": {
+    "useTabs": true,
+    "trailingComma": "es5",
+    "arrowParens": "always"
   }
 }
