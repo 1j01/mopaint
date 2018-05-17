@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ToolPreview from "./ToolPreview.js";
 import './Toolbox.css';
 
 class Toolbox extends Component {
@@ -12,14 +13,17 @@ class Toolbox extends Component {
 						<button
 							key={tool.name}
 							className="Toolbox-tool"
-							// disabled would be more meaningful, but it doesn't transition well
 							// TODO: disabled when selected?
 							role="radio"
 							aria-checked={selected ? "aria-checked" : null}
 							onClick={()=> { selectTool(tool); }}
-							// title={tool.name}
+							title={tool.name}
 						>
-							{tool.name}
+							<ToolPreview
+								tool={tool}
+								width={48}
+								height={48}
+							/>
 						</button>
 					);
 				})}
