@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "husky": "^0.14.3",
     "immutable": "^3.8.2",
+    "lint-staged": "^7.1.0",
+    "prettier": "^1.12.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-scripts": "^1.1.4",
@@ -13,6 +16,14 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "precommit": "lint-staged",
+    "format": "prettier --write \"src/**/*.{js,css}\""
+  },
+  "lint-staged": {
+    "src/**/*.{js,css}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
