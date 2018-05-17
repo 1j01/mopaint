@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import trimCanvas from '../trim-canvas.js';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import trimCanvas from "../trim-canvas.js";
 // import './ToolPreview.css';
 
 class ToolPreview extends Component {
@@ -33,7 +33,16 @@ class ToolPreview extends Component {
 		if (tool.drawShape) {
 			const startPos = { x: opCanvas.width / 2, y: opCanvas.height / 2 };
 			const pos = { x: opCanvas.width - 20, y: opCanvas.height - 20 };
-			tool.drawShape(opCtx, startPos.x, startPos.y, pos.x, pos.y, swatch, canvas.width, canvas.height);
+			tool.drawShape(
+				opCtx,
+				startPos.x,
+				startPos.y,
+				pos.x,
+				pos.y,
+				swatch,
+				canvas.width,
+				canvas.height
+			);
 		}
 		if (tool.drawSegmentOfPath) {
 			// TODO: smoothing (instead of just segments)
@@ -45,7 +54,16 @@ class ToolPreview extends Component {
 				pos.x = opCanvas.width / 2 + 48 * Math.sin(Math.sin(i * i / 302));
 				pos.y = opCanvas.height / 2 + 48 * Math.cos(Math.sin(i / 5));
 				if (i > 0) {
-					tool.drawSegmentOfPath(opCtx, lastPos.x, lastPos.y, pos.x, pos.y, swatch, canvas.width, canvas.height);
+					tool.drawSegmentOfPath(
+						opCtx,
+						lastPos.x,
+						lastPos.y,
+						pos.x,
+						pos.y,
+						swatch,
+						canvas.width,
+						canvas.height
+					);
 				}
 				lastPos.x = pos.x;
 				lastPos.y = pos.y;
@@ -57,7 +75,6 @@ class ToolPreview extends Component {
 		}
 
 		const trimmedCanvas = trimCanvas(opCanvas);
-
 
 		let drawWidth, drawHeight;
 		// TODO: maybe handle height not equaling width for props to ToolPreview
@@ -73,7 +90,7 @@ class ToolPreview extends Component {
 			(canvas.width - drawWidth) / 2,
 			(canvas.height - drawHeight) / 2,
 			drawWidth,
-			drawHeight,
+			drawHeight
 		);
 	}
 }

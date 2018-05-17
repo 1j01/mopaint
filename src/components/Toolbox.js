@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 import ToolPreview from "./ToolPreview.js";
-import './Toolbox.css';
+import "./Toolbox.css";
 
 class Toolbox extends Component {
 	render() {
-		const {tools, selectedTool, selectTool} = this.props;
+		const { tools, selectedTool, selectTool } = this.props;
 		return (
 			<div className="Toolbox" role="radiogroup">
-				{tools.map((tool)=> {
+				{tools.map((tool) => {
 					const selected = selectedTool === tool;
 					return (
 						<button
@@ -16,14 +16,12 @@ class Toolbox extends Component {
 							// TODO: disabled when selected?
 							role="radio"
 							aria-checked={selected ? "aria-checked" : null}
-							onClick={()=> { selectTool(tool); }}
+							onClick={() => {
+								selectTool(tool);
+							}}
 							title={tool.name}
 						>
-							<ToolPreview
-								tool={tool}
-								width={48}
-								height={48}
-							/>
+							<ToolPreview tool={tool} width={48} height={48} />
 						</button>
 					);
 				})}

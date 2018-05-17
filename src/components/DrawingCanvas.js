@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
-import ImageAction from '../ImageAction.js';
-import './DrawingCanvas.css';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import ImageAction from "../ImageAction.js";
+import "./DrawingCanvas.css";
 
 class DrawingCanvas extends Component {
 	constructor(props) {
@@ -15,35 +15,41 @@ class DrawingCanvas extends Component {
 		// with timestamps and periodic updates to the lastest timestamp
 		// and support psuedorandomness by seeding from the gesture data
 		// or including a seed with each update, or whatever
-		
+
 		this.opCanvas = document.createElement("canvas");
 		this.opCtx = this.opCanvas.getContext("2d");
 
-		const {width, height} = props.documentCanvas;
+		const { width, height } = props.documentCanvas;
 		this.opCanvas.width = width;
 		this.opCanvas.height = height;
 	}
 	render() {
-		const {width, height} = this.props.documentCanvas;
+		const { width, height } = this.props.documentCanvas;
 		// TODO: put documentCanvas directly in the DOM,
 		// with canvases representing gestures/operations on top
 		return (
-			<div className="DrawingCanvas" style={{width, height}}>
-				<canvas width={width} height={height} ref={(canvas)=> { this.canvas = canvas; }}/>
+			<div className="DrawingCanvas" style={{ width, height }}>
+				<canvas
+					width={width}
+					height={height}
+					ref={(canvas) => {
+						this.canvas = canvas;
+					}}
+				/>
 			</div>
 		);
 	}
 	toCanvasCoords(event) {
-		const {canvas} = this;
+		const { canvas } = this;
 		const rect = canvas.getBoundingClientRect();
 		return {
 			x: event.clientX - rect.left,
-			y: event.clientY - rect.top
+			y: event.clientY - rect.top,
 		};
 	}
 	draw() {
-		const {canvas, opCanvas} = this;
-		const {documentCanvas} = this.props;
+		const { canvas, opCanvas } = this;
+		const { documentCanvas } = this.props;
 		const ctx = canvas.getContext("2d");
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -54,9 +60,9 @@ class DrawingCanvas extends Component {
 	onMouseMoveWhileDown(event) {
 		event.preventDefault();
 
-		const {opCanvas, opCtx} = this;
+		const { opCanvas, opCtx } = this;
 
-		const {startPos, lastPos, tool, swatch} = this.gesture;
+		const { startPos, lastPos, tool, swatch } = this.gesture;
 		const pos = this.toCanvasCoords(event);
 		this.gesture.lastPos = pos;
 
@@ -73,21 +79,26 @@ class DrawingCanvas extends Component {
 		// TODO: collaborative sync with undo/redo...
 	}
 	onMouseDown(event) {
-		if(event.which !== 1){
+		if (event.which !== 1) {
 			return;
 		}
 		event.preventDefault();
-		const {selectedSwatch, selectedTool} = this.props;
+		const { selectedSwatch, selectedTool } = this.props;
 		const pos = this.toCanvasCoords(event);
-		this.gesture = {startPos: pos, lastPos: pos, tool: selectedTool, swatch: selectedSwatch};
+		this.gesture = {
+			startPos: pos,
+			lastPos: pos,
+			tool: selectedTool,
+			swatch: selectedSwatch,
+		};
 		if (event.target.setCapture) {
 			event.target.setCapture();
 		} else {
 			document.body.classList.add("cursor-override-DrawingCanvas");
 		}
-		const {opCtx} = this;
-		const {documentContext} = this.props;
-		if(selectedTool.click){		
+		const { opCtx } = this;
+		const { documentContext } = this.props;
+		if (selectedTool.click) {
 			selectedTool.click(opCtx, pos.x, pos.y, selectedSwatch, documentContext);
 			this.draw();
 		}
@@ -98,35 +109,50 @@ class DrawingCanvas extends Component {
 		this.gesture.endPos = pos;
 		document.body.classList.remove("cursor-override-DrawingCanvas");
 
-		const {opCanvas, opCtx} = this;
-		const {undoable} = this.props;
+		const { opCanvas, opCtx } = this;
+		const { undoable } = this.props;
 		// TODO: create action from subsection of the canvas
-		const action = new ImageAction(opCtx, 0, 0, opCanvas.width, opCanvas.height);
+		const action = new ImageAction(
+			opCtx,
+			0,
+			0,
+			opCanvas.width,
+			opCanvas.height
+		);
 		undoable(action);
 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 	}
 	componentDidMount() {
 		const canvas = ReactDOM.findDOMNode(this);
 		let mouseIsDown = false;
-		canvas.addEventListener("mousedown", this.mouseDownListener = (event)=> {
-			if (mouseIsDown) {
-				return;
-			}
-			if (event.button !== 0) {
-				return;
-			}
-			mouseIsDown = true;
-			this.onMouseDown(event);
-			window.addEventListener("mousemove", this.mouseMoveListener = (event)=> {
-				this.onMouseMoveWhileDown(event);
-			});
-			window.addEventListener("mouseup", this.mouseUpListener = (event)=> {
-				window.removeEventListener("mousemove", this.mouseMoveListener);
-				window.removeEventListener("mouseup", this.mouseUpListener);
-				mouseIsDown = false;
-				this.onMouseUp(event);
-			});
-		});
+		canvas.addEventListener(
+			"mousedown",
+			(this.mouseDownListener = (event) => {
+				if (mouseIsDown) {
+					return;
+				}
+				if (event.button !== 0) {
+					return;
+				}
+				mouseIsDown = true;
+				this.onMouseDown(event);
+				window.addEventListener(
+					"mousemove",
+					(this.mouseMoveListener = (event) => {
+						this.onMouseMoveWhileDown(event);
+					})
+				);
+				window.addEventListener(
+					"mouseup",
+					(this.mouseUpListener = (event) => {
+						window.removeEventListener("mousemove", this.mouseMoveListener);
+						window.removeEventListener("mouseup", this.mouseUpListener);
+						mouseIsDown = false;
+						this.onMouseUp(event);
+					})
+				);
+			})
+		);
 	}
 	componentWillUnmount() {
 		const canvas = ReactDOM.findDOMNode(this);

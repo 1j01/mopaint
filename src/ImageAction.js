@@ -1,5 +1,4 @@
-
-const copyCanvas = (canvas)=> {
+const copyCanvas = (canvas) => {
 	const newCanvas = document.createElement("canvas");
 	newCanvas.width = canvas.width;
 	newCanvas.height = canvas.width;
@@ -12,7 +11,7 @@ const copyCanvas = (canvas)=> {
 
 export default class ImageAction {
 	constructor(patchContext, x, y) {
-		const {width, height} = patchContext.canvas;
+		const { width, height } = patchContext.canvas;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -22,8 +21,13 @@ export default class ImageAction {
 		// TODO: probably copyCanvas(patchContext.canvas, x, y, width, height);
 	}
 	apply(documentContext) {
-		const {x, y, width, height} = this;
-		this.reversePatchImageData = documentContext.getImageData(x, y, width, height);
+		const { x, y, width, height } = this;
+		this.reversePatchImageData = documentContext.getImageData(
+			x,
+			y,
+			width,
+			height
+		);
 		documentContext.drawImage(this.patchCanvas, this.x, this.y);
 	}
 	applyReverse(documentContext) {

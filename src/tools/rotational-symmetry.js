@@ -1,8 +1,6 @@
-
 // TODO: user-configurable center and number of repetitions and everything
 
-
-const rotationallyReflect = (ctx, x1, y1, x2, y2, swatch, tool)=> {
+const rotationallyReflect = (ctx, x1, y1, x2, y2, swatch, tool) => {
 	const offsetAngle = 0; // Radians
 	const repetitions = 6;
 	const centerX = ctx.canvas.width / 2;
@@ -21,7 +19,7 @@ const rotationallyReflect = (ctx, x1, y1, x2, y2, swatch, tool)=> {
 			let theta = angle + Math.PI * 2 / repetitions * i; // Radians
 			x = centerX + Math.sin(theta) * distance;
 			y = centerY - Math.cos(theta) * distance;
-			result.push({x, y});
+			result.push({ x, y });
 			// if (mirrorSymmetry) {
 			// 	x = centerX - Math.sin(theta) * distance;
 			// 	result.push([x, y]);

@@ -1,4 +1,3 @@
-
 const palette = [
 	"rgb(0,0,0)",
 	"rgb(34,32,52)",
@@ -31,7 +30,7 @@ const palette = [
 	"rgb(217,87,99)",
 	"rgb(215,123,186)",
 	"rgb(143,151,74)",
-	"rgb(138,111,48)"
+	"rgb(138,111,48)",
 ];
 
 export default palette;

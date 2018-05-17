@@ -1,4 +1,3 @@
-
 // TODO:
 // * Keep bounds and return them
 // so an ImageAction can at least be bounded by the affected region.
@@ -28,12 +27,12 @@
 // QuickFill: https://www.codeproject.com/Articles/6017/QuickFill-An-efficient-flood-fill-algorithm
 // Queue-Linear: https://www.codeproject.com/Articles/16405/Queue-Linear-Flood-Fill-A-Fast-Flood-Fill-Algorith
 
-const fill = (ctx, x, y, swatch)=> {
+const fill = (ctx, x, y, swatch) => {
 	const canvas = ctx.canvas;
 
 	const stack = [[x, y]];
 	const image_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-	let pixel_index = (y*canvas.width + x) * 4;
+	let pixel_index = (y * canvas.width + x) * 4;
 	const start_r = image_data.data[pixel_index + 0];
 	const start_g = image_data.data[pixel_index + 1];
 	const start_b = image_data.data[pixel_index + 2];
@@ -47,7 +46,7 @@ const fill = (ctx, x, y, swatch)=> {
 	const [fill_r, fill_g, fill_b, fill_a] = one_pixel_image_data.data;
 
 	// console.log([start_r, start_g, start_b, start_a], [fill_r, fill_g, fill_b, fill_a]);
-	
+
 	if (
 		fill_r === start_r &&
 		fill_g === start_g &&
@@ -63,21 +62,21 @@ const fill = (ctx, x, y, swatch)=> {
 		x = new_pos[0];
 		y = new_pos[1];
 
-		pixel_index = (y*canvas.width + x) * 4;
+		pixel_index = (y * canvas.width + x) * 4;
 		while (matches_start_color(pixel_index)) {
 			y--;
-			pixel_index = (y*canvas.width + x) * 4;
+			pixel_index = (y * canvas.width + x) * 4;
 		}
 		reach_left = false;
 		reach_right = false;
 		while (true) {
 			y++;
-			pixel_index = (y*canvas.width + x) * 4;
-			
+			pixel_index = (y * canvas.width + x) * 4;
+
 			if (!(y < canvas.height && matches_start_color(pixel_index))) {
 				break;
 			}
-			
+
 			color_pixel(pixel_index);
 
 			if (x > 0) {
@@ -91,7 +90,7 @@ const fill = (ctx, x, y, swatch)=> {
 				}
 			}
 
-			if (x < canvas.width-1) {
+			if (x < canvas.width - 1) {
 				if (matches_start_color(pixel_index + 4)) {
 					if (!reach_right) {
 						stack.push([x + 1, y]);

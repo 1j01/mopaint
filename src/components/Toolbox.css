@@ -10,7 +10,7 @@
 }
 .Toolbox-tool:hover:not([aria-checked]),
 .Toolbox-tool:focus:not([aria-checked]) {
-	background: #CBDBFC;
+	background: #cbdbfc;
 	color: black;
 }
 .Toolbox-tool:active:not([aria-checked]) {
@@ -18,6 +18,6 @@
 	color: black;
 }
 .Toolbox-tool[aria-checked] {
-	background: #639BFF;
+	background: #639bff;
 	color: white;
 }
