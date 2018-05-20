@@ -1,20 +1,31 @@
 # Mopaint
 
-Mopaint is a sort of rewrite of, or successor to [JS Paint],  
+Mopaint is a sort of rewrite of, or successor to [JS Paint][],  
 without the limiting factor of being first and foremost a recreation of MS Paint from Windows 98,  
-on more solid foundations (e.g. [React] (or [Preact] or [Vue]) instead of [jQuery], [Webpack] (or [Rollup]) instead of a bunch of scripts, probably [Redux]... instead of just a bunch of mutable global variables),  
+on more solid foundations (e.g. [React][] or [Preact][] or [Vue][] or [Svelte][] instead of [jQuery][],
+[Webpack][] or [Rollup][] instead of a bunch of scripts,
+probably [Redux][] or similar patterns instead of just a bunch of mutable global variables),  
 where I plan to implement things that I feel would be too difficult to implement in that codebase,  
 such as collaborative image editing.
 
-I want it to be a *modern*, *modular*, *multi-user* painting app, and *more!*
-(It should also support *mobile*!)
+I want it to be a *modern*, *modular*, *mobile operable*, *multiuser online* painting app, and *more!*  
 
 (I may backport some things to JS Paint, and may eventually rewrite JS Paint to use a core editing engine of Mopaint.)
 
 **Update:**
 It's actually going to be more of a testing ground for new ideas about image editors and editors in general.
-[Make **Making** Better](https://isaiahodhner.ml/make-making-better).
+[Make **Making** Better][Make Making Better].
 But also hopefully a really nice image editor. And more!
+
+I mean, it should end up better than I was even conceiving before,
+but probably take longer. because I'll be focusing on certain features first and
+trying to make the tooling around tools really powerful,
+rather than going ahead and making a lot of directly useful tools, which would be *easier*,
+but make iterating on the tools as a whole and the process for making them etc. more difficult (more API usage and thus friction).
+I want to keep it fairly few tools probably so churn is easier in the codebase.
+That said I might end up creating a significant toolset early on, just because it's fun and useful, and pay the cost,
+either in friction to changes,
+or instability of the toolset by disabling tools to work on how tools work and progressively adding them back (or doing that work in branches).
 
 ## Crazy (or at least Kooky) Ideas
 
@@ -23,10 +34,9 @@ But also hopefully a really nice image editor. And more!
 What if selections were just layers?  
 (what if selections were just layers in a mode? and would it *have* to be a mode?)  
 what if you could have hierarchial selections? selections within selections, sublayers of layers?  
-what if layers, layer groups, frames of an animation, selections, copy-pastes/duplicates, "smart objects", [recursive fractal references], shapes and brush strokes and other operations - from you or other users, were all the same thing?  
+what if layers, layer groups, frames of an animation, selections, copy-pastes/duplicates, "smart objects",
+[recursive fractal references][Doodal], shapes and brush strokes and other operations - from you or other users, were all the same thing?  
 what about masking? that could be the same as a selection, right?
-
-[recursive fractal references]: http://dood.al/
 
 How many of these things are feasible?  
 what are the relationships between these objects/concepts?  
@@ -84,25 +94,20 @@ What if you could paint on tessalated/wrapping canvases, infinite canvases, 3D m
 
 If we implement 3D documents  
 (i.e. editing textures on a 3D model,
-like [Chameleon](http://www-ui.is.s.u-tokyo.ac.jp/~takeo/chameleon/chameleon.htm),
-[Chameleon.js](https://github.com/tomtung/chameleon.js),
-[Paint 3D](https://www.microsoft.com/en-us/store/p/paint-3d/9nblggh5fv99),
-[SculptGL](https://stephaneginier.com/sculptgl/),
-etc.),
-(actually probably not like Chameleon with its dynamic re-UV-mapping,)
+like [Chameleon][], [Chameleon.js][], [Paint 3D][], [SculptGL][], etc.),  
+(actually probably not like Chameleon with its dynamic re-UV-mapping,)  
 if it can handle wrapping seamlessly around a cylinder (across triangles, drawing multiply),  
 we should be able to do tessalation, wrapping and symetry pretty easily.  
-For instance, here's an infinitely zooming set of patterns, in 2D, but made with Three.js:  
-https://www.infinitezoom.net/ (or [backup link](https://web.archive.org/web/20180127023916/http://www.infinitezoom.net/))  
+For instance, here's an infinitely zooming set of patterns, in 2D, but made with Three.js: [Infinite Zoom][]
 (just imagine texture on those shapes)  
 
 What about 3D painting not just *on* 3D, but *in* 3D?  
-like [Tilt Brush](https://www.tiltbrush.com/) (a VR thing)  
-(or *vaguely* like [Pixelweaver](https://github.com/1j01/pixelweaver) (a code-doodling thing))  
+like [Tilt Brush][] (a VR thing)  
+(or *vaguely* like [Pixelweaver][] (a code-doodling thing))  
 I don't think a lot of 2D tools would map so well to 3D,  
 and, certainly they'd have a better chance if they had to use a 3D API,  
 but idk, what would a flood fill tool be?  
-it'd have to use voxels–or, it wouldn't *have* to, but–  
+it'd have to use voxels–or, it wouldn't *have* to, but  
 what would it be? what would be the point?  
 if you look inside an object your vision is completely occluded?  
 maybe it could be useful if joins shapes together that are near together  
@@ -123,15 +128,27 @@ THREE SIXTY
 NO  
 SCOPE  
 
-Actually, I'm combining this idea with [Pixelweaver](https://github.com/1j01/pixelweaver) (another project of mine, focused on reprodubibility), and writing a manifesto. [Make **Making** Better](https://isaiahodhner.ml/make-making-better).
-Yes, that probably sounds rather broad, but I *am* trying to figure out what the scope is.
+Actually, I'm combining this idea with [Pixelweaver][]
+(another project of mine, focused on reprodubibility),
+(and other projects),
+and writing a manifesto. [Make **Making** Better][Make Making Better].
+Yes, that probably sounds really broad, but I *am* trying to figure out what the scope is.
 
 [JS Paint]: https://github.com/1j01/jspaint/
 [React]: https://facebook.github.io/react/
 [Preact]: https://preactjs.com/
 [Vue]: https://vuejs.org/
+[Svelte]: https://github.com/sveltejs/svelte
 [jQuery]: https://jquery.com/
 [Webpack]: https://webpack.github.io/
 [Redux]: https://redux.js.org/
 [Rollup]: https://rollupjs.org/
-
+[Chameleon]: http://www-ui.is.s.u-tokyo.ac.jp/~takeo/chameleon/chameleon.htm
+[Chameleon.js]: https://github.com/tomtung/chameleon.js
+[Paint 3D]: https://www.microsoft.com/en-us/store/p/paint-3d/9nblggh5fv99
+[SculptGL]: https://stephaneginier.com/sculptgl/
+[Infinite Zoom]: https://www.infinitezoom.net/
+[Tilt Brush]: https://www.tiltbrush.com/
+[Pixelweaver]: https://github.com/1j01/pixelweaver/
+[Doodal]: https://dood.al/
+[Make Making Better]: https://isaiahodhner.ml/make-making-better/
