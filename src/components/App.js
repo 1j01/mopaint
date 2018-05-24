@@ -10,6 +10,7 @@ import "./App.css";
 class App extends Component {
 	constructor() {
 		super();
+		// TODO: move state outside of the component
 		this.state = {
 			selectedSwatch: defaultPalette[0],
 			selectedTool: tools[0],
@@ -47,6 +48,7 @@ class App extends Component {
 		);
 	}
 
+	// TODO: move these out of the component
 	undo() {
 		const { undos, redos } = this.state;
 		const { documentContext } = this;

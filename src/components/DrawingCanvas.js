@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 import ImageAction from "../ImageAction.js";
 import "./DrawingCanvas.css";
 
@@ -161,5 +162,17 @@ class DrawingCanvas extends Component {
 		window.removeEventListener("mouseup", this.mouseUpListener);
 	}
 }
+
+DrawingCanvas.propTypes = {
+	documentCanvas: PropTypes.object.isRequired,
+	documentContext: PropTypes.object.isRequired,
+	undoable: PropTypes.func.isRequired,
+	selectedTool: PropTypes.object.isRequired,
+	selectedSwatch: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.instanceOf(CanvasGradient),
+		PropTypes.instanceOf(CanvasPattern),
+	]).isRequired,
+};
 
 export default DrawingCanvas;

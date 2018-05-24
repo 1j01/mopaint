@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import ToolPreview from "./ToolPreview.js";
 import "./Toolbox.css";
 
@@ -29,5 +30,11 @@ class Toolbox extends Component {
 		);
 	}
 }
+
+Toolbox.propTypes = {
+	tools: PropTypes.array.isRequired,
+	selectedTool: PropTypes.object,
+	selectTool: PropTypes.func.isRequired,
+};
 
 export default Toolbox;

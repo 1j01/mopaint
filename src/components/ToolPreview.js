@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 import trimCanvas from "../trim-canvas.js";
 // import './ToolPreview.css';
 
@@ -94,5 +95,11 @@ class ToolPreview extends Component {
 		);
 	}
 }
+
+ToolPreview.propTypes = {
+	tool: PropTypes.object.isRequired,
+	width: PropTypes.number.isRequired,
+	height: PropTypes.number.isRequired,
+};
 
 export default ToolPreview;

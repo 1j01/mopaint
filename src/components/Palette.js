@@ -1,6 +1,8 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import "./Palette.css";
 
+// TODO: DRY Toolbox + Palette
 class Palette extends Component {
 	render() {
 		const { palette, selectedSwatch, selectSwatch } = this.props;
@@ -25,5 +27,11 @@ class Palette extends Component {
 		);
 	}
 }
+
+Palette.propTypes = {
+	palette: PropTypes.array.isRequired,
+	selectedSwatch: PropTypes.object,
+	selectSwatch: PropTypes.func.isRequired,
+};
 
 export default Palette;

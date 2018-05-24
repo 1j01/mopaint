@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import Palette from "./Palette.js";
 import "./Colorbox.css";
 
@@ -24,5 +25,11 @@ class Colorbox extends Component {
 		);
 	}
 }
+
+Colorbox.propTypes = {
+	palette: PropTypes.array.isRequired,
+	selectedSwatch: PropTypes.object,
+	selectSwatch: PropTypes.func.isRequired,
+};
 
 export default Colorbox;
