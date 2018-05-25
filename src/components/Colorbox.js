@@ -28,7 +28,11 @@ class Colorbox extends Component {
 
 Colorbox.propTypes = {
 	palette: PropTypes.array.isRequired,
-	selectedSwatch: PropTypes.object,
+	selectedSwatch: PropTypes.oneOfType([
+		PropTypes.instanceOf(CanvasPattern),
+		PropTypes.instanceOf(CanvasGradient),
+		PropTypes.string,
+	]).isRequired,
 	selectSwatch: PropTypes.func.isRequired,
 };
 
