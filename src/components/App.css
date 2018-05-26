@@ -1,14 +1,28 @@
 html,
 body,
-#root,
-.App {
+#root {
 	height: 100%;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 }
+.App {
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: row;
+}
 
 .App > main {
+	/* TODO: make the canvas area be the overflow area instead */
+	/* make the color and tool palettes compact enough to be on the screen at all times on mobile by collapsing */
 	overflow: auto;
 	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.sidebar {
+	max-width: 30vw;
+	flex-basis: 400px;
 }

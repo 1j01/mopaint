@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
+import HistoryView from "./HistoryView.js";
 import defaultPalette from "../db32-palette.js";
 import tools from "../tools/";
 import "./App.css";
@@ -11,6 +12,7 @@ class App extends Component {
 	constructor() {
 		super();
 		// TODO: move state outside of the component
+		// also save data (in an at least *somewhat* future-proof way)
 		this.state = {
 			selectedSwatch: defaultPalette[0],
 			selectedTool: tools[0],
@@ -59,7 +61,7 @@ class App extends Component {
 
 		const action = undos.last();
 		this.setState({
-			undos: undos.slice(0, undos.size - 1),
+			undos: undos.pop(),
 			redos: redos.push(action),
 		});
 
@@ -76,7 +78,7 @@ class App extends Component {
 		const action = redos.last();
 		this.setState({
 			undos: undos.push(action),
-			redos: redos.slice(0, redos.size - 1),
+			redos: redos.pop(),
 		});
 
 		action.apply(documentContext);
@@ -99,6 +101,28 @@ class App extends Component {
 				undos: undos.push(action),
 			});
 			action.apply(documentContext);
+		};
+
+		const goToEntry = (entry) => {
+			alert("TODO: allow selecting different points in history");
+			// const { undos, redos } = this.state;
+			// var indexInUndos = undos.indexOf(entry);
+			// var indexInRedos = redos.indexOf(entry);
+			// var isCurrent = entry === undos.last();
+			// if (isCurrent) {
+			// 	return;
+			// }
+			// if (indexInUndos) {
+			// 	const actionsToApply = undos.slice(indexInUndos, undos.size);
+			// 	this.setState({
+			// 		undos: undos.slice(0, indexInUndos),
+			// 		redos: redos.concat(actionsToApply),
+			// 	});
+			// 	for (var i=0; i<indexInUndos; i++){
+
+			// 	}
+			// }
+			// actionsToApply.forEach((action)=> action.apply());
 		};
 
 		const { documentContext, documentCanvas } = this;
@@ -126,6 +150,14 @@ class App extends Component {
 						}}
 					/>
 				</main>
+				{/* TODO: resizable sidebar */}
+				<div className="sidebar">
+					<HistoryView
+						undos={this.state.undos}
+						redos={this.state.redos}
+						goToEntry={goToEntry}
+					/>
+				</div>
 			</div>
 		);
 	}

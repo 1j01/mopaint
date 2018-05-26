@@ -111,14 +111,14 @@ class DrawingCanvas extends Component {
 		document.body.classList.remove("cursor-override-DrawingCanvas");
 
 		const { opCanvas, opCtx } = this;
-		const { undoable } = this.props;
+		const { undoable, selectedTool } = this.props;
 		// TODO: create action from subsection of the canvas
 		const action = new ImageAction(
 			opCtx,
 			0,
 			0,
-			opCanvas.width,
-			opCanvas.height
+			selectedTool,
+			selectedTool.name
 		);
 		undoable(action);
 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);

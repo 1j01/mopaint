@@ -1,0 +1,25 @@
+.HistoryEntry {
+	flex: 0 0 auto;
+	width: 100%;
+	/*width: 200px;*/
+	/*cursor: pointer;*/
+	background: white;
+	border: 0;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	padding: 5px;
+	font: inherit;
+	text-align: left;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.HistoryEntry:active {
+	background: rgb(240, 240, 240);
+}
+.HistoryEntry[aria-checked] {
+	background: rgb(99, 155, 255);
+}
+.HistoryEntry canvas {
+	margin-right: 5px;
+	vertical-align: middle;
+}

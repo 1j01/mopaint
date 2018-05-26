@@ -1,0 +1,7 @@
+.HistoryView {
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	height: 100%;
+	box-shadow: -1px 0 5px rgba(0, 0, 0, 0.5);
+}
