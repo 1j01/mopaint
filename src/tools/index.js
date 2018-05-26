@@ -57,65 +57,47 @@ const modifiers = [
 // events.map(mirrorPoint) --> mirrorGesture
 // (maybe "gesture" should be reserved for direct-from-user gestures; maybe it should be called ToolOperation or something)
 
-Object.keys(tools).forEach((key) => {
-	const originalTool = tools[key];
-	// if (originalTool.drawSegmentOfPath || originalTool.drawShape || originalTool.click) {
-	// TODO: DRY and rework all this, make all this unnecessary and obselete
-	if (originalTool.drawSegmentOfPath) {
-		modifiers.forEach((modifier) => {
-			const newKey = modifier.prefix + key;
-			tools[newKey] = {
-				//};
-				// tools[newKey][toolTypeIndicatorAPIFunctionNameThingString] =
-				drawSegmentOfPath: (ctx, x1, y1, x2, y2, swatch) => {
-					modifier.metaTool(
-						ctx,
-						x1,
-						y1,
-						x2,
-						y2,
-						swatch,
-						originalTool.drawSegmentOfPath
-					);
-				},
+modifiers.forEach((modifier) => {
+	Object.keys(tools).forEach((key) => {
+		const originalTool = tools[key];
+		const newKey = modifier.prefix + key;
+
+		// if (originalTool.drawSegmentOfPath || originalTool.drawShape || originalTool.click) {
+		// TODO: DRY and rework all this, make all this unnecessary and obselete
+		if (originalTool.drawSegmentOfPath) {
+			const newTool = (tools[newKey] = {});
+			newTool.drawSegmentOfPath = (ctx, x1, y1, x2, y2, swatch) => {
+				modifier.metaTool(
+					ctx,
+					x1,
+					y1,
+					x2,
+					y2,
+					swatch,
+					originalTool.drawSegmentOfPath
+				);
 			};
-		});
-	}
-	if (originalTool.drawShape) {
-		modifiers.forEach((modifier) => {
-			const newKey = modifier.prefix + key;
-			tools[newKey] = {
-				drawShape: (ctx, x1, y1, x2, y2, swatch) => {
-					modifier.metaTool(
-						ctx,
-						x1,
-						y1,
-						x2,
-						y2,
-						swatch,
-						originalTool.drawShape
-					);
-				},
+		}
+		if (originalTool.drawShape) {
+			const newTool = (tools[newKey] = {});
+			newTool.drawShape = (ctx, x1, y1, x2, y2, swatch) => {
+				modifier.metaTool(ctx, x1, y1, x2, y2, swatch, originalTool.drawShape);
 			};
-		});
-	}
-	// if (originalTool.click) {
-	// 	modifiers.forEach((modifier) => {
-	// 		const newKey = modifier.prefix + key;
-	// 		tools[newKey] = {
-	// 			click: (ctx, x1, y1, swatch, documentCtx) => {
-	// 				modifier.metaTool(
-	// 					ctx,
-	// 					x1,
-	// 					y1,
-	// 					swatch,
-	// 					documentCtx,
-	// 					originalTool.click
-	// 				);
-	// 			},
-	// 		};
-	// 	});
-	// }
+		}
+		// if (originalTool.click) {
+		// 	const newTool = (tools[newKey] = {});
+		// 	newTool.click = (ctx, x1, y1, swatch, documentCtx) => {
+		// 		modifier.metaTool(
+		// 			ctx,
+		// 			x1,
+		// 			y1,
+		// 			swatch,
+		// 			documentCtx,
+		// 			originalTool.click
+		// 		);
+		// 	};
+		// }
+	});
 });
 
 const toolsArray = Object.keys(tools).map((key) => {
