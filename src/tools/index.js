@@ -38,14 +38,14 @@ const tools = {
 };
 
 // TODO: allow the USER to compose tools (dynamically)
-const modifiers = [
+const pointModifiers = [
 	{
 		prefix: "Mirror Symmetric ",
-		metaTool: mirrorReflect,
+		pointToPoints: mirrorReflect,
 	},
 	{
 		prefix: "Rotationally Symmetric ",
-		metaTool: rotationallyReflect,
+		pointToPoints: rotationallyReflect,
 	},
 ];
 // TODO: for now I've gone with relying on a generic/shared API for tools that take certain kinds of geometry
@@ -57,7 +57,7 @@ const modifiers = [
 // events.map(mirrorPoint) --> mirrorGesture
 // (maybe "gesture" should be reserved for direct-from-user gestures; maybe it should be called ToolOperation or something)
 
-modifiers.forEach((modifier) => {
+pointModifiers.forEach((modifier) => {
 	Object.keys(tools).forEach((key) => {
 		const originalTool = tools[key];
 		const newKey = modifier.prefix + key;
@@ -67,34 +67,50 @@ modifiers.forEach((modifier) => {
 		if (originalTool.drawSegmentOfPath) {
 			const newTool = (tools[newKey] = {});
 			newTool.drawSegmentOfPath = (ctx, x1, y1, x2, y2, swatch) => {
-				modifier.metaTool(
-					ctx,
-					x1,
-					y1,
-					x2,
-					y2,
-					swatch,
-					originalTool.drawSegmentOfPath
-				);
+				const starts = modifier.pointToPoints(x1, y1, ctx);
+				const ends = modifier.pointToPoints(x2, y2, ctx);
+				for (let i = 0; i < starts.length; i++) {
+					const start = starts[i];
+					const end = ends[i];
+					originalTool.drawSegmentOfPath(
+						ctx,
+						start.x,
+						start.y,
+						end.x,
+						end.y,
+						swatch
+					);
+				}
 			};
 		}
 		if (originalTool.drawShape) {
 			const newTool = (tools[newKey] = {});
 			newTool.drawShape = (ctx, x1, y1, x2, y2, swatch) => {
-				modifier.metaTool(ctx, x1, y1, x2, y2, swatch, originalTool.drawShape);
+				const starts = modifier.pointToPoints(x1, y1, ctx);
+				const ends = modifier.pointToPoints(x2, y2, ctx);
+				for (let i = 0; i < starts.length; i++) {
+					const start = starts[i];
+					const end = ends[i];
+					originalTool.drawShape(ctx, start.x, start.y, end.x, end.y, swatch);
+				}
 			};
 		}
 		// if (originalTool.click) {
 		// 	const newTool = (tools[newKey] = {});
-		// 	newTool.click = (ctx, x1, y1, swatch, documentCtx) => {
-		// 		modifier.metaTool(
-		// 			ctx,
-		// 			x1,
-		// 			y1,
-		// 			swatch,
-		// 			documentCtx,
-		// 			originalTool.click
-		// 		);
+		// 	newTool.click = (ctx, x, y, swatch, documentCtx) => {
+		// 		const starts = modifier.pointToPoints(x, y, ctx);
+		// 		// console.log(starts);
+		// 		for(let i = 0; i < starts.length; i++){
+		// 			// break;
+		// 			const start = starts[i];
+		// 			originalTool.click(
+		// 				ctx,
+		// 				start.x,
+		// 				start.y,
+		// 				swatch,
+		// 				documentCtx
+		// 			);
+		// 		}
 		// 	};
 		// }
 	});

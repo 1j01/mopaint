@@ -1,6 +1,4 @@
-const mirrorReflect = (ctx, x1, y1, x2, y2, swatch, tool) => {
-	tool(ctx, x1, y1, x2, y2, swatch);
-
+const getMirrorSymmetryPoints = (x, y, ctx) => {
 	// const angle = 0;
 	const flipCenterX = ctx.canvas.width / 2;
 	// const flipCenterY = ctx.canvas.height / 2;
@@ -14,10 +12,7 @@ const mirrorReflect = (ctx, x1, y1, x2, y2, swatch, tool) => {
 		y: y,
 	});
 
-	const reflected_1 = reflectPoint(x1, y1);
-	const reflected_2 = reflectPoint(x2, y2);
-
-	tool(ctx, reflected_1.x, reflected_1.y, reflected_2.x, reflected_2.y, swatch);
+	return [{ x, y }, reflectPoint(x, y)];
 };
 
-export default mirrorReflect;
+export default getMirrorSymmetryPoints;
