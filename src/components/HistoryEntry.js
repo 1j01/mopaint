@@ -15,21 +15,41 @@ class Thumbnail extends Component {
 	}
 }
 
-const HistoryEntry = (props) => {
-	const { selected, onClick, entry } = props;
-	return (
-		<button
-			className="HistoryEntry"
-			role="radio"
-			aria-checked={selected ? "aria-checked" : null}
-			onClick={onClick}
-		>
-			<Thumbnail image={entry.patchCanvas} />
-			<ToolPreview tool={entry.tool} width={16} height={16} />
-			{entry.name}
-		</button>
-	);
-};
+class HistoryEntry extends Component {
+	render() {
+		const { selected, onClick, entry } = this.props;
+		return (
+			<button
+				className="HistoryEntry"
+				role="radio"
+				aria-checked={selected ? "aria-checked" : null}
+				onClick={onClick}
+			>
+				<Thumbnail image={entry.patchCanvas} />
+				<ToolPreview tool={entry.tool} width={16} height={16} />
+				{entry.name}
+			</button>
+		);
+	}
+	componentDidMount() {
+		var el = ReactDOM.findDOMNode(this);
+		el.scrollIntoView({
+			behavior: "instant",
+			block: "nearest",
+			inline: "nearest",
+		});
+	}
+	componentDidUpdate() {
+		if (this.props.selected) {
+			var el = ReactDOM.findDOMNode(this);
+			el.scrollIntoView({
+				behavior: "instant",
+				block: "nearest",
+				inline: "nearest",
+			});
+		}
+	}
+}
 
 HistoryEntry.propTypes = {
 	entry: PropTypes.object.isRequired,
