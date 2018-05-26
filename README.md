@@ -8,7 +8,7 @@ probably [Redux][] or similar patterns instead of just a bunch of mutable global
 where I plan to implement things that I feel would be too difficult to implement in that codebase,  
 such as collaborative image editing.
 
-I want it to be a *modern*, *modular*, *mobile operable*, *multiuser online* painting app, and *more!*  
+I want it to be a ***mo**dern*, ***mo**dular*, ***m**obily **o**perable*, ***m**ultiuser **o**nline* painting app, and ***mo**re!*  
 
 (I may backport some things to JS Paint, and may eventually rewrite JS Paint to use a core editing engine of Mopaint.)
 
