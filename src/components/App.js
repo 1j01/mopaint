@@ -153,7 +153,7 @@ class App extends Component {
 						Saving is not yet implemented!
 						This app is in very early stages of development,
 						and it doesn't represent the future vision for this project,
-						like at all.Except that there's (some sort of) a history view, pretty early on.
+						like at all. Except that there's (some sort of) a history view, pretty early on.
 						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub</a>.
 					</Warning>
 					<Toolbox
