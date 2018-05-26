@@ -104,25 +104,42 @@ class App extends Component {
 		};
 
 		const goToEntry = (entry) => {
-			alert("TODO: allow selecting different points in history");
-			// const { undos, redos } = this.state;
-			// var indexInUndos = undos.indexOf(entry);
-			// var indexInRedos = redos.indexOf(entry);
-			// var isCurrent = entry === undos.last();
-			// if (isCurrent) {
-			// 	return;
-			// }
-			// if (indexInUndos) {
-			// 	const actionsToApply = undos.slice(indexInUndos, undos.size);
-			// 	this.setState({
-			// 		undos: undos.slice(0, indexInUndos),
-			// 		redos: redos.concat(actionsToApply),
-			// 	});
-			// 	for (var i=0; i<indexInUndos; i++){
-
-			// 	}
-			// }
-			// actionsToApply.forEach((action)=> action.apply());
+			const { undos, redos } = this.state;
+			const { documentContext } = this;
+			var indexInUndos = undos.indexOf(entry);
+			var indexInRedos = redos.indexOf(entry);
+			var isCurrent = entry === undos.last();
+			if (isCurrent) {
+				return;
+			}
+			// the item you click on should become the last item in undos
+			if (indexInUndos > -1) {
+				const actionsToApplyReverse = undos.slice(indexInUndos + 1, undos.size);
+				this.setState({
+					undos: undos.slice(0, indexInUndos + 1),
+					redos: redos.concat(actionsToApplyReverse.reverse()),
+				});
+				actionsToApplyReverse.reverse().forEach((action) => {
+					action.applyReverse(documentContext);
+				});
+				this.drawingCanvasComponent.draw();
+				return;
+			}
+			if (indexInRedos > -1) {
+				const actionsToApply = redos.slice(indexInRedos, redos.size);
+				this.setState({
+					undos: undos.concat(actionsToApply.reverse()),
+					redos: redos.slice(0, indexInRedos),
+				});
+				actionsToApply.reverse().forEach((action) => {
+					action.apply(documentContext);
+				});
+				this.drawingCanvasComponent.draw();
+				return;
+			}
+			alert(
+				"Something bad happened and somehow the entry wasn't found in undos or redos. You should report this bug."
+			);
 		};
 
 		const { documentContext, documentCanvas } = this;
