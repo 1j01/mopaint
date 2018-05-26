@@ -4,6 +4,7 @@ import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
 import HistoryView from "./HistoryView.js";
+import Warning from "./Warning.js";
 import defaultPalette from "../db32-palette.js";
 import tools from "../tools/";
 import "./App.css";
@@ -146,6 +147,15 @@ class App extends Component {
 		return (
 			<div className="App">
 				<main>
+					{/* prettier-ignore */}
+					<Warning>
+						⚠
+						Saving is not yet implemented!
+						This app is in very early stages of development,
+						and it doesn't represent the future vision for this project,
+						like at all.Except that there's (some sort of) a history view, pretty early on.
+						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub</a>.
+					</Warning>
 					<Toolbox
 						tools={tools}
 						selectedTool={selectedTool}

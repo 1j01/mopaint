@@ -1,0 +1,7 @@
+.Warning {
+	background: rgb(255, 255, 100);
+	padding: 5px;
+	margin: 10px;
+	border-radius: 3px;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+}
