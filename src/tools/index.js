@@ -38,6 +38,7 @@ const tools = {
 };
 
 // TODO: allow the USER to compose tools (dynamically)
+// TODO: show preview of the multiple points the user will interact with when they do
 const pointModifiers = [
 	{
 		prefix: "Mirror Symmetric ",
@@ -95,6 +96,16 @@ pointModifiers.forEach((modifier) => {
 				}
 			};
 		}
+		// TODO: sub-operations for symmetric fill so that it can use the underlying image data of the canvas
+		// consistently when called multiple times in an operation
+		// (It could also work by accepting multiple starting points simply enough in the fill algorithm,
+		// but it's a matter of complicating the external code (and the boundary/API),
+		// and I think generally we want it to act as if there were simply multiple clicks,
+		// so more tools can work without change, so it would be good to do that earlier on.
+		// Other tools like the line tool could benefit from taking the geometry of multiple lines to draw all at once as an optimization,
+		// so maybe it could be an opt in thing, but also maybe that could be optimized at a different level like the browser,
+		// maybe they have optimizations for that, or maybe it's not worth worrying about; there'll be much more complex tools,
+		// and we'll want WegGL at some point and it's not worth thinking about atm. --io May 28)
 		// if (originalTool.click) {
 		// 	const newTool = (tools[newKey] = {});
 		// 	newTool.click = (ctx, x, y, swatch, documentCtx) => {
