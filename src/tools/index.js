@@ -1,16 +1,15 @@
-import line from "./line.js";
-import circle from "./circle.js";
-import rectangle from "./rectangle.js";
-import fill from "./fill.js";
-import mirrorReflect from "./mirror-symmetry.js";
-import rotationallyReflect from "./rotational-symmetry.js";
+// import line from "./line.js";
+// import circle from "./circle.js";
+// import rectangle from "./rectangle.js";
+// import fill from "./fill.js";
+// import mirrorReflect from "./mirror-symmetry.js";
+// import rotationallyReflect from "./rotational-symmetry.js";
+import freeformLine from "./freeform-line.js";
 
+/*
 const tools = {
 	"Freeform Line": {
-		// maybe this should be more like
-		// from: "lastPos", to: "pos", draw: (...)=>
-		// or make this less framework-like/abstract at this level
-		// and just have it register event handlers
+		// TODO: maybe just have it register event handlers
 		// and have a function for transforming mouse coordinates to canvas coordinates, etc.
 		drawSegmentOfPath: line,
 	},
@@ -18,6 +17,9 @@ const tools = {
 		drawShape: line,
 	},
 	"Freeform Circles": {
+		// TODO: use time and draw multiple circles in between mouse events if necessary
+		// so that it doesn't get unusable when laggy, making huge circles
+		// and maybe limit it logarithmically so it doesn't get so huge when you move fast
 		drawSegmentOfPath: circle,
 	},
 	Circle: {
@@ -37,8 +39,9 @@ const tools = {
 	},
 };
 
+/*
 // TODO: allow the USER to compose tools (dynamically)
-// TODO: show preview of the multiple points the user will interact with when they do
+// TODO: show preview of the multiple points the user will interact with if they click
 const pointModifiers = [
 	{
 		prefix: "Mirror Symmetric ",
@@ -131,5 +134,8 @@ const toolsArray = Object.keys(tools).map((key) => {
 	const tool = tools[key];
 	return { name: key, ...tool };
 });
+*/
+
+const toolsArray = [freeformLine];
 
 export default toolsArray;

@@ -8,14 +8,13 @@ class DrawingCanvas extends Component {
 	constructor(props) {
 		super();
 
-		this.gesture = null;
+		// this.gesture = null;
 		// TODO: show gestures of other users in realtime
-		// this.state = {gestures: new List()]};
-
-		// NOTE: should be able to support time-based tools
+		// NOTE: should be able to support time-based tools in a reproducible way
 		// with timestamps and periodic updates to the lastest timestamp
 		// and support psuedorandomness by seeding from the gesture data
 		// or including a seed with each update, or whatever
+		// this.state = {gestures: new List()]};
 
 		this.opCanvas = document.createElement("canvas");
 		this.opCtx = this.opCanvas.getContext("2d");
@@ -40,14 +39,14 @@ class DrawingCanvas extends Component {
 			</div>
 		);
 	}
-	toCanvasCoords(event) {
-		const { canvas } = this;
-		const rect = canvas.getBoundingClientRect();
-		return {
-			x: event.clientX - rect.left,
-			y: event.clientY - rect.top,
-		};
-	}
+	// toCanvasCoords(event) {
+	// 	const { canvas } = this;
+	// 	const rect = canvas.getBoundingClientRect();
+	// 	return {
+	// 		x: event.clientX - rect.left,
+	// 		y: event.clientY - rect.top,
+	// 	};
+	// }
 	draw() {
 		const { canvas, opCanvas } = this;
 		const { documentCanvas } = this.props;
@@ -58,58 +57,116 @@ class DrawingCanvas extends Component {
 		ctx.drawImage(opCanvas, 0, 0);
 	}
 	// TODO: touch support
-	onMouseMoveWhileDown(event) {
-		event.preventDefault();
+	// TODO: add back some of this stuff like setCapture
+	// onMouseMoveWhileDown(event) {
+	// 	event.preventDefault();
 
-		const { opCanvas, opCtx } = this;
+	// 	const { opCanvas, opCtx } = this;
 
-		const { startPos, lastPos, tool, swatch } = this.gesture;
-		const pos = this.toCanvasCoords(event);
-		this.gesture.lastPos = pos;
+	// 	const { startPos, lastPos, tool, swatch } = this.gesture;
+	// 	const pos = this.toCanvasCoords(event);
+	// 	this.gesture.lastPos = pos;
 
-		if (tool.drawShape) {
-			opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
-			tool.drawShape(opCtx, startPos.x, startPos.y, pos.x, pos.y, swatch);
-		}
-		if (tool.drawSegmentOfPath) {
-			// TODO: smoothing (instead of just segments)
-			tool.drawSegmentOfPath(opCtx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
-		}
+	// 	if (tool.drawShape) {
+	// 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
+	// 		tool.drawShape(opCtx, startPos.x, startPos.y, pos.x, pos.y, swatch);
+	// 	}
+	// 	if (tool.drawSegmentOfPath) {
+	// 		// TODO: smoothing (instead of just segments)
+	// 		tool.drawSegmentOfPath(opCtx, lastPos.x, lastPos.y, pos.x, pos.y, swatch);
+	// 	}
 
-		this.draw();
-		// TODO: collaborative sync with undo/redo...
+	// 	this.draw();
+	// 	// TODO: collaborative sync with undo/redo...
+	// }
+	// onMouseDown(event) {
+	// 	if (event.which !== 1) {
+	// 		return;
+	// 	}
+	// 	event.preventDefault();
+	// 	const { selectedSwatch, selectedTool } = this.props;
+	// 	const pos = this.toCanvasCoords(event);
+	// 	this.gesture = {
+	// 		startPos: pos,
+	// 		lastPos: pos,
+	// 		tool: selectedTool,
+	// 		swatch: selectedSwatch,
+	// 	};
+	// 	if (event.target.setCapture) {
+	// 		event.target.setCapture();
+	// 	} else {
+	// 		document.body.classList.add("cursor-override-DrawingCanvas");
+	// 	}
+	// 	const { opCtx } = this;
+	// 	const { documentContext } = this.props;
+	// 	if (selectedTool.click) {
+	// 		selectedTool.click(opCtx, pos.x, pos.y, selectedSwatch, documentContext);
+	// 		this.draw();
+	// 	}
+	// }
+	// onMouseUp(event) {
+	// 	const pos = this.toCanvasCoords(event);
+	// 	this.gesture.lastPos = pos;
+	// 	this.gesture.endPos = pos;
+	// 	document.body.classList.remove("cursor-override-DrawingCanvas");
+
+	// 	const { opCanvas, opCtx } = this;
+	// 	const { undoable, selectedTool } = this.props;
+	// 	// TODO: create action from subsection of the canvas
+	// 	const action = new ImageAction(
+	// 		opCtx,
+	// 		0,
+	// 		0,
+	// 		selectedTool,
+	// 		selectedTool.name
+	// 	);
+	// 	undoable(action);
+	// 	opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
+	// }
+	componentDidMount() {
+		const canvas = ReactDOM.findDOMNode(this);
+		// let mouseIsDown = false;
+		// canvas.addEventListener(
+		// 	"mousedown",
+		// 	(this.mouseDownListener = (event) => {
+		// 		if (mouseIsDown) {
+		// 			return;
+		// 		}
+		// 		if (event.button !== 0) {
+		// 			return;
+		// 		}
+		// 		mouseIsDown = true;
+		// 		this.onMouseDown(event);
+		// 		window.addEventListener(
+		// 			"mousemove",
+		// 			(this.mouseMoveListener = (event) => {
+		// 				this.onMouseMoveWhileDown(event);
+		// 			})
+		// 		);
+		// 		window.addEventListener(
+		// 			"mouseup",
+		// 			(this.mouseUpListener = (event) => {
+		// 				window.removeEventListener("mousemove", this.mouseMoveListener);
+		// 				window.removeEventListener("mouseup", this.mouseUpListener);
+		// 				mouseIsDown = false;
+		// 				this.onMouseUp(event);
+		// 			})
+		// 		);
+		// 	})
+		// );
+		const { selectedSwatch, selectedTool /*, documentContext*/ } = this.props;
+		// const op = new selectedTool(documentContext, selectedSwatch);
+		// op.addListeners/setup(canvas);
+		selectedTool.setup(
+			canvas,
+			this.opCtx,
+			this.makeAction.bind(this),
+			this.draw.bind(this),
+			selectedSwatch
+		); //, documentContext
 	}
-	onMouseDown(event) {
-		if (event.which !== 1) {
-			return;
-		}
-		event.preventDefault();
-		const { selectedSwatch, selectedTool } = this.props;
-		const pos = this.toCanvasCoords(event);
-		this.gesture = {
-			startPos: pos,
-			lastPos: pos,
-			tool: selectedTool,
-			swatch: selectedSwatch,
-		};
-		if (event.target.setCapture) {
-			event.target.setCapture();
-		} else {
-			document.body.classList.add("cursor-override-DrawingCanvas");
-		}
-		const { opCtx } = this;
-		const { documentContext } = this.props;
-		if (selectedTool.click) {
-			selectedTool.click(opCtx, pos.x, pos.y, selectedSwatch, documentContext);
-			this.draw();
-		}
-	}
-	onMouseUp(event) {
-		const pos = this.toCanvasCoords(event);
-		this.gesture.lastPos = pos;
-		this.gesture.endPos = pos;
-		document.body.classList.remove("cursor-override-DrawingCanvas");
-
+	makeAction() {
+		// console.log(this, "makeAction");
 		const { opCanvas, opCtx } = this;
 		const { undoable, selectedTool } = this.props;
 		// TODO: create action from subsection of the canvas
@@ -123,44 +180,12 @@ class DrawingCanvas extends Component {
 		undoable(action);
 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 	}
-	componentDidMount() {
-		const canvas = ReactDOM.findDOMNode(this);
-		let mouseIsDown = false;
-		canvas.addEventListener(
-			"mousedown",
-			(this.mouseDownListener = (event) => {
-				if (mouseIsDown) {
-					return;
-				}
-				if (event.button !== 0) {
-					return;
-				}
-				mouseIsDown = true;
-				this.onMouseDown(event);
-				window.addEventListener(
-					"mousemove",
-					(this.mouseMoveListener = (event) => {
-						this.onMouseMoveWhileDown(event);
-					})
-				);
-				window.addEventListener(
-					"mouseup",
-					(this.mouseUpListener = (event) => {
-						window.removeEventListener("mousemove", this.mouseMoveListener);
-						window.removeEventListener("mouseup", this.mouseUpListener);
-						mouseIsDown = false;
-						this.onMouseUp(event);
-					})
-				);
-			})
-		);
-	}
-	componentWillUnmount() {
-		const canvas = ReactDOM.findDOMNode(this);
-		canvas.removeEventListener("mousedown", this.mouseDownListener);
-		window.removeEventListener("mousemove", this.mouseMoveListener);
-		window.removeEventListener("mouseup", this.mouseUpListener);
-	}
+	// componentWillUnmount() {
+	// 	const canvas = ReactDOM.findDOMNode(this);
+	// 	canvas.removeEventListener("mousedown", this.mouseDownListener);
+	// 	window.removeEventListener("mousemove", this.mouseMoveListener);
+	// 	window.removeEventListener("mouseup", this.mouseUpListener);
+	// }
 }
 
 DrawingCanvas.propTypes = {
