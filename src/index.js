@@ -8,6 +8,7 @@ import "./simulate-gestures.js";
 
 // Needed for onTouchTap used by Material UI
 // https://stackoverflow.com/a/34015469/988941
+// TODO: remove me!
 injectTapEventPlugin();
 
 if (

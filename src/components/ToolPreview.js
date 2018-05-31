@@ -4,6 +4,9 @@ import PropTypes from "prop-types";
 import trimCanvas from "../trim-canvas.js";
 // import './ToolPreview.css';
 
+// TODO: cache based on size and tool
+// or at least tool and generate canvases downscaled
+// (could even maybe do something crazy like use svg <use>)
 class ToolPreview extends Component {
 	render() {
 		const { width, height } = this.props;
@@ -29,8 +32,9 @@ class ToolPreview extends Component {
 
 		const swatch = "black";
 
-		// TODO: update how tools work so this isn't necessary
+		// TODO: update this so it works again
 		// also, tools could maybe define some metadata of operation geometry for the preview
+		/*
 		if (tool.drawShape) {
 			const startPos = { x: opCanvas.width / 2, y: opCanvas.height / 2 };
 			const pos = { x: opCanvas.width - 20, y: opCanvas.height - 20 };
@@ -74,6 +78,7 @@ class ToolPreview extends Component {
 			// TODO: represent fill tool better, and/or at LEAST different from the rectangle tool
 			tool.click(opCtx, opCanvas.width / 2, opCanvas.height / 2, swatch, ctx);
 		}
+		*/
 
 		const trimmedCanvas = trimCanvas(opCanvas);
 
