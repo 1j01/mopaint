@@ -67,7 +67,7 @@ const tool = {
 	renderOperation: (operation, finish, updateDisplay) => {
 		const { swatch } = operation;
 		const opCtx = operation.context;
-		const pointsStream = operation.gesture;
+		const pointsStream = operation.pointsStream;
 
 		const nextWindow = (slidingWindow, x) => slidingWindow.concat(x).slice(-3);
 
