@@ -25,14 +25,35 @@ const getPointsFromGesturalEvents = (canvas) => {
 			}
 		}
 	};
+
+	const captureCursor = (event) => {
+		if (event.target.setCapture) {
+			event.target.setCapture();
+		} else {
+			document.body.classList.add("cursor-override-DrawingCanvas");
+		}
+	};
+	const uncaptureCursor = () => {
+		document.body.classList.remove("cursor-override-DrawingCanvas");
+	};
+
+	// TODO: make sure event handlers are cleaned up
+	// TODO: touch support
 	return most
 		.fromEvent("mousedown", canvas)
+		.filter((event) => event.which === 1)
 		.tap(preventDefault)
 		.tap(removeSelection)
+		.tap(captureCursor)
 		.map(() => {
 			return most
-				.fromEvent("mousemove", canvas)
-				.until(most.fromEvent("mouseup", window))
+				.fromEvent("mousemove", window)
+				.until(
+					most
+						.fromEvent("mouseup", window)
+						// TODO: maybe .filter((event)=> event.which === 1)? maybe.
+						.tap(uncaptureCursor)
+				)
 				.map(toCanvasCoords);
 		});
 };
@@ -49,9 +70,9 @@ const tool = {
 
 			pointsStream
 				.scan(nextWindow, [])
-				.skip(3) // includes []
+				.skip(3) // includes empty array, so it skips [], [a], [a, b], but not [a, b, c]
 				.forEach(([a, b, c]) => {
-					// TODO: smooth curves
+					// TODO: smooth curves for pen tool
 					opCtx.beginPath();
 					opCtx.moveTo(a.x, a.y + Math.random() * 50);
 					opCtx.lineTo(b.x, b.y + Math.random() * 50);
