@@ -1,4 +1,4 @@
-// import line from "./line.js";
+import line from "./line.js";
 // import circle from "./circle.js";
 // import rectangle from "./rectangle.js";
 // import fill from "./fill.js";
@@ -136,6 +136,6 @@ const toolsArray = Object.keys(tools).map((key) => {
 });
 */
 
-const toolsArray = [freeformLine];
+const toolsArray = [freeformLine, line];
 
 export default toolsArray;

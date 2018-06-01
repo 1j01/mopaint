@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@most/create": "^2.0.1",
     "husky": "^0.14.3",
     "immutable": "^3.8.2",
     "lint-staged": "^7.1.0",

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { create as createStream } from "@most/create";
 import ImageAction from "../ImageAction.js";
 import "./DrawingCanvas.css";
 
@@ -21,6 +22,8 @@ class DrawingCanvas extends Component {
 		this.opCanvas.height = height;
 
 		this.canvasRef = React.createRef();
+
+		this.toolCleanup = null;
 	}
 	render() {
 		const { width, height } = this.props.documentCanvas;
@@ -43,6 +46,18 @@ class DrawingCanvas extends Component {
 		ctx.drawImage(opCanvas, 0, 0);
 	}
 	componentDidMount() {
+		this.setupSelectedToolUI();
+	}
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (this.props.selectedTool !== prevProps.selectedTool) {
+			this.setupSelectedToolUI();
+		}
+	}
+	setupSelectedToolUI() {
+		if (this.toolCleanup) {
+			this.toolCleanup();
+		}
+
 		const canvas = this.canvasRef.current;
 		const { selectedTool } = this.props;
 
@@ -50,7 +65,12 @@ class DrawingCanvas extends Component {
 		// store operation data in the undo history
 		// allow swapping swatches after the fact (i.e. modify the operation)
 
-		const uiStream = selectedTool.setupUI(canvas);
+		// TODO: find a better way to do this (using subscribe().unsubscribe()?)
+		const endSignal = createStream((add, end, error) => {
+			this.toolCleanup = () => add("end signal");
+		});
+
+		const uiStream = selectedTool.setupUI(canvas, endSignal);
 
 		const operationsStream = uiStream.map((pointsStream) => {
 			const { opCanvas, opCtx } = this;
