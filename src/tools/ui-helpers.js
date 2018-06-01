@@ -57,13 +57,19 @@ const getStreamOfStreamsOfPoints = (canvas, endSignal) => {
 		});
 };
 
+/*
 const firstAndLast = (stream) =>
 	most.mergeArray([
 		most.fromPromise(stream.reduce((first, val) => first || val)),
-		most.fromPromise(stream.reduce((last, val) => val)),
+		most.fromPromise(stream.reduce((last, val) => val))
 	]);
 
 const getStreamOfStreamsOfStartAndEndPoints = (canvas, endSignal) =>
-	getStreamOfStreamsOfPoints(canvas, endSignal).map(firstAndLast);
+	getStreamOfStreamsOfPoints(canvas, endSignal)
+	.tap((val)=> console.log("(in getStreamOfStreamsOfStartAndEndPoints)", val))
+	.map(firstAndLast);
+*/
 
-export { getStreamOfStreamsOfPoints, getStreamOfStreamsOfStartAndEndPoints };
+export {
+	getStreamOfStreamsOfPoints /*, getStreamOfStreamsOfStartAndEndPoints*/,
+};
