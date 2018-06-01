@@ -61,32 +61,31 @@ const getPointsFromGesturalEvents = (canvas) => {
 const tool = {
 	// TODO: translatable name and description (and maybe a short name?)
 	name: "Pen",
-	setup: (canvas, opCtx, makeAction, updateDisplay, swatch) => {
-		const gesturesStream = getPointsFromGesturalEvents(canvas);
+	setupUI: (canvas) => {
+		return getPointsFromGesturalEvents(canvas);
+	},
+	renderOperation: (operation, finish, updateDisplay) => {
+		const { swatch } = operation;
+		const opCtx = operation.context;
+		const pointsStream = operation.gesture;
 
-		gesturesStream.observe((pointsStream) => {
-			const nextWindow = (slidingWindow, x) =>
-				slidingWindow.concat(x).slice(-3);
+		const nextWindow = (slidingWindow, x) => slidingWindow.concat(x).slice(-3);
 
-			pointsStream
-				.scan(nextWindow, [])
-				.skip(3) // includes empty array, so it skips [], [a], [a, b], but not [a, b, c]
-				.forEach(([a, b, c]) => {
-					// TODO: smooth curves for pen tool
-					opCtx.beginPath();
-					opCtx.moveTo(a.x, a.y);
-					opCtx.lineTo(b.x, b.y);
-					// TODO: separate UI and drawing code with data in the middle
-					// so we can update swatch when the user selects a swatch,
-					// including after the fact (after the user drew the line)
-					opCtx.strokeStyle = swatch;
-					opCtx.lineWidth = 5;
-					opCtx.lineCap = "round";
-					opCtx.stroke();
-					updateDisplay();
-				})
-				.then(makeAction);
-		});
+		pointsStream
+			.scan(nextWindow, [])
+			.skip(3) // includes empty array, so it skips [], [a], [a, b], but not [a, b, c]
+			.forEach(([a, b, c]) => {
+				// TODO: smooth curves for pen tool
+				opCtx.beginPath();
+				opCtx.moveTo(a.x, a.y);
+				opCtx.lineTo(b.x, b.y);
+				opCtx.strokeStyle = swatch;
+				opCtx.lineWidth = 5;
+				opCtx.lineCap = "round";
+				opCtx.stroke();
+				updateDisplay();
+			})
+			.then(finish);
 	},
 };
 

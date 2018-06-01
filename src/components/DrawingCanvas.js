@@ -45,13 +45,31 @@ class DrawingCanvas extends Component {
 	componentDidMount() {
 		const canvas = this.canvasRef.current;
 		const { selectedSwatch, selectedTool } = this.props;
-		selectedTool.setup(
-			canvas,
-			this.opCtx,
-			this.makeAction.bind(this),
-			this.draw.bind(this),
-			selectedSwatch
-		);
+
+		// TODO: allow tool and swatch switching again
+		// store operation data in the undo history
+		// allow swapping swatches after the fact (i.e. modify the operation)
+
+		const gestureStream = selectedTool.setupUI(canvas);
+
+		const operationStream = gestureStream.map((gesture) => {
+			const { opCanvas, opCtx } = this;
+			return {
+				tool: selectedTool,
+				swatch: selectedSwatch,
+				context: opCtx,
+				canvas: opCanvas,
+				gesture,
+			};
+		});
+
+		operationStream.forEach((operation) => {
+			selectedTool.renderOperation(
+				operation,
+				this.makeAction.bind(this),
+				this.draw.bind(this)
+			);
+		});
 	}
 	makeAction() {
 		const { opCanvas, opCtx } = this;
