@@ -74,8 +74,8 @@ const tool = {
 				.forEach(([a, b, c]) => {
 					// TODO: smooth curves for pen tool
 					opCtx.beginPath();
-					opCtx.moveTo(a.x, a.y + Math.random() * 50);
-					opCtx.lineTo(b.x, b.y + Math.random() * 50);
+					opCtx.moveTo(a.x, a.y);
+					opCtx.lineTo(b.x, b.y);
 					// TODO: separate UI and drawing code with data in the middle
 					// so we can update swatch when the user selects a swatch,
 					// including after the fact (after the user drew the line)
@@ -85,9 +85,7 @@ const tool = {
 					opCtx.stroke();
 					updateDisplay();
 				})
-				.then(() => {
-					makeAction();
-				});
+				.then(makeAction);
 		});
 	},
 };

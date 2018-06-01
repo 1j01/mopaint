@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import ImageAction from "../ImageAction.js";
 import "./DrawingCanvas.css";
@@ -20,6 +19,8 @@ class DrawingCanvas extends Component {
 		const { width, height } = props.documentCanvas;
 		this.opCanvas.width = width;
 		this.opCanvas.height = height;
+
+		this.canvasRef = React.createRef();
 	}
 	render() {
 		const { width, height } = this.props.documentCanvas;
@@ -27,19 +28,14 @@ class DrawingCanvas extends Component {
 		// with canvases representing gestures/operations on top
 		return (
 			<div className="DrawingCanvas" style={{ width, height }}>
-				<canvas
-					width={width}
-					height={height}
-					ref={(canvas) => {
-						this.canvas = canvas;
-					}}
-				/>
+				<canvas width={width} height={height} ref={this.canvasRef} />
 			</div>
 		);
 	}
 	draw() {
-		const { canvas, opCanvas } = this;
+		const { opCanvas } = this;
 		const { documentCanvas } = this.props;
+		const canvas = this.canvasRef.current;
 		const ctx = canvas.getContext("2d");
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -47,7 +43,7 @@ class DrawingCanvas extends Component {
 		ctx.drawImage(opCanvas, 0, 0);
 	}
 	componentDidMount() {
-		const canvas = ReactDOM.findDOMNode(this);
+		const canvas = this.canvasRef.current;
 		const { selectedSwatch, selectedTool } = this.props;
 		selectedTool.setup(
 			canvas,
