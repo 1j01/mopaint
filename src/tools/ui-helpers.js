@@ -35,11 +35,10 @@ const getStreamOfStreamsOfPoints = (canvas, endSignal) => {
 		document.body.classList.remove("cursor-override-DrawingCanvas");
 	};
 
-	// TODO: make sure event handlers are cleaned up
 	// TODO: touch support
 	return most
 		.fromEvent("mousedown", canvas)
-		.until(endSignal)
+		.until(endSignal) // TODO: clean up event handlers in a cleaner way
 		.filter((event) => event.which === 1)
 		.tap(preventDefault)
 		.tap(removeSelection)
@@ -50,26 +49,23 @@ const getStreamOfStreamsOfPoints = (canvas, endSignal) => {
 				.until(
 					most
 						.fromEvent("mouseup", window)
-						// TODO: maybe .filter((event)=> event.which === 1)? maybe.
+						// TODO: maybe .filter((event)=> event.which === 1)? *maybe*
 						.tap(uncaptureCursor)
 				)
 				.map(toCanvasCoords);
 		});
 };
 
-/*
-const firstAndLast = (stream) =>
-	most.mergeArray([
-		most.fromPromise(stream.reduce((first, val) => first || val)),
-		most.fromPromise(stream.reduce((last, val) => val))
-	]);
-
-const getStreamOfStreamsOfStartAndEndPoints = (canvas, endSignal) =>
-	getStreamOfStreamsOfPoints(canvas, endSignal)
-	.tap((val)=> console.log("(in getStreamOfStreamsOfStartAndEndPoints)", val))
-	.map(firstAndLast);
-*/
-
-export {
-	getStreamOfStreamsOfPoints /*, getStreamOfStreamsOfStartAndEndPoints*/,
+const getStreamOfStreamsOfLines = (canvas, endSignal) => {
+	return getStreamOfStreamsOfPoints(canvas, endSignal)
+		.tap((val) => console.log("(in getStreamOfStreamsOfLines)", val))
+		.map((pointsStream) => {
+			let firstPoint; // is this anti-functional or whatever? having state here?
+			return pointsStream.map((point) => {
+				firstPoint = firstPoint || point;
+				return [firstPoint, point];
+			});
+		});
 };
+
+export { getStreamOfStreamsOfPoints, getStreamOfStreamsOfLines };

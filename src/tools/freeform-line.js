@@ -9,7 +9,7 @@ const tool = {
 	renderOperation: (operation, finish, updateDisplay) => {
 		const { swatch } = operation;
 		const opCtx = operation.context;
-		const pointsStream = operation.pointsStream;
+		const pointsStream = operation.uiData;
 
 		const nextWindow = (slidingWindow, x) => slidingWindow.concat(x).slice(-3);
 

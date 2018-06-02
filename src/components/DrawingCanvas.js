@@ -61,9 +61,8 @@ class DrawingCanvas extends Component {
 		const canvas = this.canvasRef.current;
 		const { selectedTool } = this.props;
 
-		// TODO: allow tool switching again
-		// store operation data in the undo history
-		// allow swapping swatches after the fact (i.e. modify the operation)
+		// TODO: store operation data in the undo history
+		// TODO: allow swapping swatches after the fact (i.e. modify the operation)
 
 		// TODO: find a better way to do this (using subscribe().unsubscribe()?)
 		const endSignal = createStream((add, end, error) => {
@@ -72,7 +71,7 @@ class DrawingCanvas extends Component {
 
 		const uiStream = selectedTool.setupUI(canvas, endSignal);
 
-		const operationsStream = uiStream.map((pointsStream) => {
+		const operationsStream = uiStream.map((uiData) => {
 			const { opCanvas, opCtx } = this;
 			const { selectedSwatch } = this.props;
 			return {
@@ -80,7 +79,7 @@ class DrawingCanvas extends Component {
 				swatch: selectedSwatch,
 				context: opCtx,
 				canvas: opCanvas,
-				pointsStream,
+				uiData, // TODO: better name esp. since this is a stream (rn at least)
 			};
 		});
 
