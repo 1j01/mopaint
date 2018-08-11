@@ -1,9 +1,6 @@
 # Mopaint
 
 Mopaint is a testing ground for ideas about image editors and editors in general.  
-I've previously made many editors\* and, dissatisfied with the status quo of how editors work,
-I've begun a quest to improve on it and
-[Make **Making** Better][Make Making Better].
 
 As an application,
 I want it to be a
@@ -11,72 +8,28 @@ I want it to be a
 ***m**obily **o**perable*, ***m**ultiuser **o**nline*
 painting app, and ***mo**re!*  
 
-It's also sort of a successor to [JS Paint][],  
-without the limiting factor of being first and foremost a recreation of MS Paint from Windows 98,  
-on more solid foundations (jspaint's codebase is a mess FYI),  
-where I plan to implement things that I feel would be too difficult to implement in that codebase,  
-such as (good) collaborative image editing.  
-(I may backport some things to JS Paint, and may eventually rewrite JS Paint to use a core editing engine of Mopaint.)  
+(It's also vaguely a successor to [JS Paint][],
+without the limiting factor of being first and foremost a clone of MS Paint from Windows 98.)  
 
-I'll be focusing on trying to make the tooling around tools really powerful,  
-rather than going ahead and making a lot of tools, which would be *easier* and directly useful,  
-but add friction to iterating on how tools work as a whole and the process for making them etc.  
-That said I might end up creating a significant toolset early on, just because it can be fun and useful,  
-and pay the cost in terms of friction to changes (have to update a bunch of tools at once),  
-or instability of the toolset (by disabling tools to work on how tools work and progressively adding them back).  
+I'll be focusing on trying to make the *tooling around tools* really powerful,
+rather than going ahead and making a large toolset, which would be *easier* and more directly useful,
+but add friction to iterating on how tools work as a whole, and the process for making them etc.  
+That said it can be fun and useful, and it might be worth the cost of friction (having to update a bunch of tools at once).  
 
---------
+## A few principles
 
-\*Such as [jspaint][JS Paint], [wavey][Wavey], and
-[many][Cityship] [many][Chiptool] [many][Tiamblia-original] [many][Skele2D] more.
-I've copy-pasted and adapted, or rewritten (often looking at older code as reference),
-undo/redo code for new projects, many many times.
-I've previously only gone with a very simple undo/redo model where each undo/redo state holds the entire state,
-which works fine when the data is simple/small, not so great when it's an image,
-altho even that works (computers tend to have a lot of memory these days),
-and I've just refined it as such.
-This system will be much more advanced, nuanced, etc.
-And anyways, having worked on all these different editors,
-I've gotten a sense of how editors work\*\* and some of their fundamental problems.
-
-* The copying of the status quo; "follow the leader"; stagnation;
-it's entirely reasonable, you want your application to behave similarly to other applications,
-so that users can pick up your application easier and faster and use it,
-but it's a problem.
-And a huge part of it I think is just blindly following what's been done.
-Or, *unblindly*, because it's impossible not to form an idea of how things [should] work when you see existing systems.
-Not blindly, but unquestioningly.
-* Not trying hard enough to minimize the UI (and conceptual) surface,
+* Minimize the conceptual surface and maximize applicability;
 combine components/elements/ideas and make anything that works with X also apply to Y by making X and Y the same thing.
 Do more with less. [Multiism][].
-* Once you have some data, there are a million and one things the user might want to do with/to it.
-You should e.g. let the user do things in bulk the same way as doing a single thing if possible, if it makes sense.
-And many of these things are common between editors (or should be), and could be shared,
-so it's worth trying to make libraries for things like undo history,
-but things like this are often tied to the data model / store, and you want to have control over that,
-and other features are less clear how to librafy and share between applications,
-but maybe there should be a free open book/wiki / collection of tutorials for things like data versioning and copy and paste and undo history and things like that and this probably exists but idk
-* Lack of [generativity][Generativity].
-Running code means dealing with security. (Security is hard.)
-And if you're gonna allow code, does that mean your app needs to have a code editor?
-Why can't the user use an external editor that already has all the features they want built in and configured?
-Why can't they use the language *they* want?
-\[as long as it compiles to javascript \[or WebAssembly(?)\]\] ([would be a fine requirement][compile to JS])
-This ties into... [Being part of a Modular Design](https://www.w3.org/DesignIssues/Principles.html),
-Test of Independent Invention ("If someone else had already invented your system, would theirs work with yours?") etc.
-I think this problem/these problems are better solved outside of the web, outside of the browser.
-That is, I think the browser may be harder to solve these problems in, vs desktop.
+Once you have some data, there are a million and one things the user might want to do with it, manipulate it, organize it.
+The user should be able to act on different objects in the same ways if possible.
+Bulk actions should be a natural extension of singular actions, or the same if possible, if it makes sense.
+And many things the user might want to do are common between editors, and could be shared.
 
-Hm, I wasn't planning on typing that much.
-It was a short list before I exanded on it.
-And I'm not sure why I'm... why I've put this here, or...
-Alright, I'm just gonna leave it here, commit, come back to this later.
-
-\*\*I'm not sure what I mean by this exactly.
-I mean I obviously know more about the scope of editors,
-like I can think of the various UI bits and bobs like ctrl+clicking things that you might expect,
-enumerate them, I guess, but what am I getting at here?
-Probably something. But I'm tired.
+* Question the status quo.
+It's one thing to design an application to behave similarly to other applications so that users can pick it up easier and faster,
+but another to copy existing ideas (components, elements, concepts, the scope of a project or program, etc.) without question.
+(Check out Bret Victor's talk [The Future of Programming][]. And also his other work.)
 
 ## Crazy (or at least Kooky) Ideas
 
@@ -125,8 +78,9 @@ what if mine was, would I be benched?
 
 also what if software worked  
 like, what if it was good  
+tho  
 
-#### Programmability / Generativity
+#### Programmability (& [Generativity][])
 
 What if documents were reproducible?  
 what if they contained all the code for brushes and other tools,  
@@ -141,14 +95,14 @@ what if there was a *community* of people creating and remixing tools?
 
 #### Modularity of Document Types
 
-What if you could paint on tessalated/wrapping canvases, infinite canvases, 3D models, etc., all with the same toolset?  
+What if you could paint on tessellated/wrapping canvases, infinite canvases, 3D models, etc., all with the same toolset?  
 
 If we implement 3D documents  
 (i.e. editing textures on a 3D model,
 like [Chameleon][], [Chameleon.js][], [Paint 3D][], [SculptGL][], etc.),  
 (actually probably not like Chameleon with its dynamic re-UV-mapping,)  
 if it can handle wrapping seamlessly around a cylinder (across triangles, drawing multiply),  
-we should be able to do tessalation, wrapping and symetry pretty easily.  
+we should be able to do tessellation, wrapping and symmetry pretty easily.  
 For instance, here's an infinitely zooming set of patterns, in 2D, but made with Three.js: [Infinite Zoom][]
 (just imagine texture on those shapes)  
 
@@ -179,13 +133,7 @@ THREE SIXTY
 NO  
 SCOPE  
 
-<!-- this part is weird now considering it's introduced at the top: -->
-
-Actually, I'm combining this idea with [Pixelweaver][]
-(another project of mine, focused on reprodubibility),
-(and other projects),
-and writing a manifesto. [Make **Making** Better][Make Making Better].
-Yes, that probably sounds really broad, but I *am* trying to figure out what the scope is.
+[Make **Making** Better][Make Making Better].
 
 [JS Paint]: https://github.com/1j01/jspaint/
 [Wavey]: https://github.com/1j01/wavey/
@@ -211,5 +159,5 @@ Yes, that probably sounds really broad, but I *am* trying to figure out what the
 [Doodal]: https://dood.al/
 [Multiism]: https://multiism.ml/
 [Generativity]: https://progrium.com/wiki/Generativity/
-[compile to JS]: https://github.com/jashkenas/coffeescript/wiki/list-of-languages-that-compile-to-js
+[The Future of Programming]: https://vimeo.com/71278954
 [Make Making Better]: https://isaiahodhner.ml/make-making-better/
