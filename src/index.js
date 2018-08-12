@@ -2,13 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./components/App";
-import injectTapEventPlugin from "react-tap-event-plugin";
 import registerServiceWorker from "./registerServiceWorker";
 import "./simulate-gestures.js";
-
-// Needed for onTouchTap used by Material UI
-// https://stackoverflow.com/a/34015469/988941
-injectTapEventPlugin();
 
 if (
 	window.location.protocol === "http:" &&
