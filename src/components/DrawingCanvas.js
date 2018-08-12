@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import ImageAction from "../ImageAction.js";
 import "./DrawingCanvas.css";
@@ -10,9 +9,7 @@ class DrawingCanvas extends Component {
 
 		this.gesture = null;
 		// TODO: show gestures of other users in realtime
-		// this.state = {gestures: new List()]};
-
-		// NOTE: should be able to support time-based tools
+		// NOTE: should be able to support time-based tools in a reproducible way
 		// with timestamps and periodic updates to the lastest timestamp
 		// and support psuedorandomness by seeding from the gesture data
 		// or including a seed with each update, or whatever
@@ -23,6 +20,8 @@ class DrawingCanvas extends Component {
 		const { width, height } = props.documentCanvas;
 		this.opCanvas.width = width;
 		this.opCanvas.height = height;
+
+		this.canvasRef = React.createRef();
 	}
 	render() {
 		const { width, height } = this.props.documentCanvas;
@@ -30,18 +29,12 @@ class DrawingCanvas extends Component {
 		// with canvases representing gestures/operations on top
 		return (
 			<div className="DrawingCanvas" style={{ width, height }}>
-				<canvas
-					width={width}
-					height={height}
-					ref={(canvas) => {
-						this.canvas = canvas;
-					}}
-				/>
+				<canvas width={width} height={height} ref={this.canvasRef} />
 			</div>
 		);
 	}
 	toCanvasCoords(event) {
-		const { canvas } = this;
+		const canvas = this.canvasRef.current;
 		const rect = canvas.getBoundingClientRect();
 		return {
 			x: event.clientX - rect.left,
@@ -49,7 +42,8 @@ class DrawingCanvas extends Component {
 		};
 	}
 	draw() {
-		const { canvas, opCanvas } = this;
+		const canvas = this.canvasRef.current;
+		const { opCanvas } = this;
 		const { documentCanvas } = this.props;
 		const ctx = canvas.getContext("2d");
 
@@ -124,7 +118,7 @@ class DrawingCanvas extends Component {
 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 	}
 	componentDidMount() {
-		const canvas = ReactDOM.findDOMNode(this);
+		const canvas = this.canvasRef.current;
 		let mouseIsDown = false;
 		canvas.addEventListener(
 			"mousedown",
@@ -156,7 +150,7 @@ class DrawingCanvas extends Component {
 		);
 	}
 	componentWillUnmount() {
-		const canvas = ReactDOM.findDOMNode(this);
+		const canvas = this.canvasRef.current;
 		canvas.removeEventListener("mousedown", this.mouseDownListener);
 		window.removeEventListener("mousemove", this.mouseMoveListener);
 		window.removeEventListener("mouseup", this.mouseUpListener);

@@ -6,12 +6,13 @@ import "./HistoryEntry.css";
 
 class Thumbnail extends Component {
 	render() {
-		return <canvas width={24} height={24} />;
+		const { width, height } = this.props;
+		return <canvas width={width} height={height} />;
 	}
 	componentDidMount() {
 		var canvas = ReactDOM.findDOMNode(this);
 		var ctx = canvas.getContext("2d");
-		ctx.drawImage(this.props.image, 0, 0, 24, 24);
+		ctx.drawImage(this.props.image, 0, 0, canvas.width, canvas.height);
 	}
 }
 
@@ -25,7 +26,7 @@ class HistoryEntry extends Component {
 				aria-checked={selected ? "aria-checked" : null}
 				onClick={onClick}
 			>
-				<Thumbnail image={entry.patchCanvas} />
+				<Thumbnail image={entry.patchCanvas} width={24} height={24} />
 				<ToolPreview tool={entry.tool} width={16} height={16} />
 				{entry.name}
 			</button>
