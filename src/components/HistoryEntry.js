@@ -32,23 +32,31 @@ class HistoryEntry extends Component {
 			</button>
 		);
 	}
+	// TODO: move scrolling logic outside of HistoryEntry
 	componentDidMount() {
+		this.scrollIntoView();
+	}
+	componentDidUpdate() {
+		if (this.props.selected) {
+			this.scrollIntoView();
+		}
+	}
+	scrollIntoView() {
 		var el = ReactDOM.findDOMNode(this);
 		el.scrollIntoView({
 			behavior: "instant",
 			block: "nearest",
 			inline: "nearest",
 		});
-	}
-	componentDidUpdate() {
-		if (this.props.selected) {
-			var el = ReactDOM.findDOMNode(this);
-			el.scrollIntoView({
-				behavior: "instant",
-				block: "nearest",
-				inline: "nearest",
-			});
-		}
+		// This would work for old browser compatibility:
+		// el.parentElement.scrollTop =
+		// 	Math.min(
+		// 		el.offsetTop,
+		// 		Math.max(
+		// 			el.parentElement.scrollTop,
+		// 			el.offsetTop - el.parentElement.clientHeight + el.clientHeight
+		// 		)
+		// 	);
 	}
 }
 
