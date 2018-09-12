@@ -27,7 +27,7 @@ const tools = {
 		drawShape: rectangle,
 	},
 	Fill: {
-		icon: "flaticons-fill-bucket.svg",
+		icon: "flaticons-fill-bucket-flipped.svg",
 		// these UI function signatures are pretty arbitrary and would only get worse
 		// as time goes on and I maintain backwards compatibility out of laziness and add things to the end
 		// and it doesn't help that there's this layer of indirection
