@@ -19,7 +19,8 @@
 .HistoryEntry[aria-checked] {
 	background: rgb(99, 155, 255);
 }
-.HistoryEntry canvas {
+.HistoryEntry canvas,
+.HistoryEntry .ToolPreview {
 	margin-right: 5px;
 	vertical-align: middle;
 }

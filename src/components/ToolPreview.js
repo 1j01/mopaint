@@ -6,18 +6,33 @@ import trimCanvas from "../trim-canvas.js";
 
 class ToolPreview extends Component {
 	render() {
-		const { width, height } = this.props;
-		return (
-			<canvas
-				className="ToolPreview"
-				width={width}
-				height={height}
-				ref="canvas"
-			/>
-		);
+		const { width, height, tool } = this.props;
+		if (tool.icon) {
+			return (
+				<img
+					className="ToolPreview"
+					src={"icons/" + tool.icon}
+					width={width}
+					height={height}
+					alt=""
+				/>
+			);
+		} else {
+			return (
+				<canvas
+					className="ToolPreview"
+					width={width}
+					height={height}
+					ref="canvas"
+				/>
+			);
+		}
 	}
 	componentDidMount() {
 		const canvas = ReactDOM.findDOMNode(this.refs.canvas);
+		if (!canvas) {
+			return;
+		}
 		const ctx = canvas.getContext("2d");
 
 		const opCanvas = document.createElement("canvas");

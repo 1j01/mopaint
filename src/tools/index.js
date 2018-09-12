@@ -27,6 +27,7 @@ const tools = {
 		drawShape: rectangle,
 	},
 	Fill: {
+		icon: "flaticons-fill-bucket.svg",
 		// these UI function signatures are pretty arbitrary and would only get worse
 		// as time goes on and I maintain backwards compatibility out of laziness and add things to the end
 		// and it doesn't help that there's this layer of indirection
@@ -42,10 +43,16 @@ const tools = {
 const pointModifiers = [
 	{
 		prefix: "Mirror Symmetric ",
+		// name: "Mirror Symmetry",
+		// name: "Mirror Reflect",
+		// icon: "noun-symmetry.svg",
 		pointToPoints: mirrorReflect,
 	},
 	{
 		prefix: "Rotationally Symmetric ",
+		// name: "Rotational Symmetry",
+		// name: "Point Reflect",
+		// icon: "noun-celtic-knot.svg",
 		pointToPoints: rotationallyReflect,
 	},
 ];
