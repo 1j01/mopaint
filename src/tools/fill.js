@@ -30,6 +30,9 @@
 const fill = (ctx, x, y, swatch) => {
 	const canvas = ctx.canvas;
 
+	x = Math.floor(x);
+	y = Math.floor(y);
+
 	const stack = [[x, y]];
 	const image_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	let pixel_index = (y * canvas.width + x) * 4;
