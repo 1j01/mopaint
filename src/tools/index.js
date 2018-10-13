@@ -71,7 +71,7 @@ pointModifiers.forEach((modifier) => {
 		const newKey = modifier.prefix + key;
 
 		// if (originalTool.drawSegmentOfPath || originalTool.drawShape || originalTool.click) {
-		// TODO: DRY and rework all this, make all this unnecessary and obselete
+		// TODO: DRY and rework all this, make all this unnecessary and obsolete
 		if (originalTool.drawSegmentOfPath) {
 			const newTool = (tools[newKey] = {});
 			newTool.drawSegmentOfPath = (ctx, x1, y1, x2, y2, swatch) => {

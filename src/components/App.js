@@ -1,5 +1,6 @@
 import { List } from "immutable";
 import React, { Component } from "react";
+import { load as loadPalette } from "anypalette";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
@@ -15,6 +16,8 @@ class App extends Component {
 		// TODO: move state outside of the component
 		// also save data (in an at least *somewhat* future-proof way)
 		this.state = {
+			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept; this data isn't special enough to warrant special handling
+			// it can be part of the document, and can be shared along with other things with other documents (like you can share tools in the same way as colors)
 			selectedSwatch: defaultPalette[0],
 			selectedTool: tools[0],
 			undos: new List(),
@@ -40,9 +43,39 @@ class App extends Component {
 				}
 			})
 		);
+
+		const handleDroppedFiles = (files) => {
+			if (files[0]) {
+				// TODO: handle image files, Photoshop documents, GIMP documents, etc.
+				loadPalette(files[0], (error, palette) => {
+					if (error) {
+						// TODO: show error in a nicer way!
+						alert(error);
+					} else {
+						this.setState({ palette });
+					}
+				});
+			}
+		};
+
+		window.addEventListener(
+			"dragover",
+			(this.dragOverLister = (e) => {
+				e.preventDefault();
+			})
+		);
+		window.addEventListener(
+			"drop",
+			(this.dropListener = (e) => {
+				e.preventDefault();
+				handleDroppedFiles(e.dataTransfer.files);
+			})
+		);
 	}
 	componentWillUnmount() {
 		window.removeEventListener("keydown", this.keyDownListener);
+		window.removeEventListener("dragover", this.dragOverListener);
+		window.removeEventListener("drop", this.dropListener);
 	}
 	componentWillReceiveProps(nextProps) {
 		console.assert(
@@ -86,7 +119,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { selectedSwatch, selectedTool } = this.state;
+		const { selectedSwatch, selectedTool, palette } = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch });
@@ -162,7 +195,7 @@ class App extends Component {
 						selectTool={selectTool}
 					/>
 					<Colorbox
-						palette={defaultPalette}
+						palette={palette}
 						selectedSwatch={selectedSwatch}
 						selectSwatch={selectSwatch}
 					/>

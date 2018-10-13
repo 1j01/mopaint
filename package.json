@@ -30,5 +30,8 @@
     "useTabs": true,
     "trailingComma": "es5",
     "arrowParens": "always"
+  },
+  "devDependencies": {
+    "anypalette": "0.1.0"
   }
 }
