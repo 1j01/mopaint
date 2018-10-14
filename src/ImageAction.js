@@ -1,3 +1,4 @@
+/*
 const copyCanvas = (canvas) => {
 	const newCanvas = document.createElement("canvas");
 	newCanvas.width = canvas.width;
@@ -49,3 +50,4 @@ export default class ImageAction {
 		documentContext.putImageData(this.reversePatchImageData, this.x, this.y);
 	}
 }
+*/

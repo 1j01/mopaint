@@ -17,11 +17,14 @@ class App extends Component {
 		// also save data (in an at least *somewhat* future-proof way)
 		this.state = {
 			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept; I don't think this feature isn't special enough to warrant special handling (except for parsing palette files)
-			// it can be part of the document, and more dynamic, and could be shared with other documents the same way as tools
+			// it can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
 			selectedSwatch: defaultPalette[0],
 			selectedTool: tools[0],
 			undos: new List(),
 			redos: new List(),
+			// document: {
+			operations: new List(),
+			// },
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
@@ -49,7 +52,7 @@ class App extends Component {
 				// TODO: handle image files, Photoshop documents, GIMP documents, etc.
 				loadPalette(files[0], (error, palette) => {
 					if (error) {
-						// TODO: show error in a nicer way!
+						// TODO: show error in a nice way
 						alert(error);
 					} else {
 						this.setState({
@@ -87,6 +90,16 @@ class App extends Component {
 	}
 
 	// TODO: move these out of the component
+	// TODO: collaborative sync with undo/redo...
+	addOperation(operation) {
+		this.setState({ operations: this.state.operations.push(operation) });
+	}
+	updateOperation(operation) {
+		// TODO: immutable operation objects probably
+		// this.setState({operations: this.state.operations.set(operations.indexOf(operation), operation)});
+		this.setState({ operations: this.state.operations });
+		// console.log(this.state.operations); // log would need to move if async actually changing it
+	}
 	undo() {
 		const { undos, redos } = this.state;
 		const { documentContext } = this;
@@ -121,7 +134,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { selectedSwatch, selectedTool, palette } = this.state;
+		const { selectedSwatch, selectedTool, palette, operations } = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch });
@@ -207,6 +220,9 @@ class App extends Component {
 						undoable={undoable}
 						documentContext={documentContext}
 						documentCanvas={documentCanvas}
+						addOperation={this.addOperation.bind(this)}
+						updateOperation={this.updateOperation.bind(this)}
+						operations={operations}
 						ref={(component) => {
 							this.drawingCanvasComponent = component;
 						}}

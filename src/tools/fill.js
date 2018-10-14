@@ -1,25 +1,28 @@
 // TODO:
 // * Keep bounds and return them
-// so an ImageAction can at least be bounded by the affected region.
-// (like this one does: https://github.com/hughsk/flood-fill)
-// * Separate the fill (output) from the reference (input)
-// so the ImageAction contains only the fill (and maybe anti-aliasing against shapes).
+// (like this implementation does: https://github.com/hughsk/flood-fill)
+// so an image operation can at least be bounded by the affected region
+// (which could save memory, or save the time that a general bounding box finding algorithm would take),
+// if not have the fill separated out (which could save memory further if the image operation is compressed, e.g. as a PNG)
+// * Separate the fill (output) from the reference (input)?
+// so the image operation contains only the fill (and maybe anti-aliasing against shapes).
 // * Split out "flood" function for more arbitrary selective operations
-// e.g. selective selection (the "magic wand" tool).
+// e.g. selective selection, AKA the "magic wand" tool.
 // * Optimize flood based on chunks / make it handle chunks in order to do infinite documents etc.
 // Need to keep track of visited chunks, but could revisit a chunk from a different side.
 // Imagine the worst case of a flood fill algorithm input, but spread across chunks.
 // * Show progress bar and cancel button as necessary
 // (This would be handled outside any flooding and/or filling implementation(s).)
 // * Support fill with bitmap (pattern as swatch).
-// * Tolerance threshold, and maybe some fancier blending...
-// Maybe use previous operations to draw on top of a more generous (i.e. purposefully bleeding) fill?
-// That would probably be really complicated, and it wouldn't work in *general*.
-// But at any rate, with a kernel, this can definitely be done considerably better than a binary fill.
+// * Tolerance threshold, and maybe some fancier blending (i.e. non-binary)...
+// * Also, I want to support workflows where you draw fills underneath other shapes/strokes,
+// and have the fills extend by at least the antialiasing distance.
+// (This is good for comics, from what I've seen.)
 
 // Other optimizations may include:
 // * Delegate to Web Workers or the GPU.
 // GPU.js looks interesting: https://github.com/gpujs/gpu.js
+// * Compile JavaScript to Web Assembly with a tool for that
 // * Get and set entire pixels at a time instead of individual RGBA components
 // https://hacks.mozilla.org/2011/12/faster-canvas-pixel-manipulation-with-typed-arrays/
 // * Study and implement ideas from an optimized flood fill algorithm,
