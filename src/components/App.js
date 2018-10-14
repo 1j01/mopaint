@@ -16,8 +16,8 @@ class App extends Component {
 		// TODO: move state outside of the component
 		// also save data (in an at least *somewhat* future-proof way)
 		this.state = {
-			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept; this data isn't special enough to warrant special handling
-			// it can be part of the document, and can be shared along with other things with other documents (like you can share tools in the same way as colors)
+			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept; I don't think this feature isn't special enough to warrant special handling (except for parsing palette files)
+			// it can be part of the document, and more dynamic, and could be shared with other documents the same way as tools
 			selectedSwatch: defaultPalette[0],
 			selectedTool: tools[0],
 			undos: new List(),
@@ -52,7 +52,9 @@ class App extends Component {
 						// TODO: show error in a nicer way!
 						alert(error);
 					} else {
-						this.setState({ palette });
+						this.setState({
+							palette: palette.map((color) => color.toString()),
+						});
 					}
 				});
 			}
