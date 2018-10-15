@@ -4,24 +4,30 @@ import PropTypes from "prop-types";
 import ToolPreview from "./ToolPreview.js";
 import "./HistoryEntry.css";
 
-/*
 class Thumbnail extends Component {
 	render() {
 		const { width, height } = this.props;
 		return <canvas width={width} height={height} />;
 	}
-	componentDidMount() {
+	draw() {
 		var canvas = ReactDOM.findDOMNode(this);
 		var ctx = canvas.getContext("2d");
 		ctx.drawImage(this.props.image, 0, 0, canvas.width, canvas.height);
 	}
+	componentDidMount() {
+		this.draw();
+	}
+	componentDidUpdate() {
+		this.draw();
+	}
+	shouldComponentUpdate(newProps) {
+		return newProps.image !== this.props.image;
+	}
 }
-*/
 
 class HistoryEntry extends Component {
 	render() {
 		const { selected, onClick, entry } = this.props;
-		// TODO: <Thumbnail image={entry.cachedImage or thumbnail or whatever} width={24} height={24} />
 		return (
 			<button
 				className="HistoryEntry"
@@ -29,6 +35,9 @@ class HistoryEntry extends Component {
 				aria-checked={selected ? "aria-checked" : null}
 				onClick={onClick}
 			>
+				{entry.thumbnail && (
+					<Thumbnail image={entry.thumbnail} width={24} height={24} />
+				)}
 				<ToolPreview tool={entry.tool} width={16} height={16} />
 				{entry.tool.name}
 			</button>

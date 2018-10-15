@@ -92,6 +92,12 @@ class DrawingCanvas extends Component {
 			}
 
 			documentContext.drawImage(opCanvas, 0, 0);
+			// this is all super inefficient btw, without implementing caching
+			operation.thumbnail = document.createElement("canvas");
+			operation.thumbnail.width = 64;
+			operation.thumbnail.height = 64;
+			operation.thumbnail.getContext("2d").drawImage(opCanvas, 0, 0, 64, 64); // TODO: proportional and whatever
+			// can reuse code in ToolPreview.js
 		});
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
