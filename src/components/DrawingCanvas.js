@@ -14,12 +14,7 @@ class DrawingCanvas extends Component {
 	constructor(props) {
 		super();
 
-		this.gesture = null;
-		// TODO: show gestures of other users in realtime
-		// NOTE: should be able to support time-based tools in a reproducible way
-		// with timestamps and periodic updates to the lastest timestamp
-		// and support psuedorandomness by seeding from the gesture data
-		// or including a seed with each update, or whatever
+		this.operation = null;
 
 		this.opCanvas = document.createElement("canvas");
 		this.opCtx = this.opCanvas.getContext("2d");
@@ -50,14 +45,22 @@ class DrawingCanvas extends Component {
 	draw() {
 		const canvas = this.canvasRef.current;
 		const { opCanvas, opCtx } = this;
-		const { documentCanvas, operations } = this.props;
+		const { documentCanvas, documentContext, operations } = this.props;
 		const ctx = canvas.getContext("2d");
 
-		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
+		documentContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
 
-		// TODO: cache the images and state of/after operations
+		// TODO: cache the images/state of/after operations
 		// (and TODO eventually: use bounding boxes to keep memory usage down)
+		// (and parts of the cache could be saved in the file and even shared in a collaborative setting
+		// but we'll need good cache invalidation)
+		// (it could fetch the cached data for the latest state of the document
+		// and then load earlier stuff if you toggle/undo operations,
+		// and it could simultaneously kick off rendering for them, so whichever is faster,
+		// the network or your computer, could win and show you the results)
 		operations.forEach((operation) => {
+			opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
+
 			const { points, tool, swatch } = operation;
 			const startPos = points[0];
 			const lastPos = points[points.length - 1];
@@ -85,13 +88,14 @@ class DrawingCanvas extends Component {
 				}
 			}
 			if (tool.click) {
-				tool.click(opCtx, startPos.x, startPos.y, swatch, opCtx);
+				tool.click(documentContext, startPos.x, startPos.y, swatch, opCtx);
 			}
+
+			documentContext.drawImage(opCanvas, 0, 0);
 		});
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		ctx.drawImage(documentCanvas, 0, 0);
-		ctx.drawImage(opCanvas, 0, 0);
 	}
 	// TODO: touch support
 	onMouseMoveWhileDown(event) {

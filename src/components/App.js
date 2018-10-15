@@ -16,15 +16,14 @@ class App extends Component {
 		// TODO: move state outside of the component
 		// also save data (in an at least *somewhat* future-proof way)
 		this.state = {
-			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept; I don't think this feature isn't special enough to warrant special handling (except for parsing palette files)
-			// it can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
+			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept;
+			// I don't think this feature is special enough to warrant special handling (except for parsing palette files)
+			// It can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
 			selectedSwatch: defaultPalette[0],
 			selectedTool: tools[0],
 			undos: new List(),
 			redos: new List(),
-			// document: {
 			operations: new List(),
-			// },
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
@@ -89,8 +88,11 @@ class App extends Component {
 		);
 	}
 
-	// TODO: move these out of the component
-	// TODO: collaborative sync with undo/redo...
+	// TODO: collaborative sync with undo/redo, showing operations from other users in realtime
+	// Note: should be able to support time-based tools in a reproducible way
+	// with timestamps and periodic updates to the lastest timestamp
+	// and support psuedorandomness by seeding from operation ID
+	// TODO: move this state manipulation stuff out of the component
 	addOperation(operation) {
 		this.setState({ operations: this.state.operations.push(operation) });
 	}
@@ -98,7 +100,6 @@ class App extends Component {
 		// TODO: immutable operation objects probably
 		// this.setState({operations: this.state.operations.set(operations.indexOf(operation), operation)});
 		this.setState({ operations: this.state.operations });
-		// console.log(this.state.operations); // log would need to move if async actually changing it
 	}
 	undo() {
 		const { undos, redos } = this.state;

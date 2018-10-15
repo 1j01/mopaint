@@ -17,6 +17,7 @@ const goToDocument = (documentID) => {
 	window.location.hash = `document=${documentID}`;
 };
 
+// TODO: more URL-friendly/efficient IDs
 const byteToHex = (byte) => `0${byte.toString(16)}`.slice(-2);
 const generateID = (length = 40) => {
 	// length must be an even number (default: 40)

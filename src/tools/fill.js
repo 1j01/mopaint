@@ -2,7 +2,7 @@
 // * Keep bounds and return them
 // (like this implementation does: https://github.com/hughsk/flood-fill)
 // so an image operation can at least be bounded by the affected region
-// (which could save memory, or save the time that a general bounding box finding algorithm would take),
+// (which could save memory, or save the time that a general bounding box finding algorithm would take - like trim-canvas.js),
 // if not have the fill separated out (which could save memory further if the image operation is compressed, e.g. as a PNG)
 // * Separate the fill (output) from the reference (input)?
 // so the image operation contains only the fill (and maybe anti-aliasing against shapes).
@@ -22,7 +22,7 @@
 // Other optimizations may include:
 // * Delegate to Web Workers or the GPU.
 // GPU.js looks interesting: https://github.com/gpujs/gpu.js
-// * Compile JavaScript to Web Assembly with a tool for that
+// * Compile JavaScript to Web Assembly with a tool
 // * Get and set entire pixels at a time instead of individual RGBA components
 // https://hacks.mozilla.org/2011/12/faster-canvas-pixel-manipulation-with-typed-arrays/
 // * Study and implement ideas from an optimized flood fill algorithm,

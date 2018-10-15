@@ -7,11 +7,6 @@ import rotationallyReflect from "./rotational-symmetry.js";
 
 const tools = {
 	"Freeform Line": {
-		// maybe this should be more like
-		// from: "lastPos", to: "pos", draw: (...)=>
-		// or make this less framework-like/abstract at this level
-		// and just have it register event handlers
-		// and have a function for transforming mouse coordinates to canvas coordinates, etc.
 		drawSegmentOfPath: line,
 	},
 	Line: {
@@ -29,8 +24,8 @@ const tools = {
 	Fill: {
 		icon: "flaticons-fill-bucket-flipped.svg",
 		// these UI function signatures are pretty arbitrary and would only get worse
-		// as time goes on and I maintain backwards compatibility out of laziness and add things to the end
-		// and it doesn't help that there's this layer of indirection
+		// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
+		// and it doesn't help that there's this layer of indirection where I have to map these signatures
 		click: function(opCtx, x, y, swatch, documentCtx) {
 			opCtx.drawImage(documentCtx.canvas, 0, 0);
 			fill(opCtx, x, y, swatch);
@@ -39,7 +34,7 @@ const tools = {
 };
 
 // TODO: allow the USER to compose tools (dynamically)
-// TODO: show preview of the multiple points the user will interact with when they do
+// TODO: show preview of multiple points the user will interact with if they interact
 const pointModifiers = [
 	{
 		prefix: "Mirror Symmetric ",
@@ -56,14 +51,8 @@ const pointModifiers = [
 		pointToPoints: rotationallyReflect,
 	},
 ];
-// TODO: for now I've gone with relying on a generic/shared API for tools that take certain kinds of geometry
-// something better might involve streams of events / geometry
-// maybe something like
-// var normalGesture = new Gesture
-// var mirrorGesture = new Gesture
-// events --> normalGesture
-// events.map(mirrorPoint) --> mirrorGesture
-// (maybe "gesture" should be reserved for direct-from-user gestures; maybe it should be called ToolOperation or something)
+// TODO: for now I'm relying on a sort of set of separate APIs for tools based on certain kinds of geometry they can take
+// something better might involve streams of events / geometry, or just generally be more general
 
 pointModifiers.forEach((modifier) => {
 	Object.keys(tools).forEach((key) => {
@@ -105,14 +94,12 @@ pointModifiers.forEach((modifier) => {
 		}
 		// TODO: sub-operations for symmetric fill so that it can use the underlying image data of the canvas
 		// consistently when called multiple times in an operation
-		// (It could also work by accepting multiple starting points simply enough in the fill algorithm,
+		// (The fill tool could also work by accepting multiple starting points (easily),
 		// but it's a matter of complicating the external code (and the boundary/API),
-		// and I think generally we want it to act as if there were simply multiple clicks,
+		// and I think generally we want it to act as if there were simply multiple separate clicks/gestures,
 		// so more tools can work without change, so it would be good to do that earlier on.
 		// Other tools like the line tool could benefit from taking the geometry of multiple lines to draw all at once as an optimization,
-		// so maybe it could be an opt in thing, but also maybe that could be optimized at a different level like the browser,
-		// maybe they have optimizations for that, or maybe it's not worth worrying about; there'll be much more complex tools,
-		// and we'll want WegGL at some point and it's not worth thinking about atm. --io May 28)
+		// so maybe there could be a way for tools to opt in to handling batching for optimization)
 		// if (originalTool.click) {
 		// 	const newTool = (tools[newKey] = {});
 		// 	newTool.click = (ctx, x, y, swatch, documentCtx) => {
