@@ -19,6 +19,7 @@ class Thumbnail extends Component {
 class HistoryEntry extends Component {
 	render() {
 		const { selected, onClick, entry } = this.props;
+		// TODO: <Thumbnail image={entry.cachedImage or thumbnail or whatever} width={24} height={24} />
 		return (
 			<button
 				className="HistoryEntry"
@@ -26,9 +27,8 @@ class HistoryEntry extends Component {
 				aria-checked={selected ? "aria-checked" : null}
 				onClick={onClick}
 			>
-				<Thumbnail image={entry.patchCanvas} width={24} height={24} />
 				<ToolPreview tool={entry.tool} width={16} height={16} />
-				{entry.name}
+				{entry.tool.name}
 			</button>
 		);
 	}

@@ -1,7 +1,18 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-// import ImageAction from "../ImageAction.js";
 import "./DrawingCanvas.css";
+
+// dec2hex :: Integer -> String
+function dec2hex(dec) {
+	return ("0" + dec.toString(16)).substr(-2);
+}
+
+// generateId :: Integer -> String
+function generateId(len) {
+	var arr = new Uint8Array((len || 40) / 2);
+	window.crypto.getRandomValues(arr);
+	return Array.from(arr, dec2hex).join("");
+}
 
 class DrawingCanvas extends Component {
 	constructor(props) {
@@ -48,6 +59,8 @@ class DrawingCanvas extends Component {
 
 		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 
+		// TODO: cache the images and state of/after operations
+		// (and TODO eventually: use bounding boxes to keep memory usage down)
 		operations.forEach((operation) => {
 			const { points, tool, swatch } = operation;
 			const startPos = points[0];
@@ -63,8 +76,7 @@ class DrawingCanvas extends Component {
 				);
 			}
 			if (tool.drawSegmentOfPath) {
-				// TODO: smoothing (instead of just segments)
-				// points.forEach((point, index)=> {
+				// TODO: allow for smoothing (rather than just plain segments)
 				for (let i1 = 0, i2 = 1; i2 < points.length; i1 += 1, i2 += 1) {
 					tool.drawSegmentOfPath(
 						opCtx,
@@ -74,7 +86,6 @@ class DrawingCanvas extends Component {
 						points[i2].y,
 						swatch
 					);
-					// });
 				}
 			}
 			if (tool.click) {
@@ -104,6 +115,7 @@ class DrawingCanvas extends Component {
 		const { selectedSwatch, selectedTool } = this.props;
 		const pos = this.toCanvasCoords(event);
 		this.operation = {
+			id: generateId(10),
 			points: [pos],
 			tool: selectedTool,
 			swatch: selectedSwatch,
@@ -121,19 +133,6 @@ class DrawingCanvas extends Component {
 		// TODO: add pos if different?
 
 		document.body.classList.remove("cursor-override-DrawingCanvas");
-
-		// const { opCanvas, opCtx } = this;
-		// const { undoable, selectedTool } = this.props;
-		// // TODO: create action from subsection of the canvas
-		// const action = new ImageAction(
-		// 	opCtx,
-		// 	0,
-		// 	0,
-		// 	selectedTool,
-		// 	selectedTool.name
-		// );
-		// undoable(action);
-		// opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 	}
 	componentDidMount() {
 		const canvas = this.canvasRef.current;

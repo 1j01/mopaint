@@ -153,6 +153,8 @@ class App extends Component {
 		};
 
 		const goToEntry = (entry) => {
+			alert("History navigation is not yet (re-)implemented.");
+			return;
 			const { undos, redos } = this.state;
 			const { documentContext } = this;
 			var indexInUndos = undos.indexOf(entry);
@@ -231,7 +233,9 @@ class App extends Component {
 				{/* TODO: resizable sidebar */}
 				<div className="sidebar">
 					<HistoryView
-						undos={this.state.undos}
+						// operations={this.state.operations}
+						// undos={this.state.undos}
+						undos={this.state.operations}
 						redos={this.state.redos}
 						goToEntry={goToEntry}
 					/>
