@@ -177,7 +177,6 @@ class DrawingCanvas extends Component {
 DrawingCanvas.propTypes = {
 	documentCanvas: PropTypes.object.isRequired,
 	documentContext: PropTypes.object.isRequired,
-	undoable: PropTypes.func.isRequired,
 	selectedTool: PropTypes.object.isRequired,
 	selectedSwatch: PropTypes.oneOfType([
 		PropTypes.string,

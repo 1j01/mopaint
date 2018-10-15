@@ -23,7 +23,7 @@ class App extends Component {
 			selectedTool: tools[0],
 			undos: new List(),
 			redos: new List(),
-			operations: new List(),
+			// operations: new List(),
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
@@ -94,16 +94,26 @@ class App extends Component {
 	// and support psuedorandomness by seeding from operation ID
 	// TODO: move this state manipulation stuff out of the component
 	addOperation(operation) {
-		this.setState({ operations: this.state.operations.push(operation) });
+		// this.setState({ operations: this.state.operations.push(operation) });
+
+		// const action = {type: "add-operation", operation};
+		// const { undos } = this.state;
+		// this.setState({
+		// 	undos: undos.push(action),
+		// });
+		// this.setState({ operations: action.apply(this.state.operations) });
+
+		this.setState({ undos: this.state.undos.push(operation) });
 	}
 	updateOperation(operation) {
 		// TODO: immutable operation objects probably
+		// TODO: soft undo/redo / fundo/freedo
 		// this.setState({operations: this.state.operations.set(operations.indexOf(operation), operation)});
-		this.setState({ operations: this.state.operations });
+		// this.setState({ operations: this.state.operations });
+		this.setState({ undos: this.state.undos });
 	}
 	undo() {
 		const { undos, redos } = this.state;
-		const { documentContext } = this;
 
 		if (undos.size < 1) {
 			return false;
@@ -115,11 +125,10 @@ class App extends Component {
 			redos: redos.push(action),
 		});
 
-		action.applyReverse(documentContext);
+		// action.applyReverse(documentContext);
 	}
 	redo() {
 		const { undos, redos } = this.state;
-		const { documentContext } = this;
 
 		if (redos.size < 1) {
 			return false;
@@ -131,11 +140,11 @@ class App extends Component {
 			redos: redos.pop(),
 		});
 
-		action.apply(documentContext);
+		// action.apply(documentContext);
 	}
 
 	render() {
-		const { selectedSwatch, selectedTool, palette, operations } = this.state;
+		const { selectedSwatch, selectedTool, palette, undos } = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch });
@@ -144,20 +153,8 @@ class App extends Component {
 			this.setState({ selectedTool: tool });
 		};
 
-		const undoable = (action) => {
-			const { undos } = this.state;
-			const { documentContext } = this;
-			this.setState({
-				undos: undos.push(action),
-			});
-			action.apply(documentContext);
-		};
-
 		const goToEntry = (entry) => {
-			alert("History navigation is not yet (re-)implemented.");
-			/*
 			const { undos, redos } = this.state;
-			const { documentContext } = this;
 			var indexInUndos = undos.indexOf(entry);
 			var indexInRedos = redos.indexOf(entry);
 			var isCurrent = entry === undos.last();
@@ -171,9 +168,9 @@ class App extends Component {
 					undos: undos.slice(0, indexInUndos + 1),
 					redos: redos.concat(actionsToApplyReverse.reverse()),
 				});
-				actionsToApplyReverse.reverse().forEach((action) => {
-					action.applyReverse(documentContext);
-				});
+				// actionsToApplyReverse.reverse().forEach((action) => {
+				// 	action.applyReverse(documentContext);
+				// });
 				this.drawingCanvasComponent.draw();
 				return;
 			}
@@ -183,19 +180,17 @@ class App extends Component {
 					undos: undos.concat(actionsToApply.reverse()),
 					redos: redos.slice(0, indexInRedos),
 				});
-				actionsToApply.reverse().forEach((action) => {
-					action.apply(documentContext);
-				});
+				// actionsToApply.reverse().forEach((action) => {
+				// 	action.apply(documentContext);
+				// });
 				this.drawingCanvasComponent.draw();
 				return;
 			}
 			alert(
 				"Something bad happened and somehow the entry wasn't found in undos or redos. You should report this bug."
 			);
-			*/
 		};
 
-		const { documentContext, documentCanvas } = this;
 		return (
 			<div className="App">
 				<main>
@@ -221,12 +216,11 @@ class App extends Component {
 					<DrawingCanvas
 						selectedSwatch={selectedSwatch}
 						selectedTool={selectedTool}
-						undoable={undoable}
-						documentContext={documentContext}
-						documentCanvas={documentCanvas}
+						documentContext={this.documentContext}
+						documentCanvas={this.documentCanvas}
 						addOperation={this.addOperation.bind(this)}
 						updateOperation={this.updateOperation.bind(this)}
-						operations={operations}
+						operations={undos}
 						ref={(component) => {
 							this.drawingCanvasComponent = component;
 						}}
@@ -236,8 +230,7 @@ class App extends Component {
 				<div className="sidebar">
 					<HistoryView
 						// operations={this.state.operations}
-						// undos={this.state.undos}
-						undos={this.state.operations}
+						undos={this.state.undos}
 						redos={this.state.redos}
 						goToEntry={goToEntry}
 					/>
