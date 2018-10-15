@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import ToolPreview from "./ToolPreview.js";
 import "./HistoryEntry.css";
 
+/*
 class Thumbnail extends Component {
 	render() {
 		const { width, height } = this.props;
@@ -15,6 +16,7 @@ class Thumbnail extends Component {
 		ctx.drawImage(this.props.image, 0, 0, canvas.width, canvas.height);
 	}
 }
+*/
 
 class HistoryEntry extends Component {
 	render() {

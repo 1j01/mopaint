@@ -2,17 +2,13 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./DrawingCanvas.css";
 
-// dec2hex :: Integer -> String
-function dec2hex(dec) {
-	return ("0" + dec.toString(16)).substr(-2);
-}
-
-// generateId :: Integer -> String
-function generateId(len) {
-	var arr = new Uint8Array((len || 40) / 2);
-	window.crypto.getRandomValues(arr);
-	return Array.from(arr, dec2hex).join("");
-}
+const byteToHex = (byte) => `0${byte.toString(16)}`.slice(-2);
+const generateID = (length = 40) => {
+	// length must be an even number (default: 40)
+	const array = new Uint8Array(length / 2);
+	crypto.getRandomValues(array);
+	return Array.from(array, byteToHex).join("");
+};
 
 class DrawingCanvas extends Component {
 	constructor(props) {
@@ -115,7 +111,7 @@ class DrawingCanvas extends Component {
 		const { selectedSwatch, selectedTool } = this.props;
 		const pos = this.toCanvasCoords(event);
 		this.operation = {
-			id: generateId(10),
+			id: generateID(10),
 			points: [pos],
 			tool: selectedTool,
 			swatch: selectedSwatch,

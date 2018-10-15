@@ -154,7 +154,7 @@ class App extends Component {
 
 		const goToEntry = (entry) => {
 			alert("History navigation is not yet (re-)implemented.");
-			return;
+			/*
 			const { undos, redos } = this.state;
 			const { documentContext } = this;
 			var indexInUndos = undos.indexOf(entry);
@@ -191,6 +191,7 @@ class App extends Component {
 			alert(
 				"Something bad happened and somehow the entry wasn't found in undos or redos. You should report this bug."
 			);
+			*/
 		};
 
 		const { documentContext, documentCanvas } = this;

@@ -12,17 +12,17 @@ if (
 	window.location.protocol = "https:";
 }
 
+/*
 const goToDocument = (documentID) => {
 	window.location.hash = `document=${documentID}`;
 };
 
 const byteToHex = (byte) => `0${byte.toString(16)}`.slice(-2);
-
 const generateID = (length = 40) => {
 	// length must be an even number (default: 40)
-	let array = new Uint8Array(length / 2);
+	const array = new Uint8Array(length / 2);
 	crypto.getRandomValues(array);
-	return [].map.call(array, byteToHex).join("");
+	return Array.from(array, byteToHex).join("");
 };
 
 const createNewDocument = (documentsRef, uid, callback) => {
@@ -33,19 +33,20 @@ const createNewDocument = (documentsRef, uid, callback) => {
 		callback(err, newDocumentID);
 	});
 };
+*/
 
 const render = () => {
 	const container = document.getElementById("root");
-	const documentID = (window.location.hash.match(/document=([\w\-./]*)/) || [
-		null,
-		"default",
-	])[1];
+	// const documentID = (window.location.hash.match(/document=([\w\-./]*)/) || [
+	// 	null,
+	// 	"default",
+	// ])[1];
 	ReactDOM.render(
 		<App
-			key={documentID}
-			documentID={documentID}
-			goToDocument={goToDocument}
-			createNewDocument={createNewDocument}
+		// key={documentID}
+		// documentID={documentID}
+		// goToDocument={goToDocument}
+		// createNewDocument={createNewDocument}
 		/>,
 		container
 	);
