@@ -2,6 +2,30 @@
   "name": "mopaint",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/1j01/mopaint.git"
+  },
+  "bugs": {
+    "url": "http://github.com/1j01/mopaint/issues"
+  },
+  "author": "Isaiah Odhner <isaiahodhner@gmail.com>",
+  "keywords": [
+    "paint",
+    "painting",
+    "image",
+    "images",
+    "image-editing",
+    "image-editor",
+    "mopaint",
+    "jspaint",
+    "canvas",
+    "editor",
+    "art",
+    "drawing",
+    "drawing-tool",
+    "symmetry"
+  ],
   "dependencies": {
     "anypalette": "0.1.0",
     "husky": "1.1.2",
