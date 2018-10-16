@@ -20,14 +20,16 @@ class Thumbnail extends Component {
 	componentDidUpdate() {
 		this.draw();
 	}
-	shouldComponentUpdate(newProps) {
-		return newProps.image !== this.props.image;
-	}
+	// (TODO)
+	// shouldComponentUpdate(newProps) {
+	// 	return newProps.image !== this.props.image;
+	// }
 }
 
 class HistoryEntry extends Component {
 	render() {
 		const { selected, onClick, entry } = this.props;
+		// TODO: always show thumbnail, have loading state (or other indicator) if not available
 		return (
 			<button
 				className="HistoryEntry"

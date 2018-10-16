@@ -28,7 +28,10 @@ class DrawingCanvas extends Component {
 	}
 	render() {
 		const { width, height } = this.props.documentCanvas;
-		requestAnimationFrame(this.draw.bind(this));
+		if (this.animationFrameID) {
+			cancelAnimationFrame(this.animationFrameID);
+		}
+		this.animationFrameID = requestAnimationFrame(this.draw.bind(this));
 		return (
 			<div className="DrawingCanvas" style={{ width, height }}>
 				<canvas width={width} height={height} ref={this.canvasRef} />
@@ -59,6 +62,11 @@ class DrawingCanvas extends Component {
 		// and then load earlier stuff if you toggle/undo operations,
 		// and it could simultaneously kick off rendering for them, so whichever is faster,
 		// the network or your computer, could win and show you the results)
+		// (if you load the latest state of the document and so don't need to compute everything up to that point,
+		// it should probably also have the thumbnails cached & shared (and maybe that can also be on a "need to know basis");
+		// and also if you load a document and there are entries that are disabled, like redos)
+		// (it could also compute in the background to fill out the cache of earlier stages if it's not doing anything else,
+		// so you save bandwidth if it's already computed, otherwise (you request it and) you save computation, potentially)
 		operations.forEach((operation) => {
 			opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 
@@ -178,6 +186,7 @@ class DrawingCanvas extends Component {
 		canvas.removeEventListener("mousedown", this.mouseDownListener);
 		window.removeEventListener("mousemove", this.mouseMoveListener);
 		window.removeEventListener("mouseup", this.mouseUpListener);
+		cancelAnimationFrame(this.animationFrameID);
 	}
 }
 

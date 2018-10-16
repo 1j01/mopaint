@@ -18,19 +18,22 @@ const urlForID = (documentID) =>
 const getIDfromCurrentURL = () =>
 	(window.location.search.match(/document=([\w\-./]*)/) || [])[1];
 
-// const goToDocument = (documentID) => {
-// 	window.history.pushState({} , null, urlForID(documentID));
-// };
+const goToDocument = (documentID) => {
+	window.history.pushState({}, null, urlForID(documentID));
+};
 
 const createNewDocument = () => {
-	// let newDocumentID = shortid.generate();
-	// goToDocument(newDocumentID);
-	window.history.pushState({}, null, urlForID(shortid.generate()));
+	const newDocumentID = shortid.generate();
+	goToDocument(newDocumentID);
 };
 
 const render = () => {
 	const container = document.getElementById("root");
 	const documentID = getIDfromCurrentURL();
+	// TODO: don't allow implicit default document stored as "undefined"
+	// create a new document, but use history.replaceState()
+	// (could also check if it's a 'valid' id with shortid.isValid(documentID))
+	// (but i might switch to a different id generator anyways, idk)
 	ReactDOM.render(
 		<App
 			key={documentID}

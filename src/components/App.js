@@ -149,12 +149,9 @@ class App extends Component {
 			}
 		);
 	}
-	save(leavingDocument) {
+	save(leavingThisDocument) {
 		if (!this.state.loaded) {
-			// if(window.confirm("The document hasn't loaded, so saving isn't enabled. Would you like to create a new document?")){
-			// if(window.confirm("The document hasn't loaded, so saving isn't enabled. Create a new document?")){
-			// if(window.confirm("The document failed to load. Create a new document?")){
-			if (!leavingDocument) {
+			if (!leavingThisDocument) {
 				if (
 					window.confirm(
 						`The document ${
@@ -168,6 +165,7 @@ class App extends Component {
 			return;
 		}
 		// TODO: serialize tools as code (+ identifiers), and create a sandbox
+		// at least try to include code for future compatibility
 		const serializeOperation = (operation) => {
 			return {
 				id: operation.id,
@@ -197,7 +195,7 @@ class App extends Component {
 				} else {
 					console.log(
 						`Saved ${this.props.documentID}${
-							leavingDocument ? " (leaving it)" : ""
+							leavingThisDocument ? " (leaving it)" : ""
 						}`
 					);
 				}
@@ -220,10 +218,8 @@ class App extends Component {
 				if (event.ctrlKey) {
 					if (event.key === "z") {
 						this.undo();
-						this.drawingCanvasComponent.draw();
 					} else if (event.key === "Z" || event.key === "y") {
 						this.redo();
-						this.drawingCanvasComponent.draw();
 					}
 				}
 			})
@@ -262,7 +258,6 @@ class App extends Component {
 	componentWillUnmount() {
 		this.save(true);
 		this.timeoutIDs.forEach((timeoutID) => {
-			console.log("clearTimeout", timeoutID);
 			clearTimeout(timeoutID);
 		});
 		window.removeEventListener("beforeunload", this.beforeUnloadListener);
@@ -283,27 +278,16 @@ class App extends Component {
 	// and support psuedorandomness by seeding from operation ID
 	// TODO: move this state manipulation stuff out of the component
 	addOperation(operation) {
-		// this.setState({ operations: this.state.operations.push(operation) });
-
-		// const action = {type: "add-operation", operation};
-		// const { undos } = this.state;
-		// this.setState({
-		// 	undos: undos.push(action),
-		// });
-		// this.setState({ operations: action.apply(this.state.operations) });
-
-		this.setState({ undos: this.state.undos.push(operation) });
-		this.save();
+		this.setState(
+			{ undos: this.state.undos.push(operation) },
+			this.save.bind(this)
+		);
 	}
 	updateOperation(operation) {
 		// TODO: immutable operation objects probably (immutable.js has a Record class, I could use that)
 		// or append-only operation state?
 		// TODO: soft undo/redo / fundo/freedo / sliding/gliding/partial undo/redo
-		// this.setState({operations: this.state.operations.set(operations.indexOf(operation), operation)});
-		// this.setState({ operations: this.state.operations });
-		this.setState({ undos: this.state.undos });
-
-		this.saveDebounced();
+		this.setState({ undos: this.state.undos }, this.saveDebounced.bind(this));
 	}
 	undo() {
 		const { undos, redos } = this.state;
@@ -352,27 +336,19 @@ class App extends Component {
 			}
 			// the item you click on should become the last item in undos
 			if (indexInUndos > -1) {
-				const actionsToApplyReverse = undos.slice(indexInUndos + 1, undos.size);
+				const actionsToUndo = undos.slice(indexInUndos + 1, undos.size);
 				this.setState({
 					undos: undos.slice(0, indexInUndos + 1),
-					redos: redos.concat(actionsToApplyReverse.reverse()),
+					redos: redos.concat(actionsToUndo.reverse()),
 				});
-				// actionsToApplyReverse.reverse().forEach((action) => {
-				// 	action.applyReverse(documentContext);
-				// });
-				this.drawingCanvasComponent.draw();
 				return;
 			}
 			if (indexInRedos > -1) {
-				const actionsToApply = redos.slice(indexInRedos, redos.size);
+				const actionsToRedo = redos.slice(indexInRedos, redos.size);
 				this.setState({
-					undos: undos.concat(actionsToApply.reverse()),
+					undos: undos.concat(actionsToRedo.reverse()),
 					redos: redos.slice(0, indexInRedos),
 				});
-				// actionsToApply.reverse().forEach((action) => {
-				// 	action.apply(documentContext);
-				// });
-				this.drawingCanvasComponent.draw();
 				return;
 			}
 			alert(
