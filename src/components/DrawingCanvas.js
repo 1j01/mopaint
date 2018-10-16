@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./DrawingCanvas.css";
 
+// TODO: more efficient IDs (don't need to restrict the alphabet to hex!)
 const byteToHex = (byte) => `0${byte.toString(16)}`.slice(-2);
 const generateID = (length = 40) => {
 	// length must be an even number (default: 40)

@@ -1,3 +1,4 @@
+import localforage from "localforage";
 import { List } from "immutable";
 import React, { Component } from "react";
 import { load as loadPalette } from "anypalette";
@@ -10,11 +11,12 @@ import defaultPalette from "../db32-palette.js";
 import tools from "../tools/";
 import "./App.css";
 
+const CURRENT_SERIALIZATION_VERSION = 1;
+
 class App extends Component {
 	constructor() {
 		super();
 		// TODO: move state outside of the component
-		// also save data (in an at least *somewhat* future-proof way)
 		this.state = {
 			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept;
 			// I don't think this feature is special enough to warrant special handling (except for parsing palette files)
@@ -24,13 +26,194 @@ class App extends Component {
 			undos: new List(),
 			redos: new List(),
 			// operations: new List(),
+			loaded: false,
+			loadFailed: false,
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
 		this.documentCanvas.width = 640;
 		this.documentCanvas.height = 480;
+
+		this.timeoutIDs = new Set();
+		const debounce = (func, delay) => {
+			let timeoutID;
+			return () => {
+				clearTimeout(timeoutID);
+				this.timeoutIDs.delete(timeoutID);
+				timeoutID = setTimeout(func, delay);
+				this.timeoutIDs.add(timeoutID);
+			};
+		};
+		this.saveDebounced = debounce(this.save.bind(this), 500);
+	}
+	load() {
+		console.log(`Load ${this.props.documentID}`);
+		localforage.getItem(
+			`document:${this.props.documentID}:state`,
+			(error, serialized) => {
+				if (error) {
+					alert(
+						"Failed to load document from storage! See console for details."
+					);
+					console.error("Failed to load document from storage!", error);
+					return;
+				}
+				if (!serialized) {
+					console.log(
+						`State not loaded for document:${this.props.documentID}:state`
+					);
+					return;
+				}
+				if (
+					typeof serialized.version !== "number" ||
+					serialized.version > CURRENT_SERIALIZATION_VERSION
+				) {
+					alert(
+						"Can't load document state created by later version of the app"
+					);
+					return;
+				}
+				const MINIMUM_LOADABLE_VERSION = 1;
+				// upgrading code can go here, incrementing the version number step by step
+				// if(serialized.version === 0){
+				// 	serialized.newPropName = serialized.oldName;
+				// 	delete serialized.oldName;
+				// 	serialized.version = 1;
+				// }
+				if (serialized.version < CURRENT_SERIALIZATION_VERSION) {
+					alert(
+						`Can't load document state created by old version of the app; there's no upgrade path from format version ${
+							serialized.version
+						} to ${MINIMUM_LOADABLE_VERSION} currently`
+					);
+					return;
+				}
+				const findToolByID = (toolID, locationMessage) => {
+					const tool = tools.find((tool) => tool.name === toolID);
+					if (!tool) {
+						throw new TypeError(`unknown tool '${toolID}' ${locationMessage}`);
+					}
+					return tool;
+				};
+				const expectPropertiesToExist = (
+					properties,
+					object,
+					locationMessage
+				) => {
+					properties.forEach((key) => {
+						if (!object[key]) {
+							throw new TypeError(
+								`expected property '${key}' ${locationMessage}`
+							);
+						}
+					});
+				};
+				const deserializeOperation = (serializedOperation) => {
+					expectPropertiesToExist(
+						["id", "toolID", "points", "swatch"],
+						serializedOperation,
+						`on operation with ID ${serializedOperation.id}`
+					);
+					const tool = findToolByID(
+						serializedOperation.toolID,
+						`on operation with ID ${serializedOperation.id}`
+					);
+					return {
+						id: serializedOperation.id,
+						tool: tool,
+						points: serializedOperation.points,
+						swatch: serializedOperation.swatch,
+					};
+				};
+				console.log(`Loaded ${this.props.documentID}`);
+				// this try-catch is mainly for the explicitly thrown TypeErrors,
+				// but TODO: maybe wrap all the loading logic, and maybe saving too
+				try {
+					expectPropertiesToExist(
+						["palette", "selectedSwatch", "selectedToolID", "undos", "redos"],
+						serialized,
+						"on the root document object"
+					);
+					this.setState({
+						palette: serialized.palette,
+						selectedSwatch: serialized.selectedSwatch,
+						selectedTool: findToolByID(serialized.selectedToolID),
+						undos: new List(serialized.undos.map(deserializeOperation)),
+						redos: new List(serialized.redos.map(deserializeOperation)),
+						loaded: true,
+					});
+				} catch (error) {
+					alert("Failed to load document! See console for details.");
+					console.error("Failed to load document!", error);
+				}
+			}
+		);
+	}
+	save(leavingDocument) {
+		if (!this.state.loaded) {
+			// if(window.confirm("The document hasn't loaded, so saving isn't enabled. Would you like to create a new document?")){
+			// if(window.confirm("The document hasn't loaded, so saving isn't enabled. Create a new document?")){
+			// if(window.confirm("The document failed to load. Create a new document?")){
+			if (!leavingDocument) {
+				if (
+					window.confirm(
+						`The document ${
+							this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
+						}. Create a new document?`
+					)
+				) {
+					this.props.createNewDocument();
+				}
+			}
+			return;
+		}
+		// TODO: serialize tools as code (+ identifiers), and create a sandbox
+		const serializeOperation = (operation) => {
+			return {
+				id: operation.id,
+				toolID: operation.tool.name,
+				// toolCode: operation.tool.toString(), // not enough to define it; need the whole module
+				points: operation.points,
+				swatch: operation.swatch,
+			};
+		};
+		const serialized = {
+			version: 1,
+			palette: this.state.palette,
+			selectedSwatch: this.state.selectedSwatch,
+			selectedToolID: this.state.selectedTool.name,
+			undos: this.state.undos.toJS().map(serializeOperation),
+			redos: this.state.redos.toJS().map(serializeOperation),
+		};
+		localforage.setItem(
+			`document:${this.props.documentID}:state`,
+			serialized,
+			(error) => {
+				if (error) {
+					alert(
+						"Failed to save document into storage! See console for details."
+					);
+					console.error("Failed to save document into storage!", error);
+				} else {
+					console.log(
+						`Saved ${this.props.documentID}${
+							leavingDocument ? " (leaving it)" : ""
+						}`
+					);
+				}
+			}
+		);
 	}
 	componentDidMount() {
+		this.load();
+
+		window.addEventListener(
+			"beforeunload",
+			(this.beforeUnloadListener = (event) => {
+				this.save(true); // this isn't the only time we save, it's just that there's some timeout based saving, so this is good to have
+			})
+		);
+
 		window.addEventListener(
 			"keydown",
 			(this.keyDownListener = (event) => {
@@ -77,6 +260,12 @@ class App extends Component {
 		);
 	}
 	componentWillUnmount() {
+		this.save(true);
+		this.timeoutIDs.forEach((timeoutID) => {
+			console.log("clearTimeout", timeoutID);
+			clearTimeout(timeoutID);
+		});
+		window.removeEventListener("beforeunload", this.beforeUnloadListener);
 		window.removeEventListener("keydown", this.keyDownListener);
 		window.removeEventListener("dragover", this.dragOverListener);
 		window.removeEventListener("drop", this.dropListener);
@@ -104,13 +293,17 @@ class App extends Component {
 		// this.setState({ operations: action.apply(this.state.operations) });
 
 		this.setState({ undos: this.state.undos.push(operation) });
+		this.save();
 	}
 	updateOperation(operation) {
-		// TODO: immutable operation objects probably
-		// TODO: soft undo/redo / fundo/freedo
+		// TODO: immutable operation objects probably (immutable.js has a Record class, I could use that)
+		// or append-only operation state?
+		// TODO: soft undo/redo / fundo/freedo / sliding/gliding/partial undo/redo
 		// this.setState({operations: this.state.operations.set(operations.indexOf(operation), operation)});
 		// this.setState({ operations: this.state.operations });
 		this.setState({ undos: this.state.undos });
+
+		this.saveDebounced();
 	}
 	undo() {
 		const { undos, redos } = this.state;
@@ -124,8 +317,6 @@ class App extends Component {
 			undos: undos.pop(),
 			redos: redos.push(action),
 		});
-
-		// action.applyReverse(documentContext);
 	}
 	redo() {
 		const { undos, redos } = this.state;
@@ -139,8 +330,6 @@ class App extends Component {
 			undos: undos.push(action),
 			redos: redos.pop(),
 		});
-
-		// action.apply(documentContext);
 	}
 
 	render() {
@@ -197,11 +386,15 @@ class App extends Component {
 					{/* prettier-ignore */}
 					<Warning>
 						⚠
-						Saving is not yet implemented!
+						The state of the app is persisted across reloads, but there's not yet a way to save a document file,
+						and as far as saving an image goes, all you've got is your browser's context menu, if it provides a "Save image as" option or similar.
+						<br/>
+						<br/>
 						This app is in very early stages of development,
 						and it doesn't represent the future vision for this project,
-						like at all. Except that there's (some sort of) a history view, pretty early on.
-						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub</a>.
+						like at all. Except that there's (some sort of) a history view, pretty early on...
+						and that undo/redo history is persisted.
+						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub for more info</a>.
 					</Warning>
 					<Toolbox
 						tools={tools}

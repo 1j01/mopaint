@@ -1,3 +1,4 @@
+import shortid from "shortid";
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
@@ -12,48 +13,36 @@ if (
 	window.location.protocol = "https:";
 }
 
-/*
-const goToDocument = (documentID) => {
-	window.location.hash = `document=${documentID}`;
-};
+const urlForID = (documentID) =>
+	`${window.location.origin}${window.location.pathname}?document=${documentID}`;
+const getIDfromCurrentURL = () =>
+	(window.location.search.match(/document=([\w\-./]*)/) || [])[1];
 
-// TODO: more URL-friendly/efficient IDs
-const byteToHex = (byte) => `0${byte.toString(16)}`.slice(-2);
-const generateID = (length = 40) => {
-	// length must be an even number (default: 40)
-	const array = new Uint8Array(length / 2);
-	crypto.getRandomValues(array);
-	return Array.from(array, byteToHex).join("");
-};
+// const goToDocument = (documentID) => {
+// 	window.history.pushState({} , null, urlForID(documentID));
+// };
 
-const createNewDocument = (documentsRef, uid, callback) => {
-	let newDocumentID = generateID();
-	let newDocumentRef = documentsRef.child(newDocumentID);
-
-	newDocumentRef.child("owner_uid").set(uid, (err) => {
-		callback(err, newDocumentID);
-	});
+const createNewDocument = () => {
+	// let newDocumentID = shortid.generate();
+	// goToDocument(newDocumentID);
+	window.history.pushState({}, null, urlForID(shortid.generate()));
 };
-*/
 
 const render = () => {
 	const container = document.getElementById("root");
-	// const documentID = (window.location.hash.match(/document=([\w\-./]*)/) || [
-	// 	null,
-	// 	"default",
-	// ])[1];
+	const documentID = getIDfromCurrentURL();
 	ReactDOM.render(
 		<App
-		// key={documentID}
-		// documentID={documentID}
-		// goToDocument={goToDocument}
-		// createNewDocument={createNewDocument}
+			key={documentID}
+			documentID={documentID}
+			// goToDocument={goToDocument}
+			createNewDocument={createNewDocument}
 		/>,
 		container
 	);
 };
 
-window.addEventListener("hashchange", render);
+window.addEventListener("popstate", render);
 render();
 
 registerServiceWorker();
