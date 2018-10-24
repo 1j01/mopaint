@@ -27,6 +27,14 @@ class HistoryView extends Component {
 		this.drawFunctions = [];
 		// TODO: should have an entry for New Document
 		// so you can click to before the first operation, like you can Ctrl+Z to it!
+		// <HistoryEntry
+		// 	key="new-document-initial-entry"
+		// 	entry={null}
+		// 	selected={undos.size() === 0}
+		// 	onClick={() => goToEntry(null)?}
+		// 	indexInListForAnimationOffset={-1}
+		// 	drawFunctionsArrayToAddTo={this.drawFunctions}
+		// />
 		const { undos, redos, goToEntry } = this.props;
 		const allHistory = undos.concat(redos.reverse());
 		return (

@@ -14,12 +14,26 @@ class Thumbnail extends Component {
 		return <canvas width={width} height={height} />;
 	}
 	draw() {
-		const { indexInListForAnimationOffset } = this.props;
+		const {
+			indexInListForAnimationOffset,
+			entryThatMightHaveAnImage,
+		} = this.props;
 		const canvas = ReactDOM.findDOMNode(this);
 		const ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		if (this.props.image) {
-			ctx.drawImage(this.props.image, 0, 0, canvas.width, canvas.height);
+
+		// TODO: clean up how this works!
+		// separation of concerns and all that
+		// this is a hack to update the image outside of React's render model,
+		// since we already have an animation loop
+		if (entryThatMightHaveAnImage.thumbnail) {
+			ctx.drawImage(
+				entryThatMightHaveAnImage.thumbnail,
+				0,
+				0,
+				canvas.width,
+				canvas.height
+			);
 		} else {
 			// ctx.fillRect(Math.random()*canvas.width / 2, Math.random()*canvas.height / 2, 10, 10);
 			/*
@@ -127,7 +141,7 @@ class HistoryEntry extends Component {
 				onClick={onClick}
 			>
 				<Thumbnail
-					image={entry.thumbnail}
+					entryThatMightHaveAnImage={entry}
 					width={24}
 					height={24}
 					indexInListForAnimationOffset={indexInListForAnimationOffset}
