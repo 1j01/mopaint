@@ -20,6 +20,7 @@ const getIDfromCurrentURL = () =>
 
 const goToDocument = (documentID) => {
 	window.history.pushState({}, null, urlForID(documentID));
+	render();
 };
 
 const createNewDocument = () => {
@@ -30,10 +31,10 @@ const createNewDocument = () => {
 const render = () => {
 	const container = document.getElementById("root");
 	const documentID = getIDfromCurrentURL();
-	// TODO: don't allow implicit default document stored as "undefined"
-	// create a new document, but use history.replaceState()
-	// (could also check if it's a 'valid' id with shortid.isValid(documentID))
-	// (but i might switch to a different id generator anyways, idk)
+	if (!documentID) {
+		createNewDocument();
+		return;
+	}
 	ReactDOM.render(
 		<App
 			key={documentID}

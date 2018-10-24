@@ -47,6 +47,10 @@ class App extends Component {
 		this.saveDebounced = debounce(this.save.bind(this), 500);
 	}
 	load() {
+		if (!this.props.documentID) {
+			console.log(`No document ID to load`);
+			return;
+		}
 		console.log(`Load ${this.props.documentID}`);
 		localforage.getItem(
 			`document:${this.props.documentID}:state`,
@@ -59,6 +63,7 @@ class App extends Component {
 					return;
 				}
 				if (!serialized) {
+					this.setState({ loaded: true });
 					console.log(
 						`State not loaded for document:${this.props.documentID}:state`
 					);
