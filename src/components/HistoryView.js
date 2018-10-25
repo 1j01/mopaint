@@ -35,7 +35,7 @@ class HistoryView extends Component {
 		// 	indexInListForAnimationOffset={-1}
 		// 	drawFunctionsArrayToAddTo={this.drawFunctions}
 		// />
-		const { undos, redos, goToEntry } = this.props;
+		const { undos, redos, goToEntry, thumbnailsByOperation } = this.props;
 		const allHistory = undos.concat(redos.reverse());
 		return (
 			<div className="HistoryView" role="radiogroup">
@@ -49,6 +49,7 @@ class HistoryView extends Component {
 							onClick={() => goToEntry(entry)}
 							indexInListForAnimationOffset={index}
 							drawFunctionsArrayToAddTo={this.drawFunctions}
+							getThumbnailImageMaybe={() => thumbnailsByOperation.get(entry)}
 						/>
 					);
 				})}

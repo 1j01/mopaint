@@ -49,5 +49,8 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "devDependencies": {
+    "hash.js": "1.1.5"
   }
 }

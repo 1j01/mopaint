@@ -14,26 +14,17 @@ class Thumbnail extends Component {
 		return <canvas width={width} height={height} />;
 	}
 	draw() {
-		const {
-			indexInListForAnimationOffset,
-			entryThatMightHaveAnImage,
-		} = this.props;
+		const { indexInListForAnimationOffset, getImageMaybe } = this.props;
 		const canvas = ReactDOM.findDOMNode(this);
 		const ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		// TODO: clean up how this works!
-		// separation of concerns and all that
-		// this is a hack to update the image outside of React's render model,
+		// this getImageMaybe thing is a hack to update the image outside of React's render model,
 		// since we already have an animation loop
-		if (entryThatMightHaveAnImage.thumbnail) {
-			ctx.drawImage(
-				entryThatMightHaveAnImage.thumbnail,
-				0,
-				0,
-				canvas.width,
-				canvas.height
-			);
+		const image = getImageMaybe();
+		if (image) {
+			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 		} else {
 			// ctx.fillRect(Math.random()*canvas.width / 2, Math.random()*canvas.height / 2, 10, 10);
 			/*
@@ -124,6 +115,13 @@ class Thumbnail extends Component {
 	// }
 }
 
+Thumbnail.propTypes = {
+	width: PropTypes.number.isRequired,
+	height: PropTypes.number.isRequired,
+	indexInListForAnimationOffset: PropTypes.number.isRequired,
+	getImageMaybe: PropTypes.func.isRequired,
+};
+
 class HistoryEntry extends Component {
 	render() {
 		const {
@@ -132,6 +130,7 @@ class HistoryEntry extends Component {
 			entry,
 			indexInListForAnimationOffset,
 			drawFunctionsArrayToAddTo,
+			getThumbnailImageMaybe,
 		} = this.props;
 		return (
 			<button
@@ -146,6 +145,7 @@ class HistoryEntry extends Component {
 					height={24}
 					indexInListForAnimationOffset={indexInListForAnimationOffset}
 					drawFunctionsArrayToAddTo={drawFunctionsArrayToAddTo}
+					getImageMaybe={getThumbnailImageMaybe}
 				/>
 				<ToolPreview tool={entry.tool} width={16} height={16} />
 				{entry.tool.name}

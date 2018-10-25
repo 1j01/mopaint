@@ -34,6 +34,9 @@ class App extends Component {
 		this.documentCanvas.width = 640;
 		this.documentCanvas.height = 480;
 
+		// TODO: move cache state out here
+		this.thumbnailsByOperation = new Map(); // TODO: could use cache
+
 		this.timeoutIDs = new Set();
 		const debounce = (func, delay) => {
 			let timeoutID;
@@ -395,6 +398,7 @@ class App extends Component {
 						addOperation={this.addOperation.bind(this)}
 						updateOperation={this.updateOperation.bind(this)}
 						operations={undos}
+						thumbnailsByOperation={this.thumbnailsByOperation}
 						ref={(component) => {
 							this.drawingCanvasComponent = component;
 						}}
@@ -407,6 +411,7 @@ class App extends Component {
 						undos={this.state.undos}
 						redos={this.state.redos}
 						goToEntry={goToEntry}
+						thumbnailsByOperation={this.thumbnailsByOperation}
 					/>
 				</div>
 			</div>
