@@ -412,6 +412,10 @@ class App extends Component {
 								})}
 							</select>
 						</label>
+						&nbsp;|&nbsp;
+						<button onClick={this.props.createNewDocument}>
+							➕📄 New Document
+						</button>
 					</div>
 					<Toolbox
 						tools={tools}
