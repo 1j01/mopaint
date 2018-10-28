@@ -1,6 +1,7 @@
 import localforage from "localforage";
 import { List } from "immutable";
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
@@ -28,6 +29,7 @@ class App extends Component {
 			// operations: new List(),
 			loaded: false,
 			loadFailed: false,
+			documentIDs: [], // or null, TODO: loading indicator
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
@@ -48,6 +50,21 @@ class App extends Component {
 			};
 		};
 		this.saveDebounced = debounce(this.save.bind(this), 500);
+
+		// TODO: move outside of App component so it doesn't become unpopulated when switching documents
+		// (also maybe make App to handle switching documents (without unmounting))
+		const periodicallyUpdateDocumentsList = () => {
+			localforage.keys().then((keys) => {
+				const documentIDs = keys
+					.map((key) => key.match(/document:([a-zA-Z0-9\-_]+):state/))
+					.filter((key) => key)
+					.map((key) => key[1]);
+				this.setState({ documentIDs });
+			});
+			const timeoutID = setTimeout(periodicallyUpdateDocumentsList, 600);
+			this.timeoutIDs.add(timeoutID);
+		};
+		periodicallyUpdateDocumentsList();
 	}
 	load() {
 		if (!this.props.documentID) {
@@ -325,7 +342,13 @@ class App extends Component {
 	}
 
 	render() {
-		const { selectedSwatch, selectedTool, palette, undos } = this.state;
+		const {
+			selectedSwatch,
+			selectedTool,
+			palette,
+			undos,
+			documentIDs,
+		} = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch });
@@ -380,6 +403,26 @@ class App extends Component {
 						and that undo/redo history is persisted.
 						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub for more info</a>.
 					</Warning>
+					<div>
+						<label>
+							Switch documents:&nbsp;
+							<select
+								value={this.props.documentID}
+								onChange={(event) =>
+									this.props.goToDocument(event.target.value)
+								}
+							>
+								>
+								{documentIDs.map((documentID) => {
+									return (
+										<option value={documentID} key={documentID}>
+											Untitled ({documentID})
+										</option>
+									);
+								})}
+							</select>
+						</label>
+					</div>
 					<Toolbox
 						tools={tools}
 						selectedTool={selectedTool}
@@ -418,5 +461,11 @@ class App extends Component {
 		);
 	}
 }
+
+App.propTypes = {
+	documentID: PropTypes.string.isRequired,
+	goToDocument: PropTypes.func.isRequired,
+	createNewDocument: PropTypes.func.isRequired,
+};
 
 export default App;

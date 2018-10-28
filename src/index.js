@@ -39,7 +39,7 @@ const render = () => {
 		<App
 			key={documentID}
 			documentID={documentID}
-			// goToDocument={goToDocument}
+			goToDocument={goToDocument}
 			createNewDocument={createNewDocument}
 		/>,
 		container
