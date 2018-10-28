@@ -29,7 +29,6 @@ class App extends Component {
 			// operations: new List(),
 			loaded: false,
 			loadFailed: false,
-			documentIDs: [], // or null, TODO: loading indicator
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
@@ -50,21 +49,6 @@ class App extends Component {
 			};
 		};
 		this.saveDebounced = debounce(this.save.bind(this), 500);
-
-		// TODO: move outside of App component so it doesn't become unpopulated when switching documents
-		// (also maybe make App to handle switching documents (without unmounting))
-		const periodicallyUpdateDocumentsList = () => {
-			localforage.keys().then((keys) => {
-				const documentIDs = keys
-					.map((key) => key.match(/document:([a-zA-Z0-9\-_]+):state/))
-					.filter((key) => key)
-					.map((key) => key[1]);
-				this.setState({ documentIDs });
-			});
-			const timeoutID = setTimeout(periodicallyUpdateDocumentsList, 600);
-			this.timeoutIDs.add(timeoutID);
-		};
-		periodicallyUpdateDocumentsList();
 	}
 	load() {
 		if (!this.props.documentID) {
@@ -295,6 +279,7 @@ class App extends Component {
 			nextProps.documentID === this.props.documentID,
 			"App component is not designed to handle switching documents without reconstruction"
 		);
+		// TODO: make App handle switching documents
 	}
 
 	// TODO: collaborative sync with undo/redo, showing operations from other users in realtime
@@ -342,13 +327,7 @@ class App extends Component {
 	}
 
 	render() {
-		const {
-			selectedSwatch,
-			selectedTool,
-			palette,
-			undos,
-			documentIDs,
-		} = this.state;
+		const { selectedSwatch, selectedTool, palette, undos } = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch });
@@ -413,7 +392,7 @@ class App extends Component {
 								}
 							>
 								>
-								{documentIDs.map((documentID) => {
+								{this.props.documentIDs.map((documentID) => {
 									return (
 										<option value={documentID} key={documentID}>
 											Untitled ({documentID})
@@ -464,6 +443,7 @@ class App extends Component {
 
 App.propTypes = {
 	documentID: PropTypes.string.isRequired,
+	documentIDs: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 	goToDocument: PropTypes.func.isRequired,
 	createNewDocument: PropTypes.func.isRequired,
 };

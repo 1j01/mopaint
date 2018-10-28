@@ -1,3 +1,4 @@
+import localforage from "localforage";
 import shortid from "shortid";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -28,6 +29,16 @@ const createNewDocument = () => {
 	goToDocument(newDocumentID);
 };
 
+let documentIDs = []; // TODO: null, and loading indicators anywhere this state is used
+const updateDocumentsList = () =>
+	localforage.keys().then((keys) => {
+		documentIDs = keys
+			.map((key) => key.match(/document:([a-zA-Z0-9\-_]+):state/))
+			.filter((key) => key)
+			.map((key) => key[1]);
+		render();
+	});
+
 const render = () => {
 	const container = document.getElementById("root");
 	const documentID = getIDfromCurrentURL();
@@ -39,6 +50,7 @@ const render = () => {
 		<App
 			key={documentID}
 			documentID={documentID}
+			documentIDs={documentIDs}
 			goToDocument={goToDocument}
 			createNewDocument={createNewDocument}
 		/>,
@@ -48,5 +60,7 @@ const render = () => {
 
 window.addEventListener("popstate", render);
 render();
+updateDocumentsList();
+setInterval(updateDocumentsList, 600);
 
 registerServiceWorker();
