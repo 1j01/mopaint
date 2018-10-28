@@ -61,18 +61,21 @@ class App extends Component {
 			(error, serialized) => {
 				if (error) {
 					alert(
-						"Failed to load document from storage! See console for details."
+						"Failed to load document state from storage! See console for details."
 					);
-					console.error("Failed to load document from storage!", error);
+					console.error("Failed to load document state from storage!", error);
 					return;
 				}
 				if (!serialized) {
 					this.setState({ loaded: true });
 					console.log(
-						`State not loaded for document:${this.props.documentID}:state`
+						`State loaded as empty for document:${this.props.documentID}:state`
 					);
 					return;
 				}
+				// TODO: extract document loading into a function
+				// to reuse for deserializing from files
+				// and maybe don't call it "state" when more explicitly loading a document, i.e. from a file
 				if (
 					typeof serialized.version !== "number" ||
 					serialized.version > CURRENT_SERIALIZATION_VERSION
@@ -152,6 +155,7 @@ class App extends Component {
 						loaded: true,
 					});
 				} catch (error) {
+					// TODO: show custom error message dialog, with expandable details
 					alert("Failed to load document! See console for details.");
 					console.error("Failed to load document!", error);
 				}
@@ -196,11 +200,18 @@ class App extends Component {
 			`document:${this.props.documentID}:state`,
 			serialized,
 			(error) => {
+				// const documentThatYouWereMaybeLeaving = `document${leavingThisDocument ? " that you were leaving" : ""}`;
+				const documentThatYouWereMaybeLeaving = leavingThisDocument
+					? "the previous document"
+					: "document";
 				if (error) {
 					alert(
-						"Failed to save document into storage! See console for details."
+						`Failed to save ${documentThatYouWereMaybeLeaving} into storage! See console for details.`
 					);
-					console.error("Failed to save document into storage!", error);
+					console.error(
+						`Failed to save ${documentThatYouWereMaybeLeaving} into storage!`,
+						error
+					);
 				} else {
 					console.log(
 						`Saved ${this.props.documentID}${
