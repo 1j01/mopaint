@@ -22,6 +22,7 @@ class App extends Component {
 			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept;
 			// I don't think this feature is special enough to warrant special handling (except for parsing palette files)
 			// It can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
+			// (and images could be used as palettes by sampling from them)
 			selectedSwatch: defaultPalette[0],
 			selectedTool: tools[0],
 			undos: new List(),
@@ -87,7 +88,8 @@ class App extends Component {
 				}
 				const MINIMUM_LOADABLE_VERSION = 1;
 				// upgrading code can go here, incrementing the version number step by step
-				// if(serialized.version === 0){
+				// e.g.
+				// if (serialized.version === 0) {
 				// 	serialized.newPropName = serialized.oldName;
 				// 	delete serialized.oldName;
 				// 	serialized.version = 1;
@@ -183,7 +185,7 @@ class App extends Component {
 			return {
 				id: operation.id,
 				toolID: operation.tool.name,
-				// toolCode: operation.tool.toString(), // not enough to define it; need the whole module
+				// toolCode: operation.tool.toString(), // not enough to define it; will need the whole module
 				points: operation.points,
 				swatch: operation.swatch,
 			};
@@ -200,7 +202,6 @@ class App extends Component {
 			`document:${this.props.documentID}:state`,
 			serialized,
 			(error) => {
-				// const documentThatYouWereMaybeLeaving = `document${leavingThisDocument ? " that you were leaving" : ""}`;
 				const documentThatYouWereMaybeLeaving = leavingThisDocument
 					? "the previous document"
 					: "document";
@@ -228,7 +229,7 @@ class App extends Component {
 		window.addEventListener(
 			"beforeunload",
 			(this.beforeUnloadListener = (event) => {
-				this.save(true); // this isn't the only time we save, it's just that there's some timeout based saving, so this is good to have
+				this.save(true); // this isn't the only time we save, but it's good to have since there's some timeout based saving
 			})
 		);
 

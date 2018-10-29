@@ -154,9 +154,11 @@ class HistoryEntry extends Component {
 	}
 	// TODO: move scrolling logic outside of HistoryEntry
 	componentDidMount() {
+		// FIXME: should be only if selected, shouldn't it?
 		this.scrollIntoView();
 	}
 	componentDidUpdate() {
+		// FIXME: only if selected changed (or entry but that shouldn't change, right?)
 		if (this.props.selected) {
 			this.scrollIntoView();
 		}

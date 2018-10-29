@@ -30,6 +30,7 @@ class DrawingCanvas extends Component {
 		this.canvasRef = React.createRef();
 
 		this.cache = {};
+		// hashes of operations up to and including the given operation in the document
 		this.hashInDocumentByOperation = new Map();
 	}
 	render() {
@@ -66,51 +67,52 @@ class DrawingCanvas extends Component {
 		documentContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
 
 		// Goals for the caching computation system:
-		// a tree of computation.
-		// 	any independent operations can stay valid in the cache.
-		// keep memory and storage usage down
-		// 	invalidation/purging of the cache
-		// 	use bounding boxes
-		// 	two-level/multi-level? in-memory, on-disk.. over-network? (or over-network = on-disk?)
-		// 																				in-memory
-		// 																				on-disk (can use localforage to save to IndexedDB)
-		// 																				over-network
-		// 																					peer to peer.
-		// 																						named data networking might be good...
-		// 																					also client–server maybe (but that's easy, you can just tack a database onto a peer - right?)
-		// 																					socket.io would probably be the simplest way to start (client–server)
-		// persist the cache locally, and even share it over the network in a collaborative setting
-		// 	as part of the document.
-		// 	parts of the cache. not the whole of everything that might be cached.
-		// 		two-level/multi-level, in-memory and on-disk (maybe network)?
-		// 	with peers that have more computing power, computation could be distributed in the form of cache sharing
-		// 		Imagine an artist (or artists) live streaming their work,
-		// 		and a random viewer providing extra juice since they happen to have a powerful computer.
-		// 		As another scenario, if you wanted to work from a laptop, but it was too slow,
-		// 		you could simply connect a beefy computer to speed things up.
-		// 	It should try to fetch the most pertinent state first, whilst also computing it locally.
-		// 		pertinent state:
-		// 			(e.g. It should try to fetch the most up to date state of the document first.
-		// 			Then if the user hits undo, the next most up to date state available.)
-		// 				(Can it request e.g. "the next latest fully cached state before X"? probably!)
-		// 			also thumbnails (those that are in view! and then those that aren't)
-		// 		whilst also computing it locally:
-		// 			simultaneously kick off rendering and request data from peers,
-		// 			so whichever is faster can win and show you the results
-		// 		(Also, while idle, it could compute locally things that aren't needed right now but may be soon, like redos)
-		// it could be useful to have both absolute states cached and differential
+		/*
+		A tree of computation.
+			Any self contained (that is, independent) operations can stay valid in the cache.
+		Persist the cache locally, and even share it over the network in a collaborative setting
+			As part of the document.
+			with peers that have more computing power, computation could be distributed in the form of cache sharing
+				Imagine an artist (or artists) live streaming their work,
+					and a random viewer providing extra juice since they happen to have a powerful computer.
+				As a simpler scenario, one could connect a beefy computer into a session to speed things up
+					when working on a less powerful device (laptop/phone/tablet maybe).
+				Peers could try to compute things in different order from each other in order to maximize parallelization.
+				There is of course the possibility of bad actors - clients or peers that could give bad data
+					maliciously / for fun / out of curiosity / accidentally / because of bugs / runtime version mismatches* / GPU differences etc.
+						(*Should probably be a bug if it tries to use mismatching runtime versions.)
+					Ultimately you either have to trust the peer and accept the results,
+						or don't in which case there's no possibility of a performance boost.
+					It could mark operations as fulfilled by a peer so you could purge results from a given peer to distrust them.
+						(It would be good to be able to selectively distrust because otherwise the trolling thing to do would be to first
+							helpfully compute as many things as possible and then backstabbingly insert some advertising or pornography or whatever)
+			It should try to fetch the most pertinent state first, whilst also computing it locally.
+				> pertinent state:
+					(e.g. It should try to fetch the most up to date state of the document first.
+					Then if the user hits undo, the next most up to date state available.)
+						(Can it request e.g. "the next latest fully cached state before X"? probably! that should be feasible)
+					Also thumbnails (those that are in view! and then later those that aren't)
+				> whilst also computing it locally:
+					Simultaneously kick off rendering and request data from peers,
+					so whichever is faster can win and show you the results.
+				(Also, while idle, it could compute locally things that aren't needed right now but may be soon, like redos)
+		Keep memory and storage usage down.
+			- Invalidate/purge entries from the cache.
+			- Use bounding boxes for image data.
+			- When saving, allow optimizing for size (less/no caching) or speed* (caching)
+				*speed of loading/editing the document, and not of loading as say a PNG, if it's a pngram - PNG loading would likely be slower
 
-		// TODO: don't cache constantly changing stuff!
-		// use heuristics to keep pertinent steps cached
-		// based on how long an operation takes to complete,
-		// how recent it is in history (for fast undo/redo)
-		// and how many operations have gone in between (so there can be periodic caching, so you can jump to any point with a limited distance in operations needed to compute)
+		Don't cache constantly changing stuff! (TODO!)
+			Use heuristics to keep pertinent steps cached, based on:
+				how long an operation takes to complete,
+				how recent it is in history (for fast undo/redo)
+				and how many operations have gone in between
+					(so there can be periodic caching, so you can jump to any point with limited computation needed)
+		*/
 
 		const runningHash = sha256();
 		operations.forEach((operation, operationIndex) => {
 			runningHash.update(JSON.stringify(operation));
-			// console.log(JSON.stringify(operation));
-			// TODO: tree/graph of computation so self contained operations can stay valid in the cache
 			const operationHash = runningHash.digest("hex");
 			opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 			if (this.cache[operationHash]) {
@@ -157,15 +159,12 @@ class DrawingCanvas extends Component {
 				this.cache[operationHash].height = opCanvas.height;
 				this.cache[operationHash].getContext("2d").drawImage(opCanvas, 0, 0);
 
-				// operation.hashInDocument = operationHash;
-				// or "hashOfOperationsUpToAndIncluding"
 				this.hashInDocumentByOperation.set(operation, operationHash);
 
-				//
 				const thumbnail = document.createElement("canvas");
 				thumbnail.width = 64;
 				thumbnail.height = 64;
-				// TODO: proportional thumbnail or whatever
+				// TODO: keep thumbnail proportional
 				// can reuse code in ToolPreview.js
 				thumbnail.getContext("2d").drawImage(opCanvas, 0, 0, 64, 64);
 				thumbnailsByOperation.set(operation, thumbnail);
