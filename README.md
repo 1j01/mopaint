@@ -4,15 +4,15 @@ Mopaint is a testing ground for ideas about image editors and editors in general
 
 As an application,
 I want it to be a
-***mo**dern*, ***mo**dular*,
-***m**obily **o**perable*, ***m**ultiuser **o**nline*
-painting app, and ***mo**re!*  
+_**mo**dern_, _**mo**dular_,
+_**m**obily **o**perable_, _**m**ultiuser **o**nline_
+painting app, and _**mo**re!_  
 
 (It's also vaguely a successor to [JS Paint][],
 without the limiting factor of being first and foremost a clone of MS Paint from Windows 98.)  
 
-I'll be focusing on trying to make the *tooling around tools* really powerful,
-rather than going ahead and making a large toolset, which would be *easier* and more directly useful,
+I'll be focusing on trying to make the _tooling around tools_ really powerful,
+rather than going ahead and making a large toolset, which would be _easier_ and more directly useful,
 but add friction to iterating on how tools work as a whole, and the process for making them etc.  
 That said it can be fun and useful, and it might be worth the cost of friction (having to update a bunch of tools at once).  
 
@@ -36,7 +36,7 @@ but another to copy existing ideas (components, elements, concepts, the scope of
 #### Merging Concepts
 
 What if selections were just layers?  
-(what if selections were just layers in a mode? and would it *have* to be a mode?)  
+(what if selections were just layers in a mode? and would it _have_ to be a mode?)  
 what if you could have hierarchial selections? selections within selections, sublayers of layers?  
 what if layers, layer groups, frames of an animation, selections, copy-pastes/duplicates, "smart objects",
 [recursive fractal references][Doodal], shapes and brush strokes and other operations - from you or other users, were all the same thing?  
@@ -45,20 +45,20 @@ what about masking? that could be the same as a selection, right?
 How many of these things are feasible?  
 what are the relationships between these objects/concepts?  
 are they fundamentally different? (the objects/concepts, or the relationships between them)  
-how many of these concepts could feasibly be *merged*, and made more *powerful*?  
-what if *anything that works with one thing* worked with the others?  
+how many of these concepts could feasibly be _merged_, and made more _powerful_?  
+what if _anything that works with one thing_ worked with the others?  
 
-Frames *could* be the same thing as layers. It can be nice to be limited to drawing individual frames, like a flipbook.  
+Frames _could_ be the same thing as layers. It can be nice to be limited to drawing individual frames, like a flipbook.  
 But I don't think that should be the main way that animation works. (You could do that if you wanted, probably.)  
 With animation support, it's inevitable to want features like tweening, objects that persist between frames.  
 If you're drawing everything in a form that interpolates between frames, and you record movement thru direct manipulation over time, you don't necessarily need to think about frames.  
 (You also might have an animation that plays back at different rates, like for slowmo in a game.)  
-If you zoom in to edit motion finely in the context of an object, the basic level of defining motion / variance over time *could* be keyframes, or it *could* be a *function*.  
-what if it was a *function*?  
+If you zoom in to edit motion finely in the context of an object, the basic level of defining motion / variance over time _could_ be keyframes, or it _could_ be a _function_.  
+what if it was a _function_?  
 
 Also, you might want onion skinning over time, as well as over operations or layers.  
 
-If you're doing animation, why not go all out, and allow for *nonlinear* animation?  
+If you're doing animation, why not go all out, and allow for _nonlinear_ animation?  
 (like for games and stuff? interactive stories or whatever?)  
 (sprites within games, with state machines, for sure could use a nonlinear timeline)  
 (or would it be a time*graph*?)  
@@ -71,8 +71,8 @@ And maybe other points within the stack.
 
 #### Interlude
 
-what if questions questioned *you*?  
-what if questions were people *too*?  
+what if questions questioned _you_?  
+what if questions were people _too_?  
 what if your quest for questions was quenched?  
 what if mine was, would I be benched?  
 
@@ -88,10 +88,10 @@ and all the operations that created it?
 (what if you could edit the application as easily as its contents?)  
 
 What if you could make your own tools really easily?  
-what if all the tools were *fully* configurable in their behavior?  
-what if most of them were just *presets* of more general tools/functions?  
-what if they were *composible*?  
-what if there was a *community* of people creating and remixing tools?  
+what if all the tools were _fully_ configurable in their behavior?  
+what if most of them were just _presets_ of more general tools/functions?  
+what if they were _composible_?  
+what if there was a _community_ of people creating and remixing tools?  
 
 #### Modularity of Document Types
 
@@ -106,13 +106,13 @@ we should be able to do tessellation, wrapping and symmetry pretty easily.
 For instance, here's an infinitely zooming set of patterns, in 2D, but made with Three.js: [Infinite Zoom][]
 (just imagine texture on those shapes)  
 
-What about 3D painting not just *on* 3D, but *in* 3D?  
+What about 3D painting not just _on_ 3D, but _in_ 3D?  
 like [Tilt Brush][] (a VR thing)  
-(or *vaguely* like [Pixelweaver][] (a code-doodling thing))  
+(or _vaguely_ like [Pixelweaver][] (a code-doodling thing))  
 I don't think a lot of 2D tools would map so well to 3D,  
 and, certainly they'd have a better chance if they had to use a 3D API,  
 but idk, what would a flood fill tool be?  
-it'd have to use voxels–or, it wouldn't *have* to, but  
+it'd have to use voxels–or, it wouldn't _have_ to, but  
 what would it be? what would be the point?  
 if you look inside an object your vision is completely occluded?  
 maybe it could be useful if joins shapes together that are near together  
