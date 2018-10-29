@@ -8,13 +8,12 @@ _**mo**dern_, _**mo**dular_,
 _**m**obily **o**perable_, _**m**ultiuser **o**nline_
 painting app, and _**mo**re!_  
 
-(It's also vaguely a successor to [JS Paint][],
-without the limiting factor of being first and foremost a clone of MS Paint from Windows 98.)  
-
 I'll be focusing on trying to make the _tooling around tools_ really powerful,
 rather than going ahead and making a large toolset, which would be _easier_ and more directly useful,
 but add friction to iterating on how tools work as a whole, and the process for making them etc.  
-That said it can be fun and useful, and it might be worth the cost of friction (having to update a bunch of tools at once).  
+(That said it can be really fun and useful, and it might be worth the cost of friction.)
+
+See also: [JS Paint][] (my clone of MS Paint from Windows 98), and (not mine) [Apparatus][] ("a hybrid graphics editor and programming environment for creating interactive diagrams")
 
 ## A few principles
 
@@ -22,21 +21,21 @@ That said it can be fun and useful, and it might be worth the cost of friction (
 combine components/elements/ideas and make anything that works with X also apply to Y by making X and Y the same thing.
 Do more with less. [Multiism][].
 Once you have some data, there are a million and one things the user might want to do with it, manipulate it, organize it.
-The user should be able to act on different objects in the same ways if possible.
+The user should be able to act on different objects/data in the same ways if possible.
 Bulk actions should be a natural extension of singular actions, or the same if possible, if it makes sense.
-And many things the user might want to do are common between editors, and could be shared.
+And many things a user might want to do could be handled in a common way across editors.
 
 * Question the status quo.
 It's one thing to design an application to behave similarly to other applications so that users can pick it up easier and faster,
-but another to copy existing ideas (components, elements, concepts, the scope of a project or program, etc.) without question.
-(Check out Bret Victor's talk [The Future of Programming][]. And also his other work.)
+but another to copy existing ideas (components, elements, concepts, the *scope of a project* or program, etc.) without question.
+(btw check out Bret Victor's talk [The Future of Programming][]. And his other work!)
 
 ## Crazy (or at least Kooky) Ideas
 
 #### Merging Concepts
 
 What if selections were just layers?  
-(what if selections were just layers in a mode? and would it _have_ to be a mode?)  
+((what if selections were just layers in a mode? and would it _have_ to be a mode?))  
 what if you could have hierarchial selections? selections within selections, sublayers of layers?  
 what if layers, layer groups, frames of an animation, selections, copy-pastes/duplicates, "smart objects",
 [recursive fractal references][Doodal], shapes and brush strokes and other operations - from you or other users, were all the same thing?  
@@ -48,7 +47,7 @@ are they fundamentally different? (the objects/concepts, or the relationships be
 how many of these concepts could feasibly be _merged_, and made more _powerful_?  
 what if _anything that works with one thing_ worked with the others?  
 
-Frames _could_ be the same thing as layers. It can be nice to be limited to drawing individual frames, like a flipbook.  
+Animation frames _could_ be the same thing as layers. It _can_ be nice to be limited to drawing individual frames, like a flipbook.  
 But I don't think that should be the main way that animation works. (You could do that if you wanted, probably.)  
 With animation support, it's inevitable to want features like tweening, objects that persist between frames.  
 If you're drawing everything in a form that interpolates between frames, and you record movement thru direct manipulation over time, you don't necessarily need to think about frames.  
@@ -126,7 +125,7 @@ what is scope, anyways?
 WHAT IF...  
 
 (let me just do some calculations here)  
-350°+10°=360°...  
+420° − 69° + (3×[3](https://www.google.com/search?q=illuminati&tbm=isch))° = 360°...  
 
 THREE SIXTY  
 
@@ -135,7 +134,36 @@ SCOPE
 
 [Make **Making** Better][Make Making Better].
 
+#### What is in a name?
+
+What might we stand to gain?
+
+- **m**obily **o**perable
+- **m**ultiuser **o**nline
+- **m**assively **o**penended
+- **mo**dern
+- **mo**dular
+- **mo**dels / 3D **mo**deling (**m**ake **o**bjects **p**retty **a**rtistically **in** **t**his thing)
+- **mo**tion (animation) (maybe even make full-blown **mo**vies)
+- e**mo**tion (in art; maybe some [custom e**mo**ji](https://github.com/multiism/emoji))
+- **mo**re!
+
+Mopaint. More than paint.
+
+Mo' players? mo' fun! Mopaint. _(or)_  
+Mo' painters, mo' fun! Mopaint.
+
+Making stuff Ossum possum, that's my M.O. That's my modus operandi.  
+Making [making][Make Making Better] Ossum possum, _that's_ my modus operandi.
+
+Oh also the file extension could be `.mop`, and it could stand for Mopaint Project,
+and/or relate to tools, like a mop. _Mop - ain't_ that great? :P
+(But also it could use `.png`, extending it as a "pngram" (like I've done for [Pixelweaver][]))
+
+Mo' pain, mo' gain, or something like that.
+
 [JS Paint]: https://github.com/1j01/jspaint/
+[Apparatus]: http://aprt.us/
 [Wavey]: https://github.com/1j01/wavey/
 [Cityship]: https://github.com/1j01/cityship/
 [Chiptool]: https://github.com/1j01/chiptool/
