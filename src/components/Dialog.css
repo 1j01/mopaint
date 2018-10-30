@@ -1,14 +1,18 @@
 .Dialog {
 	position: fixed;
-	top: 50%;
-	left: 50%;
-	-webkit-transform: translate(-50%, -50%);
-	-moz-transform: translate(-50%, -50%);
-	-ms-transform: translate(-50%, -50%);
-	-o-transform: translate(-50%, -50%);
-	transform: translate(-50%, -50%);
-	/*-webkit-font-smoothing: subpixel-antialiased;*/
-	/* TODO: fix blurry text/UI in chrome, by using flexbox instead for the layout */
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	pointer-events: none;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+.Dialog-box {
+	pointer-events: auto;
+	/*pointer-events: all;*/
 	padding: 30px;
 	background: white;
 	border-radius: 5px;

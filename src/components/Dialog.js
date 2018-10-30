@@ -35,23 +35,25 @@ export default function Dialog({
 		: error.toString();
 	return (
 		<div className="Dialog">
-			{message}
-			{error && (
-				<details>
-					<summary>Details</summary>
-					<div className="actual-details">
-						<pre>{errorText}</pre>
+			<div className="Dialog-box">
+				{message}
+				{error && (
+					<details>
+						<summary>Details</summary>
+						<div className="actual-details">
+							<pre>{errorText}</pre>
+						</div>
+					</details>
+				)}
+				{requestABugReport && (
+					<div>
+						You should <ReportBugLink>report this bug</ReportBugLink>.
 					</div>
-				</details>
-			)}
-			{requestABugReport && (
-				<div>
-					You should <ReportBugLink>report this bug</ReportBugLink>.
+				)}
+				<div className="Dialog-buttons">
+					{buttons || <button onClick={close}>Close</button>}
+					{extraButtons}
 				</div>
-			)}
-			<div className="Dialog-buttons">
-				{buttons || <button onClick={close}>Close</button>}
-				{extraButtons}
 			</div>
 		</div>
 	);
