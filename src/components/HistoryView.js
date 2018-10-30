@@ -1,5 +1,6 @@
 import { List } from "immutable";
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
 import "./HistoryView.css";
@@ -19,9 +20,38 @@ class HistoryView extends Component {
 			this.drawFunctions.forEach((fn) => fn());
 		};
 		animate();
+		this.scrollSelectedEntryIntoView();
 	}
 	componentWillUnmount() {
 		cancelAnimationFrame(this.animationFrameID);
+	}
+	componentDidUpdate(prevProps) {
+		if (this.props.undos.size !== prevProps.undos.size) {
+			// NOTE: assuming entry sizes are equal
+			this.scrollSelectedEntryIntoView();
+		}
+	}
+	scrollSelectedEntryIntoView() {
+		const thisEl = ReactDOM.findDOMNode(this);
+		const entryEl = thisEl.querySelector(
+			".HistoryEntry[aria-checked=aria-checked]"
+		);
+		if (entryEl) {
+			entryEl.scrollIntoView({
+				behavior: "instant",
+				block: "nearest",
+				inline: "nearest",
+			});
+			// This would work for old browser compatibility:
+			// entryEl.parentElement.scrollTop =
+			// 	Math.min(
+			// 		entryEl.offsetTop,
+			// 		Math.max(
+			// 			entryEl.parentElement.scrollTop,
+			// 			entryEl.offsetTop - entryEl.parentElement.clientHeight + entryEl.clientHeight
+			// 		)
+			// 	);
+		}
 	}
 	render() {
 		this.drawFunctions = [];

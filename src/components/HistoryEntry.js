@@ -132,6 +132,7 @@ class HistoryEntry extends Component {
 			drawFunctionsArrayToAddTo,
 			getThumbnailImageMaybe,
 		} = this.props;
+		// NOTE: className, role, and aria-checked all relied upon in HistoryView
 		return (
 			<button
 				className="HistoryEntry"
@@ -151,34 +152,6 @@ class HistoryEntry extends Component {
 				{entry.tool.name}
 			</button>
 		);
-	}
-	// TODO: move scrolling logic outside of HistoryEntry
-	componentDidMount() {
-		// FIXME: should be only if selected, shouldn't it?
-		this.scrollIntoView();
-	}
-	componentDidUpdate() {
-		// FIXME: only if selected changed (or entry but that shouldn't change, right?)
-		if (this.props.selected) {
-			this.scrollIntoView();
-		}
-	}
-	scrollIntoView() {
-		const el = ReactDOM.findDOMNode(this);
-		el.scrollIntoView({
-			behavior: "instant",
-			block: "nearest",
-			inline: "nearest",
-		});
-		// This would work for old browser compatibility:
-		// el.parentElement.scrollTop =
-		// 	Math.min(
-		// 		el.offsetTop,
-		// 		Math.max(
-		// 			el.parentElement.scrollTop,
-		// 			el.offsetTop - el.parentElement.clientHeight + el.clientHeight
-		// 		)
-		// 	);
 	}
 }
 
