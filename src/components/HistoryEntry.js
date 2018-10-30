@@ -138,7 +138,8 @@ class HistoryEntry extends Component {
 				className="HistoryEntry"
 				role="radio"
 				aria-checked={selected ? "aria-checked" : null}
-				onClick={onClick}
+				onClick={onClick} // for keyboard accessibility
+				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
 				<Thumbnail
 					entryThatMightHaveAnImage={entry}
