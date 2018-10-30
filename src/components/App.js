@@ -7,6 +7,7 @@ import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
 import HistoryView from "./HistoryView.js";
+import Dialog from "./Dialog.js";
 import Warning from "./Warning.js";
 import defaultPalette from "../db32-palette.js";
 import tools from "../tools/";
@@ -61,10 +62,12 @@ class App extends Component {
 			`document:${this.props.documentID}:state`,
 			(error, serialized) => {
 				if (error) {
-					alert(
-						"Failed to load document state from storage! See console for details."
-					);
-					console.error("Failed to load document state from storage!", error);
+					// TODO: detect quota limit
+					this.showError({
+						message: "Failed to load document state from storage!",
+						error,
+					});
+					this.setState({ loadFailed: true });
 					return;
 				}
 				if (!serialized) {
@@ -74,6 +77,8 @@ class App extends Component {
 					);
 					return;
 				}
+				console.log(`Loaded data for ${this.props.documentID}`);
+
 				// TODO: extract document loading into a function
 				// to reuse for deserializing from files
 				// and maybe don't call it "state" when more explicitly loading a document, i.e. from a file
@@ -81,9 +86,11 @@ class App extends Component {
 					typeof serialized.version !== "number" ||
 					serialized.version > CURRENT_SERIALIZATION_VERSION
 				) {
-					alert(
-						"Can't load document state created by later version of the app"
-					);
+					this.showError({
+						message:
+							"Can't load document state created by later version of the app",
+					});
+					this.setState({ loadFailed: true });
 					return;
 				}
 				const MINIMUM_LOADABLE_VERSION = 1;
@@ -95,11 +102,12 @@ class App extends Component {
 				// 	serialized.version = 1;
 				// }
 				if (serialized.version < CURRENT_SERIALIZATION_VERSION) {
-					alert(
-						`Can't load document state created by old version of the app; there's no upgrade path from format version ${
+					this.showError({
+						message: `Can't load document state created by old version of the app; there's no upgrade path from format version ${
 							serialized.version
-						} to ${MINIMUM_LOADABLE_VERSION} currently`
-					);
+						} to ${MINIMUM_LOADABLE_VERSION} currently`,
+					});
+					this.setState({ loadFailed: true });
 					return;
 				}
 				const findToolByID = (toolID, locationMessage) => {
@@ -139,34 +147,43 @@ class App extends Component {
 						swatch: serializedOperation.swatch,
 					};
 				};
-				console.log(`Loaded ${this.props.documentID}`);
 				// this try-catch is mainly for the explicitly thrown TypeErrors,
 				// but TODO: maybe wrap all the loading logic, and maybe saving too
+				let stateUpdates;
 				try {
 					expectPropertiesToExist(
 						["palette", "selectedSwatch", "selectedToolID", "undos", "redos"],
 						serialized,
 						"on the root document object"
 					);
-					this.setState({
+					stateUpdates = {
 						palette: serialized.palette,
 						selectedSwatch: serialized.selectedSwatch,
-						selectedTool: findToolByID(serialized.selectedToolID),
+						selectedTool: findToolByID(
+							serialized.selectedToolID,
+							"(for the selected tool)"
+						),
 						undos: new List(serialized.undos.map(deserializeOperation)),
 						redos: new List(serialized.redos.map(deserializeOperation)),
 						loaded: true,
-					});
+					};
 				} catch (error) {
-					// TODO: show custom error message dialog, with expandable details
-					alert("Failed to load document! See console for details.");
-					console.error("Failed to load document!", error);
+					this.showError({
+						message: "Failed to load document!",
+						error,
+					});
+					this.setState({ loadFailed: true });
 				}
+				this.setState(stateUpdates, () => {
+					console.log(`Loaded ${this.props.documentID}`);
+				});
 			}
 		);
 	}
 	save(leavingThisDocument) {
 		if (!this.state.loaded) {
 			if (!leavingThisDocument) {
+				// TODO: replace confirm() with a custom dialog!
 				if (
 					window.confirm(
 						`The document ${
@@ -206,13 +223,10 @@ class App extends Component {
 					? "the previous document"
 					: "document";
 				if (error) {
-					alert(
-						`Failed to save ${documentThatYouWereMaybeLeaving} into storage! See console for details.`
-					);
-					console.error(
-						`Failed to save ${documentThatYouWereMaybeLeaving} into storage!`,
-						error
-					);
+					this.showError({
+						message: `Failed to save ${documentThatYouWereMaybeLeaving} into storage! See console for details.`,
+						error,
+					});
 				} else {
 					console.log(
 						`Saved ${this.props.documentID}${
@@ -251,8 +265,10 @@ class App extends Component {
 				// TODO: handle image files, Photoshop documents, GIMP documents, etc.
 				loadPalette(files[0], (error, palette) => {
 					if (error) {
-						// TODO: show error in a nice way
-						alert(error);
+						this.showError({
+							message: `Failed to load file as a color palette.`,
+							error,
+						});
 					} else {
 						this.setState({
 							palette: palette.map((color) => color.toString()),
@@ -339,7 +355,13 @@ class App extends Component {
 	}
 
 	render() {
-		const { selectedSwatch, selectedTool, palette, undos } = this.state;
+		const {
+			selectedSwatch,
+			selectedTool,
+			palette,
+			undos,
+			errorState,
+		} = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch });
@@ -373,9 +395,11 @@ class App extends Component {
 				});
 				return;
 			}
-			alert(
-				"Something bad happened and somehow the entry wasn't found in undos or redos. You should report this bug."
-			);
+			this.showError({
+				message:
+					"Something bad happened and somehow the entry wasn't found in undos or redos.",
+				shouldNeverHappen: true,
+			});
 		};
 
 		return (
@@ -452,8 +476,28 @@ class App extends Component {
 						thumbnailsByOperation={this.thumbnailsByOperation}
 					/>
 				</div>
+				{errorState && (
+					<Dialog
+						message={errorState.message}
+						error={errorState.error}
+						requestABugReport={errorState.shouldNeverHappen}
+						close={this.clearError.bind(this)}
+					/>
+				)}
 			</div>
 		);
+	}
+	showError({ message, error, shouldNeverHappen = false }) {
+		this.setState({
+			errorState: {
+				message: message || error.toString(),
+				error,
+				shouldNeverHappen,
+			},
+		});
+	}
+	clearError() {
+		this.setState({ errorState: null });
 	}
 }
 

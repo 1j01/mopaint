@@ -1,0 +1,40 @@
+.Dialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	-o-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	/*-webkit-font-smoothing: subpixel-antialiased;*/
+	/* TODO: fix blurry text/UI in chrome, by using flexbox instead for the layout */
+	padding: 30px;
+	background: white;
+	border-radius: 5px;
+	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+.Dialog-buttons {
+	/* TODO: friendly buttons */
+	float: right;
+}
+.Dialog details {
+	margin: 1em 0;
+	width: 40em;
+	border: 1px solid rgba(128, 128, 128, 0.5);
+}
+.Dialog details > summary {
+	/*border-bottom: 1px solid rgba(128, 128, 128, 0.5);*/
+	background: rgba(128, 128, 128, 0.1);
+}
+.Dialog details > .actual-details {
+	max-height: 10em;
+	overflow: auto;
+}
+.Dialog details > summary,
+.Dialog details > .actual-details {
+	padding: 0.5em;
+}
+.Dialog details pre {
+	margin: 0;
+}
