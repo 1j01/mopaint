@@ -183,16 +183,17 @@ class App extends Component {
 	save(leavingThisDocument) {
 		if (!this.state.loaded) {
 			if (!leavingThisDocument) {
-				// TODO: replace confirm() with a custom dialog!
-				if (
-					window.confirm(
-						`The document ${
-							this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
-						}. Create a new document?`
-					)
-				) {
-					this.props.createNewDocument();
-				}
+				// TODO: allow drawing and carry the document state over to a new document
+				// update the message to reflect that (more clearly, as a reassurance)
+				this.setState({ undos: new List(), redos: new List(), loaded: false });
+				this.showError({
+					message: `The document ${
+						this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
+					}. Create a new document?`,
+					extraButtons: (
+						<button onClick={this.props.createNewDocument}>New Document</button>
+					),
+				});
 			}
 			return;
 		}
@@ -398,7 +399,7 @@ class App extends Component {
 			this.showError({
 				message:
 					"Something bad happened and somehow the entry wasn't found in undos or redos.",
-				shouldNeverHappen: true,
+				requestABugReport: true,
 			});
 		};
 
@@ -480,21 +481,17 @@ class App extends Component {
 					<Dialog
 						message={errorState.message}
 						error={errorState.error}
-						requestABugReport={errorState.shouldNeverHappen}
+						requestABugReport={errorState.requestABugReport}
+						extraButtons={errorState.extraButtons}
+						buttons={errorState.buttons}
 						close={this.clearError.bind(this)}
 					/>
 				)}
 			</div>
 		);
 	}
-	showError({ message, error, shouldNeverHappen = false }) {
-		this.setState({
-			errorState: {
-				message: message || error.toString(),
-				error,
-				shouldNeverHappen,
-			},
-		});
+	showError(errorState) {
+		this.setState({ errorState });
 	}
 	clearError() {
 		this.setState({ errorState: null });

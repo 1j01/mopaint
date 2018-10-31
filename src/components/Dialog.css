@@ -20,7 +20,10 @@
 }
 .Dialog-buttons {
 	/* TODO: friendly buttons */
-	float: right;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	margin-top: 1em;
 }
 .Dialog details {
 	margin: 1em 0;

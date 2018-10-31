@@ -25,18 +25,20 @@ export default function Dialog({
 
 	// NOTE: error.stack is nonstandard and quite different between browsers.
 	// In chrome it includes the error message redundantly
-	const errorText = error.stack
-		? error.stack.match(/^\w*Error:/) // should this check be error.stack.indexOf(error.message) === 0?
-			? error.stack.trim()
-			: `${error.toString()}\n\nStack trace:${`\n${error.stack.trim()}`.replace(
-					/\n/g,
-					"\n    "
-			  )}`
-		: error.toString();
+	const errorText =
+		error &&
+		(error.stack
+			? error.stack.match(/^\w*Error:/) // should this check be error.stack.indexOf(error.toString()) === 0?
+				? error.stack.trim()
+				: `${error.toString()}\n\nStack trace:${`\n${error.stack.trim()}`.replace(
+						/\n/g,
+						"\n    "
+				  )}`
+			: error.toString());
 	return (
 		<div className="Dialog">
 			<div className="Dialog-box">
-				{message}
+				{message || error.message}
 				{error && (
 					<details>
 						<summary>Details</summary>
