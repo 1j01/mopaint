@@ -12,7 +12,6 @@
 }
 .Dialog-box {
 	pointer-events: auto;
-	/*pointer-events: all;*/
 	padding: 30px;
 	background: white;
 	border-radius: 5px;
@@ -25,14 +24,36 @@
 	justify-content: flex-end;
 	margin-top: 1em;
 }
+.Dialog-buttons button {
+	padding: 0.4em 1.5em;
+	background: rgba(128, 128, 128, 0.1);
+	border: 1px solid rgba(128, 128, 128, 0.4);
+	margin-left: 5px;
+	border-radius: 2px;
+}
+.Dialog-buttons button:hover,
+.Dialog-buttons button:focus {
+	background: rgba(128, 128, 128, 0.2);
+}
+.Dialog-buttons button:active {
+	background: rgba(128, 128, 128, 0.3);
+}
 .Dialog details {
 	margin: 1em 0;
 	width: 40em;
+	max-width: calc(100vw - 2em);
 	border: 1px solid rgba(128, 128, 128, 0.5);
 }
 .Dialog details > summary {
-	/*border-bottom: 1px solid rgba(128, 128, 128, 0.5);*/
 	background: rgba(128, 128, 128, 0.1);
+	/*cursor: pointer;*/
+	/* We could do a pointer hand, but then it feels like *everything* should have a pointer hand,
+	and maybe it should, idk - it can be a useful cue to know when you can click on something -
+	but let's just make it *not* show a text selection cursor (over the text) for now */
+	cursor: default;
+}
+.Dialog details[open] > summary {
+	border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 }
 .Dialog details > .actual-details {
 	max-height: 10em;
