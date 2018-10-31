@@ -67,7 +67,7 @@ class ToolPreview extends Component {
 			const lastPos = { x: 2, y: 2 };
 			const pos = { x: 2, y: 2 };
 			for (let i = 0; i < 20; i += 2) {
-				pos.x = opCanvas.width / 2 + 48 * Math.sin(Math.sin(i * i / 302));
+				pos.x = opCanvas.width / 2 + 48 * Math.sin(Math.sin((i * i) / 302));
 				pos.y = opCanvas.height / 2 + 48 * Math.cos(Math.sin(i / 5));
 				if (i > 0) {
 					tool.drawSegmentOfPath(
@@ -96,9 +96,9 @@ class ToolPreview extends Component {
 		// TODO: maybe handle height not equaling width for props to ToolPreview
 		if (trimmedCanvas.width > trimmedCanvas.height) {
 			drawWidth = canvas.width;
-			drawHeight = trimmedCanvas.height / trimmedCanvas.width * canvas.width;
+			drawHeight = (trimmedCanvas.height / trimmedCanvas.width) * canvas.width;
 		} else {
-			drawWidth = trimmedCanvas.width / trimmedCanvas.height * canvas.width;
+			drawWidth = (trimmedCanvas.width / trimmedCanvas.height) * canvas.width;
 			drawHeight = canvas.width;
 		}
 		ctx.drawImage(

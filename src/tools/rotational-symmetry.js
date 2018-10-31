@@ -15,7 +15,7 @@ const getRotationalSymmetryPoints = (x, y, ctx) => {
 	const angle = Math.atan2(relativeX, relativeY) + offsetAngle; // Radians
 	const result = [];
 	for (let i = 0; i < repetitions; i++) {
-		let theta = angle + Math.PI * 2 / repetitions * i; // Radians
+		let theta = angle + ((Math.PI * 2) / repetitions) * i; // Radians
 		x = centerX + Math.sin(theta) * distance;
 		y = centerY - Math.cos(theta) * distance;
 		result.push({ x, y });

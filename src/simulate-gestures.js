@@ -25,13 +25,11 @@ window.simulateRandomGesture = (callback) => {
 	for (let i = 0; i < numberOfComponents; i += 1) {
 		gestureComponents.push({
 			rx:
-				Math.random() *
-				Math.min(rect.width, rect.height) /
+				(Math.random() * Math.min(rect.width, rect.height)) /
 				2 /
 				numberOfComponents,
 			ry:
-				Math.random() *
-				Math.min(rect.width, rect.height) /
+				(Math.random() * Math.min(rect.width, rect.height)) /
 				2 /
 				numberOfComponents,
 			angularFactor: Math.random() * 5 - Math.random(),
@@ -43,9 +41,11 @@ window.simulateRandomGesture = (callback) => {
 		for (let i = 0; i < gestureComponents.length; i += 1) {
 			let { rx, ry, angularFactor, angularOffset } = gestureComponents[i];
 			point.x +=
-				Math.sin(Math.PI * 2 * (t / 100 * angularFactor + angularOffset)) * rx;
+				Math.sin(Math.PI * 2 * ((t / 100) * angularFactor + angularOffset)) *
+				rx;
 			point.y +=
-				Math.cos(Math.PI * 2 * (t / 100 * angularFactor + angularOffset)) * ry;
+				Math.cos(Math.PI * 2 * ((t / 100) * angularFactor + angularOffset)) *
+				ry;
 		}
 		return point;
 	};
