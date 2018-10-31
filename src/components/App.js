@@ -189,7 +189,7 @@ class App extends Component {
 				this.showError({
 					message: `The document ${
 						this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
-					}. Create a new document?`,
+					}. Start a new document?`,
 					extraButtons: (
 						<button onClick={this.props.createNewDocument}>New Document</button>
 					),
