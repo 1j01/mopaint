@@ -1,59 +1,59 @@
 {
-  "name": "mopaint",
-  "version": "0.1.0",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/1j01/mopaint.git"
-  },
-  "bugs": {
-    "url": "http://github.com/1j01/mopaint/issues"
-  },
-  "author": "Isaiah Odhner <isaiahodhner@gmail.com>",
-  "keywords": [
-    "paint",
-    "painting",
-    "image",
-    "images",
-    "image-editing",
-    "image-editor",
-    "mopaint",
-    "jspaint",
-    "canvas",
-    "editor",
-    "art",
-    "drawing",
-    "drawing-tool",
-    "symmetry"
-  ],
-  "dependencies": {
-    "anypalette": "0.1.0",
-    "husky": "1.1.2",
-    "immutable": "3.8.2",
-    "localforage": "1.7.2",
-    "prettier": "1.14.3",
-    "pretty-quick": "1.8.0",
-    "prop-types": "15.6.2",
-    "react": "16.5.2",
-    "react-dom": "16.5.2",
-    "react-scripts": "1.1.5",
-    "shortid": "2.2.13"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "pretty-quick": "pretty-quick",
-    "pretty-all": "prettier \"**/*.{js,jsx,json,css}\" \"!.*/**/*\" \"!**/build/**\" --write",
-    "pretty-all-preview": "prettier \"**/*.{js,jsx,json,css}\" \"!.*/**/*\" \"!**/build/**\" --list-different"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
-  },
-  "devDependencies": {
-    "hash.js": "1.1.5"
-  }
+	"name": "mopaint",
+	"version": "0.1.0",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/1j01/mopaint.git"
+	},
+	"bugs": {
+		"url": "http://github.com/1j01/mopaint/issues"
+	},
+	"author": "Isaiah Odhner <isaiahodhner@gmail.com>",
+	"keywords": [
+		"paint",
+		"painting",
+		"image",
+		"images",
+		"image-editing",
+		"image-editor",
+		"mopaint",
+		"jspaint",
+		"canvas",
+		"editor",
+		"art",
+		"drawing",
+		"drawing-tool",
+		"symmetry"
+	],
+	"dependencies": {
+		"anypalette": "0.1.0",
+		"husky": "1.1.2",
+		"immutable": "3.8.2",
+		"localforage": "1.7.2",
+		"prettier": "1.14.3",
+		"pretty-quick": "1.8.0",
+		"prop-types": "15.6.2",
+		"react": "16.5.2",
+		"react-dom": "16.5.2",
+		"react-scripts": "1.1.5",
+		"shortid": "2.2.13"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test --env=jsdom",
+		"eject": "react-scripts eject",
+		"pretty-quick": "pretty-quick",
+		"pretty-all": "prettier \"**/*.{js,jsx,json,css}\" \"!.*/**/*\" \"!**/build/**\" --write",
+		"pretty-all-preview": "prettier \"**/*.{js,jsx,json,css}\" \"!.*/**/*\" \"!**/build/**\" --list-different"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "pretty-quick --staged"
+		}
+	},
+	"devDependencies": {
+		"hash.js": "1.1.5"
+	}
 }
