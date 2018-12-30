@@ -183,8 +183,8 @@ class App extends Component {
 	save(leavingThisDocument) {
 		if (!this.state.loaded) {
 			if (!leavingThisDocument) {
-				// TODO: allow drawing and carry the document state over to a new document
-				// update the message to reflect that (more clearly, as a reassurance)
+				// TODO: allow drawing in not-loaded document and carry state over to a new document
+				// (and update the message to reflect that (clearly and reassuringly))
 				this.setState({ undos: new List(), redos: new List(), loaded: false });
 				this.showError({
 					message: `The document ${
@@ -271,9 +271,12 @@ class App extends Component {
 							error,
 						});
 					} else {
-						this.setState({
-							palette: palette.map((color) => color.toString()),
-						});
+						this.setState(
+							{
+								palette: palette.map((color) => color.toString()),
+							},
+							this.saveDebounced.bind(this)
+						);
 					}
 				});
 			}
@@ -336,10 +339,13 @@ class App extends Component {
 		}
 
 		const action = undos.last();
-		this.setState({
-			undos: undos.pop(),
-			redos: redos.push(action),
-		});
+		this.setState(
+			{
+				undos: undos.pop(),
+				redos: redos.push(action),
+			},
+			this.saveDebounced.bind(this)
+		);
 	}
 	redo() {
 		const { undos, redos } = this.state;
@@ -349,10 +355,13 @@ class App extends Component {
 		}
 
 		const action = redos.last();
-		this.setState({
-			undos: undos.push(action),
-			redos: redos.pop(),
-		});
+		this.setState(
+			{
+				undos: undos.push(action),
+				redos: redos.pop(),
+			},
+			this.saveDebounced.bind(this)
+		);
 	}
 
 	render() {
@@ -365,10 +374,10 @@ class App extends Component {
 		} = this.state;
 
 		const selectSwatch = (swatch) => {
-			this.setState({ selectedSwatch: swatch });
+			this.setState({ selectedSwatch: swatch }, this.saveDebounced.bind(this));
 		};
 		const selectTool = (tool) => {
-			this.setState({ selectedTool: tool });
+			this.setState({ selectedTool: tool }, this.saveDebounced.bind(this));
 		};
 
 		const goToEntry = (entry) => {
@@ -382,18 +391,24 @@ class App extends Component {
 			// the item you click on should become the last item in undos
 			if (indexInUndos > -1) {
 				const actionsToUndo = undos.slice(indexInUndos + 1, undos.size);
-				this.setState({
-					undos: undos.slice(0, indexInUndos + 1),
-					redos: redos.concat(actionsToUndo.reverse()),
-				});
+				this.setState(
+					{
+						undos: undos.slice(0, indexInUndos + 1),
+						redos: redos.concat(actionsToUndo.reverse()),
+					},
+					this.saveDebounced.bind(this)
+				);
 				return;
 			}
 			if (indexInRedos > -1) {
 				const actionsToRedo = redos.slice(indexInRedos, redos.size);
-				this.setState({
-					undos: undos.concat(actionsToRedo.reverse()),
-					redos: redos.slice(0, indexInRedos),
-				});
+				this.setState(
+					{
+						undos: undos.concat(actionsToRedo.reverse()),
+						redos: redos.slice(0, indexInRedos),
+					},
+					this.saveDebounced.bind(this)
+				);
 				return;
 			}
 			this.showError({
