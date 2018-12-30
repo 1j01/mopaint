@@ -28,6 +28,7 @@
 	],
 	"dependencies": {
 		"anypalette": "0.1.0",
+		"hash.js": "1.1.5",
 		"husky": "1.1.2",
 		"immutable": "3.8.2",
 		"localforage": "1.7.2",
@@ -52,8 +53,5 @@
 		"hooks": {
 			"pre-commit": "pretty-quick --staged"
 		}
-	},
-	"devDependencies": {
-		"hash.js": "1.1.5"
 	}
 }
