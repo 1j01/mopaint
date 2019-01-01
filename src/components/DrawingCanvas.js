@@ -102,12 +102,15 @@ class DrawingCanvas extends Component {
 			- When saving, allow optimizing for size (less/no caching) or speed* (caching)
 				*speed of loading/editing the document, and not of loading as say a PNG, if it's a pngram - PNG loading would likely be slower
 
-		Don't cache constantly changing stuff! (TODO!)
-			Use heuristics to keep pertinent steps cached, based on:
-				how long an operation takes to complete,
-				how recent it is in history (for fast undo/redo)
-				and how many operations have gone in between
-					(so there can be periodic caching, so you can jump to any point with limited computation needed)
+		Use heuristics to keep pertinent steps cached, based on:
+			- How long an operation takes to complete
+				(this may vary based on the inputs, even exponentially potentially (etc.) but should still be useful,
+				i.e. if an operation takes less than a frame to compute, if it can render in realtime,
+				there's probably no point caching it)
+				(this should be able to get rid of the "updatingContinously" thing)
+			- How recent it is in history (for fast undo/redo)
+			- How many operations have gone in between
+				(so there can be periodic caching, so you can jump to any point with limited computation needed)
 		*/
 
 		const runningHash = sha256();
@@ -116,11 +119,11 @@ class DrawingCanvas extends Component {
 			const operationHash = runningHash.digest("hex");
 			opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
 			if (this.cache[operationHash]) {
-				console.log("cache hit");
+				// console.log("cache hit");
 				documentContext.drawImage(this.cache[operationHash], 0, 0);
 			} else {
 				// opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
-				console.log("cache miss");
+				// console.log("cache miss");
 				const { points, tool, swatch } = operation;
 				const startPos = points[0];
 				const lastPos = points[points.length - 1];
@@ -153,14 +156,17 @@ class DrawingCanvas extends Component {
 
 				documentContext.drawImage(opCanvas, 0, 0);
 
-				// fill the cache
-				this.cache[operationHash] = document.createElement("canvas");
-				this.cache[operationHash].width = opCanvas.width;
-				this.cache[operationHash].height = opCanvas.height;
-				this.cache[operationHash].getContext("2d").drawImage(opCanvas, 0, 0);
-
 				this.hashInDocumentByOperation.set(operation, operationHash);
 
+				// fill the cache
+				if (!operation.updatingContinously) {
+					this.cache[operationHash] = document.createElement("canvas");
+					this.cache[operationHash].width = opCanvas.width;
+					this.cache[operationHash].height = opCanvas.height;
+					this.cache[operationHash].getContext("2d").drawImage(opCanvas, 0, 0);
+				}
+
+				// TODO: optimize: use existing canvas if it exists (clear and update it)
 				const thumbnail = document.createElement("canvas");
 				thumbnail.width = 64;
 				thumbnail.height = 64;
@@ -206,6 +212,7 @@ class DrawingCanvas extends Component {
 			points: [pos],
 			tool: selectedTool,
 			swatch: selectedSwatch,
+			updatingContinously: true, // TODO: this should probably be extrinsic!
 		};
 		const { addOperation } = this.props;
 		addOperation(this.operation);
@@ -216,8 +223,13 @@ class DrawingCanvas extends Component {
 		}
 	}
 	onMouseUp(event) {
+		// TODO: add pos if different? (is that possible? and does this matter?)
 		// const pos = this.toCanvasCoords(event);
-		// TODO: add pos if different?
+		// this.operation.points.push(pos);
+
+		const { updateOperation } = this.props;
+		delete this.operation.updatingContinously; // bit of a hack so let's uh clean it up / make it less present in the document store... (as opposed to setting it to false)
+		updateOperation(this.operation);
 
 		document.body.classList.remove("cursor-override-DrawingCanvas");
 	}
