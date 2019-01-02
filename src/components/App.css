@@ -26,3 +26,8 @@ body,
 	max-width: 30vw;
 	flex-basis: 400px;
 }
+
+#new-document {
+	display: inline-flex;
+	align-items: center;
+}

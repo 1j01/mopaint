@@ -12,6 +12,7 @@ import Warning from "./Warning.js";
 import defaultPalette from "../db32-palette.js";
 import tools from "../tools/";
 import "./App.css";
+import { ReactComponent as NewDocumentIcon } from "../icons/new-document-importable.svg";
 
 const CURRENT_SERIALIZATION_VERSION = 1;
 
@@ -454,8 +455,8 @@ class App extends Component {
 							</select>
 						</label>
 						&nbsp;|&nbsp;
-						<button onClick={this.props.createNewDocument}>
-							➕📄 New Document
+						<button id="new-document" onClick={this.props.createNewDocument}>
+							<NewDocumentIcon width="3em" height="3em" /> New Document
 						</button>
 					</div>
 					<Toolbox
