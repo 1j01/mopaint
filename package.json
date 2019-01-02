@@ -37,7 +37,7 @@
 		"prop-types": "15.6.2",
 		"react": "16.5.2",
 		"react-dom": "16.5.2",
-		"react-scripts": "1.1.5",
+		"react-scripts": "2.1.2",
 		"shortid": "2.2.13"
 	},
 	"scripts": {
@@ -53,5 +53,11 @@
 		"hooks": {
 			"pre-commit": "pretty-quick --staged"
 		}
-	}
+	},
+	"browserslist": [
+		">0.2%",
+		"not dead",
+		"not ie <= 11",
+		"not op_mini all"
+	]
 }
