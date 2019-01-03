@@ -435,7 +435,7 @@ class App extends Component {
 						and that undo/redo history is persisted.
 						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub for more info</a>.
 					</Warning>
-					<div>
+					<div id="documents-options">
 						<label>
 							Switch documents:&nbsp;
 							<select
@@ -454,9 +454,14 @@ class App extends Component {
 								})}
 							</select>
 						</label>
-						&nbsp;|&nbsp;
-						<button id="new-document" onClick={this.props.createNewDocument}>
-							<NewDocumentIcon width="3em" height="3em" /> New Document
+						<hr />
+						<button
+							id="new-document"
+							onClick={this.props.createNewDocument}
+							aria-label="New Document"
+							title="New Document"
+						>
+							<NewDocumentIcon width="3em" height="3em" />
 						</button>
 					</div>
 					<Toolbox

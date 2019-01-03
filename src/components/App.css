@@ -27,7 +27,61 @@ body,
 	flex-basis: 400px;
 }
 
+/* TODO: DRY button styling with .Toolbox-tool */
+
 #new-document {
 	display: inline-flex;
 	align-items: center;
+	background: none;
+	border: none;
+	padding: 8px;
+	border-radius: 50%;
+}
+#new-document:hover,
+#new-document:focus {
+	background: rgba(128, 128, 128, 0.4);
+}
+
+#new-document:hover:not([aria-checked]),
+#new-document:focus:not([aria-checked]) {
+	background: #cbdbfc;
+	color: black;
+	outline: none;
+}
+#new-document:active:not([aria-checked]) {
+	background: rgb(214, 228, 255);
+	color: black;
+}
+#new-document[aria-checked] {
+	background: #639bff;
+	color: white;
+}
+
+#documents-options {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	/*justify-content: flex-start;*/ /* doesn't work!? */
+	padding: 0 15px;
+}
+#documents-options > * {
+	flex: 0 0 auto;
+	/*float: left;*/ /* doesn't work! */
+}
+/* doesn't work! */
+/*#documents-options::last-child {
+	margin-right: auto;
+}*/
+#documents-options::after {
+	content: "";
+	flex: 1;
+}
+#documents-options hr {
+	/*display: inline-block;*/
+	border: none;
+	border-left: 1px solid rgba(128, 128, 128, 0.8);
+	height: 3em;
+	width: 0;
+	margin-left: 8px;
+	margin-right: 8px;
 }
