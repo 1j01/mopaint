@@ -70,14 +70,19 @@ class DrawingCanvas extends Component {
 		/*
 		A tree of computation.
 			Any self contained (that is, independent) operations can stay valid in the cache.
+			For instance, a smudge/smear tool would need the underlying canvas data as an input, so it would be
+			dependent on previous operations, but a simple shape could be rendered separately and then only the compositing
+			would be dependent on the underlying canvas and thus previous operations.
+			And perhaps the simple shape has an expensive shader that makes it worth caching.
 		Persist the cache locally, and even share it over the network in a collaborative setting
 			As part of the document.
-			with peers that have more computing power, computation could be distributed in the form of cache sharing
+			With peers that have more computing power, computation could be distributed in the form of cache sharing
 				Imagine an artist (or artists) live streaming their work,
 					and a random viewer providing extra juice since they happen to have a powerful computer.
-				As a simpler scenario, one could connect a beefy computer into a session to speed things up
-					when working on a less powerful device (laptop/phone/tablet maybe).
+				Or as a slightly simpler scenario, an artist working on a laptop/phone/tablet could connect a beefy computer into their session to speed things up
+					and continue working on the less powerful device (which might be a better form factor, e.g. with a stylus perhaps, or just mobility).
 				Peers could try to compute things in different order from each other in order to maximize parallelization.
+					(don't all do the same work and then try to share it with eachother but by then everybody's already computed it)
 				There is of course the possibility of bad actors - clients or peers that could give bad data
 					maliciously / for fun / out of curiosity / accidentally / because of bugs / runtime version mismatches* / GPU differences etc.
 						(*Should probably be a bug if it tries to use mismatching runtime versions.)
