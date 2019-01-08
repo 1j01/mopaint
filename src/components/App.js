@@ -224,11 +224,58 @@ class App extends Component {
 				const documentThatYouWereMaybeLeaving = leavingThisDocument
 					? "the previous document"
 					: "document";
+				// Enable one of these lines to emit Error Message Itself Test (EMIT) errors (I'm coining that! 😛)
+				// error = new Error(); error.name = "QuotaExceededError";
+				// error = new Error("asdftest"); error.name = "QuotaExceededError";
 				if (error) {
-					this.showError({
-						message: `Failed to save ${documentThatYouWereMaybeLeaving} into storage! See console for details.`,
-						error,
-					});
+					// TODO: investigate these different error cases (in different browsers), and improve the messages
+					// This "QuotaExceededError" without a message seems to happen in Chrome when the disk is full
+					// but other browsers probably wouldn't do the same thing,
+					// so it might make sense to present both possibilities regardless...
+					// (but maybe present them in different priority of likeliness?
+					// but that might just come across as confusingly inconsistent)
+					// Also it might make sense to make it a (small/short) dialog tree,
+					// either with separate dialog boxes, or with expandables
+					// Also it would be nice to link to documentation (or web searches) to help with checking disk space and freeing it up
+					// (e.g. "check disk space <operating system name>")
+					// Also once there's a document selector, where you can manage storage, there should be a button to open it,
+					// and the message(s) should be updated; no more need to delete all documents
+					if (error.name === "QuotaExceededError" && !error.message) {
+						this.showError({
+							// prettier-ignore
+							message: <div>
+								Failed to save {documentThatYouWereMaybeLeaving} into storage!
+								<br/><br/>
+								Check that your computer has enough disk space.
+								<br/><br/>
+								If you have enough free space, we've run out of space as allowed by the browser per site.
+								You could free up quota by clearing the storage for this site in your browser's settings,
+								however, this will delete all documents.
+							</div>,
+							error,
+						});
+					} else if (error.name === "QuotaExceededError") {
+						// We don't *know* it's running into quota limits here, it could be out of disk space in other browsers
+						// This "Ran out of space allowed by the browser" is sort of designed to be ambiguous,
+						// but that's not a good way to get across the possibility of different scenarios;
+						// TODO: find a way to make this clear/better
+						this.showError({
+							// prettier-ignore
+							message: <div>
+								Failed to save {documentThatYouWereMaybeLeaving} into storage!
+								<br/><br/>
+								Ran out of space allowed by the browser.
+								You could free up quota by clearing the storage for this site in your browser's settings,
+								however, this will delete all documents.
+							</div>,
+							error,
+						});
+					} else {
+						this.showError({
+							message: `Failed to save ${documentThatYouWereMaybeLeaving} into storage!`,
+							error,
+						});
+					}
 				} else {
 					console.log(
 						`Saved ${this.props.documentID}${

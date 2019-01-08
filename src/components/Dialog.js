@@ -25,16 +25,18 @@ export default function Dialog({
 
 	// NOTE: error.stack is nonstandard and quite different between browsers.
 	// In chrome it includes the error message redundantly
+	// TODO: handle indentation generically instead of based on cases of Chrome and Firefox
+	// (which could change in the future)
+	const stackTraceText =
+		error && error.stack && error.stack.indexOf(error.toString()) === 0
+			? error.stack.slice(error.toString().length).trimEnd() // Chrome
+			: `\n${error.stack.trim()}`.replace(/\n/g, "\n    "); // Firefox
 	const errorText =
 		error &&
-		(error.stack
-			? error.stack.match(/^\w*Error:/) // should this check be error.stack.indexOf(error.toString()) === 0?
-				? error.stack.trim()
-				: `${error.toString()}\n\nStack trace:${`\n${error.stack.trim()}`.replace(
-						/\n/g,
-						"\n    "
-				  )}`
+		(stackTraceText
+			? `${error.toString()}\n\nStack trace:${stackTraceText}`
 			: error.toString());
+
 	return (
 		<div className="Dialog">
 			<div className="Dialog-box">
@@ -62,7 +64,7 @@ export default function Dialog({
 }
 
 Dialog.propTypes = {
-	message: PropTypes.string.isRequired,
+	message: PropTypes.node.isRequired,
 	error: PropTypes.object,
 	requestABugReport: PropTypes.bool,
 	close: PropTypes.func,
