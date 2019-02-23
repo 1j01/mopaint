@@ -13,21 +13,29 @@ rather than going ahead and making a large toolset, which would be _easier_ and 
 but add friction to iterating on how tools work as a whole, and the process for making them etc.  
 (That said it can be really fun and useful, and it might be worth the cost of friction.)
 
-See also: [JS Paint][] (my clone of MS Paint from Windows 98), and (not mine) [Apparatus][] ("a hybrid graphics editor and programming environment for creating interactive diagrams")
+#### See also:
 
-## A few principles
+- [Apparatus][] - "a hybrid graphics editor and programming environment for creating interactive diagrams"
 
-* Minimize the conceptual surface and maximize applicability;
-combine components/elements/ideas and make anything that works with X also apply to Y by making X and Y the same thing.
+- [JS Paint][] - my clone of MS Paint from Windows 98
+
+## A few principles / Thesis statement
+
+* Don't discard and destroy data by default, dang it! Human-computer interaction is incredibly lopsided, with great output ability (a perfectly plentiful plethora of pixels in parallel, plus piezoelectrics) vs input ability (discrete key presses, mouse clicks, linear mouse movements, and *sometimes* speech, but that's generally only taken advantage of as plain text with long delays), so input is precious. I want people to retroactively record and use data they didn't and couldn't know they would have wanted to record beforehand. If you know your work is always saved, and everything you do, every brush stroke, is usable & reusable (& refactorable) in the future, I think it will unlock a new kind of zen art exploration and encourage truly new kinds of art.
+
+* Minimize the conceptual surface, and maximize applicability.
+Combine components/elements/ideas in the UI where possible.
+Make anything that works with one thing also work with another by making them the same thing.
 Do more with less. [Multiism][].
-Once you have some data, there are a million and one things the user might want to do with it, manipulate it, organize it.
+(Once you have some data, there are a million and one things the user might want to do with it, manipulate it, organize it.
 The user should be able to act on different objects/data in the same ways if possible.
 Bulk actions should be a natural extension of singular actions, or the same if possible, if it makes sense.
-And many things a user might want to do could be handled in a common way across editors.
+And many things a user might want to do could be handled in a common way across editors.)
 
-* Question the status quo.
-It's one thing to design an application to behave similarly to other applications so that users can pick it up easier and faster,
-but another to copy existing ideas (components, elements, concepts, the *scope of a project* or program, etc.) without question.
+* Question the status quo. Try new things!
+People design based on previous work because it's what they know.
+It can be good to leverage understanding that users have so they can pick up software and use it faster and easier,
+but you shouldn't copy existing ideas (components, elements, concepts, the *scope of a project* or program, etc.) without *question*.
 (btw check out Bret Victor's talk [The Future of Programming][]. And his other work!)
 
 ## Crazy (or at least Kooky) Ideas
@@ -108,15 +116,8 @@ For instance, here's an infinitely zooming set of patterns, in 2D, but made with
 What about 3D painting not just _on_ 3D, but _in_ 3D?  
 like [Tilt Brush][] (a VR thing)  
 (or _vaguely_ like [Pixelweaver][] (a code-doodling thing))  
-I don't think a lot of 2D tools would map so well to 3D,  
-and, certainly they'd have a better chance if they had to use a 3D API,  
-but idk, what would a flood fill tool be?  
-it'd have to use voxels–or, it wouldn't _have_ to, but  
-what would it be? what would be the point?  
-if you look inside an object your vision is completely occluded?  
-maybe it could be useful if joins shapes together that are near together  
-anyways, like, an airbrush tool could add dots in a sphere,  
-but what about custom tools? idk, should you have to design it with 3D in mind, at its core?  
+like, an airbrush tool could add dots in a sphere, etc.  
+
 idk.  
 I was thinking, "no, this is totally out of scope" but,  
 I'll have to think about it... (in relation to other tools and stuff)...  
