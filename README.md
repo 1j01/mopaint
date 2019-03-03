@@ -1,6 +1,9 @@
 # Mopaint
 
 Mopaint is a testing ground for ideas about image editors and editors in general.  
+It's an exploration of the combination of the visual arts and programming,  
+where the document model is a program, rather than, say, a collection of layers with raster image data.  
+It's a fairly open-ended project with some lofty aspirations.  
 
 As an application,
 I want it to be a
@@ -9,9 +12,24 @@ _**m**obily **o**perable_, _**m**ultiuser **o**nline_
 painting app, and _**mo**re!_  
 
 I'll be focusing on trying to make the _tooling around tools_ really powerful,
-rather than going ahead and making a large toolset, which would be _easier_ and more directly useful,
+rather than going ahead and making a large toolset, which would be _easier_ and more _directly_ useful,
 but add friction to iterating on how tools work as a whole, and the process for making them etc.  
 (That said it can be really fun and useful, and it might be worth the cost of friction.)
+
+
+---------------
+
+The first prototype will be a 2D graphics editor.
+I anticipate several limitations:
+
+- There will be an awkward boundary between the code for tools (in a traditional programming language), and the higher level structures of the document (also a program).  
+The document program may be limiting because it's not a full visual programming language.
+The reason I think it's still worth it to make this tool, is because I think it'll still be less of a disconnect between *art and code*.
+
+- Generalness of the system. The first prototype will limit you to a medium of 2D graphics.  
+Hopefully this would end up as a template for editors in other mediums, or a stepping stone to a more general programming system.
+
+- Privacy. The document contains a lot more data by default than other programs. First of all, you could just not share the document, only share the exports. Avoid live collaboration with anyone you don't trust not to share it themselves. And you could still share your tools, even if you aren't sharing the whole document. Further, there could be tools to obfuscate time stamps, precompute steps (such as cropping a pasted source image!) (that is, remove the inputs to an operation from history, keeping only the results), and help show you what data is in the document by exploding everything (visualizing the history as much as possible, and analyzing, giving insights, like that something took 3 days to make, generally making everything as visible as possible, showing custom code if applicable, etc.).
 
 #### See also:
 
@@ -19,24 +37,26 @@ but add friction to iterating on how tools work as a whole, and the process for 
 
 - [JS Paint][] - my clone of MS Paint from Windows 98
 
-## A few principles / Thesis statement
+## A few principles
 
-* Don't discard and destroy data by default, dang it! Human-computer interaction is incredibly lopsided, with great output ability (a perfectly plentiful plethora of pixels in parallel, plus piezoelectrics) vs input ability (discrete key presses, mouse clicks, linear mouse movements, and *sometimes* speech, but that's generally only taken advantage of as plain text with long delays), so input is precious. I want people to retroactively record and use data they didn't and couldn't know they would have wanted to record beforehand. If you know your work is always saved, and everything you do, every brush stroke, is usable & reusable (& refactorable) in the future, I think it will unlock a new kind of zen art exploration and encourage truly new kinds of art.
+(maybe i should make this more of a "thesis statement" section...)
+
+* Don't discard and destroy data by default, dang it! Human-computer interaction is incredibly lopsided, with great output ability (a perfectly plentiful plethora of pixels in parallel, plus piezoelectrics) vs input ability (discrete key presses, mouse clicks, linear mouse movements, and *sometimes* speech, but that's generally only taken advantage of as plain text after long delays), so input is precious. I want people to retroactively record and use data they didn't and couldn't know they would have wanted to record beforehand. If you know your work is always saved, and everything you do, the data that makes up every brush stroke, is usable & reusable (& refactorable) in the future, I think it will unlock a new kind of zen art exploration and encourage truly new kinds of art.
 
 * Minimize the conceptual surface, and maximize applicability.
 Combine components/elements/ideas in the UI where possible.
-Make anything that works with one thing also work with another by making them the same thing.
+That is, make anything that works with one thing also work with another by *making them the same thing*.
 Do more with less. [Multiism][].
 (Once you have some data, there are a million and one things the user might want to do with it, manipulate it, organize it.
 The user should be able to act on different objects/data in the same ways if possible.
-Bulk actions should be a natural extension of singular actions, or the same if possible, if it makes sense.
+Bulk actions should be a natural extension of singular actions, or the same if possible.
 And many things a user might want to do could be handled in a common way across editors.)
 
 * Question the status quo. Try new things!
 People design based on previous work because it's what they know.
 It can be good to leverage understanding that users have so they can pick up software and use it faster and easier,
-but you shouldn't copy existing ideas (components, elements, concepts, the *scope of a project* or program, etc.) without *question*.
-(btw check out Bret Victor's talk [The Future of Programming][]. And his other work!)
+but you shouldn't copy existing ideas without *question*.  (components, elements, concepts, the *scope of a project* or program, etc.)  
+(btw check out Bret Victor's talk [The Future of Programming][]. And his other work! It's inspiring stuff!)
 
 ## Crazy (or at least Kooky) Ideas
 
@@ -90,9 +110,8 @@ tho
 #### Programmability (& [Generativity][])
 
 What if documents were reproducible?  
-what if they contained all the code for brushes and other tools,  
+What if they contained all the code for brushes and other tools,  
 and all the operations that created it?  
-(what if you could edit the application as easily as its contents?)  
 
 What if you could make your own tools really easily?  
 what if all the tools were _fully_ configurable in their behavior?  
@@ -111,29 +130,20 @@ like [Chameleon][], [Chameleon.js][], [Paint 3D][], [SculptGL][], etc.),
 if it can handle wrapping seamlessly around a cylinder (across triangles, drawing multiply),  
 we should be able to do tessellation, wrapping and symmetry pretty easily.  
 For instance, here's an infinitely zooming set of patterns, in 2D, but made with Three.js: [Infinite Zoom][]
-(just imagine texture on those shapes)  
+(just imagine drawing texture on those shapes)  
 
-What about 3D painting not just _on_ 3D, but _in_ 3D?  
-like [Tilt Brush][] (a VR thing)  
-(or _vaguely_ like [Pixelweaver][] (a code-doodling thing))  
-like, an airbrush tool could add dots in a sphere, etc.  
+<!--
+But it would be interesting for the future perhaps to have SVG and PDF support, like a modular rendering/output format backend where there'd be different sets of tools for operating on different types of data, and specifically for outputting to different formats, so like you could have an SVG path tool/operation/whatever and a WebGL based smudge tool, and you could use the same tools for operating on the points that define the strokes/usage of the lower level stuff, so there'd be this partially shared toolset
+And image filters that fit the subset of what SVG `<feColorMatrix>` can represent, say, could be factored to use a shared operation so filters like brightness/contrast could be shared across backends
 
-idk.  
-I was thinking, "no, this is totally out of scope" but,  
-I'll have to think about it... (in relation to other tools and stuff)...  
-what is scope, anyways?  
-
-WHAT IF...  
-
-(let me just do some calculations here)  
-420° − 69° + (3×[3](https://www.google.com/search?q=illuminati&tbm=isch))° = 360°...  
-
-THREE SIXTY  
-
-NO  
-SCOPE  
-
-[Make **Making** Better][Make Making Better].
+So there'd be this shared ecosystem of tools, across a wide variety of formats/problems/domains; G-code would be another good application/backend
+for controlling CNC machines for manufacturing
+I'd also want to do physics simulation, like Algodoo is pretty nice except the interface is really weird, and suffers it from the imprecision and lack of control that so many systems do
+It'd be so nice to be able to find a tool, like for instance one that copies and rotates something N times - rotational symmetry - and know that you could use it across all these domains
+I don't want to create a monolithic platform that all these domains would have to come to depend upon to reap these benefits, but that is what the first prototype will tend towards, architecturally - being an "app"
+That and the awkward divide between the "tool code" (I'm planning on trying to sandbox JS with a bridge to WebGL) and the higher level stuff above that, are the two main weaknesses I see / anticipate.
+Hopefully tools in specific domains will arise taking some of the ideas (it'd be hard to adopt "having the document model be a program" into existing tools), and hopefully some of the toolset could be easy to integrate into existing applications, so any application that deals with similar data types like "points"/"paths" could adopt an ever-growing library of tools for manipulating those structures
+-->
 
 #### What is in a name?
 
@@ -163,6 +173,23 @@ and/or relate to tools, like a mop. _Mop - ain't_ that great? :P
 
 Mo' pain, mo' gain, or something like that.
 
+
+#### Poème de conclusion
+
+what is scope, anyways?  
+
+WHAT IF...  
+
+(let me just do some calculations here)  
+420° − 69° + (3×[3](https://www.google.com/search?q=illuminati&tbm=isch))° = 360°...  
+
+THREE SIXTY  
+
+NO  
+SCOPE  
+
+[Make **Making** Better][Make Making Better].
+
 [JS Paint]: https://github.com/1j01/jspaint/
 [Apparatus]: http://aprt.us/
 [Wavey]: https://github.com/1j01/wavey/
@@ -183,7 +210,6 @@ Mo' pain, mo' gain, or something like that.
 [Paint 3D]: https://www.microsoft.com/en-us/store/p/paint-3d/9nblggh5fv99
 [SculptGL]: https://stephaneginier.com/sculptgl/
 [Infinite Zoom]: https://www.infinitezoom.net/
-[Tilt Brush]: https://www.tiltbrush.com/
 [Pixelweaver]: https://github.com/1j01/pixelweaver/
 [Doodal]: https://dood.al/
 [Multiism]: https://multiism.ml/
