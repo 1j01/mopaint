@@ -28,9 +28,11 @@ export default function Dialog({
 	// TODO: handle indentation generically instead of based on cases of Chrome and Firefox
 	// (which could change in the future)
 	const stackTraceText =
-		error && error.stack && error.stack.indexOf(error.toString()) === 0
+		error &&
+		error.stack &&
+		(error.stack.indexOf(error.toString()) === 0
 			? error.stack.slice(error.toString().length).trimEnd() // Chrome
-			: `\n${error.stack.trim()}`.replace(/\n/g, "\n    "); // Firefox
+			: `\n${error.stack.trim()}`.replace(/\n/g, "\n    ")); // Firefox
 	const errorText =
 		error &&
 		(stackTraceText
