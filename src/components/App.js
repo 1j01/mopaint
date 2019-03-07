@@ -53,6 +53,98 @@ class App extends Component {
 		};
 		this.saveDebounced = debounce(this.save.bind(this), 500);
 	}
+	loadSerializedDocument(serialized) {
+		// TODO: maybe don't call it "state" when more explicitly loading a document, i.e. from a file
+		if (
+			typeof serialized.version !== "number" ||
+			serialized.version > CURRENT_SERIALIZATION_VERSION
+		) {
+			this.showError({
+				message:
+					"Can't load document state created by later version of the app",
+			});
+			this.setState({ loadFailed: true });
+			return;
+		}
+		const MINIMUM_LOADABLE_VERSION = 1;
+		// upgrading code can go here, incrementing the version number step by step
+		// e.g.
+		// if (serialized.version === 0) {
+		// 	serialized.newPropName = serialized.oldName;
+		// 	delete serialized.oldName;
+		// 	serialized.version = 1;
+		// }
+		if (serialized.version < CURRENT_SERIALIZATION_VERSION) {
+			this.showError({
+				message: `Can't load document state created by old version of the app; there's no upgrade path from format version ${
+					serialized.version
+				} to ${MINIMUM_LOADABLE_VERSION} currently`,
+			});
+			this.setState({ loadFailed: true });
+			return;
+		}
+		const findToolByID = (toolID, locationMessage) => {
+			const tool = tools.find((tool) => tool.name === toolID);
+			if (!tool) {
+				throw new TypeError(`unknown tool '${toolID}' ${locationMessage}`);
+			}
+			return tool;
+		};
+		const expectPropertiesToExist = (properties, object, locationMessage) => {
+			properties.forEach((key) => {
+				if (!object[key]) {
+					throw new TypeError(`expected property '${key}' ${locationMessage}`);
+				}
+			});
+		};
+		const deserializeOperation = (serializedOperation) => {
+			expectPropertiesToExist(
+				["id", "toolID", "points", "swatch"],
+				serializedOperation,
+				`on operation with ID ${serializedOperation.id}`
+			);
+			const tool = findToolByID(
+				serializedOperation.toolID,
+				`on operation with ID ${serializedOperation.id}`
+			);
+			return {
+				id: serializedOperation.id,
+				tool: tool,
+				points: serializedOperation.points,
+				swatch: serializedOperation.swatch,
+			};
+		};
+		// this try-catch is mainly for the explicitly thrown TypeErrors,
+		// but TODO: maybe wrap all the loading logic, and maybe saving too
+		let stateUpdates;
+		try {
+			expectPropertiesToExist(
+				["palette", "selectedSwatch", "selectedToolID", "undos", "redos"],
+				serialized,
+				"on the root document object"
+			);
+			stateUpdates = {
+				palette: serialized.palette,
+				selectedSwatch: serialized.selectedSwatch,
+				selectedTool: findToolByID(
+					serialized.selectedToolID,
+					"(for the selected tool)"
+				),
+				undos: new List(serialized.undos.map(deserializeOperation)),
+				redos: new List(serialized.redos.map(deserializeOperation)),
+				loaded: true,
+			};
+		} catch (error) {
+			this.showError({
+				message: "Failed to load document!",
+				error,
+			});
+			this.setState({ loadFailed: true });
+		}
+		this.setState(stateUpdates, () => {
+			console.log(`Loaded ${this.props.documentID}`);
+		});
+	}
 	load() {
 		if (!this.props.documentID) {
 			console.log(`No document ID to load`);
@@ -79,107 +171,30 @@ class App extends Component {
 					return;
 				}
 				console.log(`Loaded data for ${this.props.documentID}`);
-
-				// TODO: extract document loading into a function
-				// to reuse for deserializing from files
-				// and maybe don't call it "state" when more explicitly loading a document, i.e. from a file
-				if (
-					typeof serialized.version !== "number" ||
-					serialized.version > CURRENT_SERIALIZATION_VERSION
-				) {
-					this.showError({
-						message:
-							"Can't load document state created by later version of the app",
-					});
-					this.setState({ loadFailed: true });
-					return;
-				}
-				const MINIMUM_LOADABLE_VERSION = 1;
-				// upgrading code can go here, incrementing the version number step by step
-				// e.g.
-				// if (serialized.version === 0) {
-				// 	serialized.newPropName = serialized.oldName;
-				// 	delete serialized.oldName;
-				// 	serialized.version = 1;
-				// }
-				if (serialized.version < CURRENT_SERIALIZATION_VERSION) {
-					this.showError({
-						message: `Can't load document state created by old version of the app; there's no upgrade path from format version ${
-							serialized.version
-						} to ${MINIMUM_LOADABLE_VERSION} currently`,
-					});
-					this.setState({ loadFailed: true });
-					return;
-				}
-				const findToolByID = (toolID, locationMessage) => {
-					const tool = tools.find((tool) => tool.name === toolID);
-					if (!tool) {
-						throw new TypeError(`unknown tool '${toolID}' ${locationMessage}`);
-					}
-					return tool;
-				};
-				const expectPropertiesToExist = (
-					properties,
-					object,
-					locationMessage
-				) => {
-					properties.forEach((key) => {
-						if (!object[key]) {
-							throw new TypeError(
-								`expected property '${key}' ${locationMessage}`
-							);
-						}
-					});
-				};
-				const deserializeOperation = (serializedOperation) => {
-					expectPropertiesToExist(
-						["id", "toolID", "points", "swatch"],
-						serializedOperation,
-						`on operation with ID ${serializedOperation.id}`
-					);
-					const tool = findToolByID(
-						serializedOperation.toolID,
-						`on operation with ID ${serializedOperation.id}`
-					);
-					return {
-						id: serializedOperation.id,
-						tool: tool,
-						points: serializedOperation.points,
-						swatch: serializedOperation.swatch,
-					};
-				};
-				// this try-catch is mainly for the explicitly thrown TypeErrors,
-				// but TODO: maybe wrap all the loading logic, and maybe saving too
-				let stateUpdates;
-				try {
-					expectPropertiesToExist(
-						["palette", "selectedSwatch", "selectedToolID", "undos", "redos"],
-						serialized,
-						"on the root document object"
-					);
-					stateUpdates = {
-						palette: serialized.palette,
-						selectedSwatch: serialized.selectedSwatch,
-						selectedTool: findToolByID(
-							serialized.selectedToolID,
-							"(for the selected tool)"
-						),
-						undos: new List(serialized.undos.map(deserializeOperation)),
-						redos: new List(serialized.redos.map(deserializeOperation)),
-						loaded: true,
-					};
-				} catch (error) {
-					this.showError({
-						message: "Failed to load document!",
-						error,
-					});
-					this.setState({ loadFailed: true });
-				}
-				this.setState(stateUpdates, () => {
-					console.log(`Loaded ${this.props.documentID}`);
-				});
+				this.loadSerializedDocument(serialized);
 			}
 		);
+	}
+	serializeDocument() {
+		// TODO: serialize tools as code (+ identifiers), and create a sandbox
+		// at least try to include code for future compatibility
+		const serializeOperation = (operation) => {
+			return {
+				id: operation.id,
+				toolID: operation.tool.name,
+				// toolCode: operation.tool.toString(), // not enough to define it; will need the whole module
+				points: operation.points,
+				swatch: operation.swatch,
+			};
+		};
+		return {
+			version: 1,
+			palette: this.state.palette,
+			selectedSwatch: this.state.selectedSwatch,
+			selectedToolID: this.state.selectedTool.name,
+			undos: this.state.undos.toJS().map(serializeOperation),
+			redos: this.state.redos.toJS().map(serializeOperation),
+		};
 	}
 	save(leavingThisDocument) {
 		if (!this.state.loaded) {
@@ -198,25 +213,7 @@ class App extends Component {
 			}
 			return;
 		}
-		// TODO: serialize tools as code (+ identifiers), and create a sandbox
-		// at least try to include code for future compatibility
-		const serializeOperation = (operation) => {
-			return {
-				id: operation.id,
-				toolID: operation.tool.name,
-				// toolCode: operation.tool.toString(), // not enough to define it; will need the whole module
-				points: operation.points,
-				swatch: operation.swatch,
-			};
-		};
-		const serialized = {
-			version: 1,
-			palette: this.state.palette,
-			selectedSwatch: this.state.selectedSwatch,
-			selectedToolID: this.state.selectedTool.name,
-			undos: this.state.undos.toJS().map(serializeOperation),
-			redos: this.state.redos.toJS().map(serializeOperation),
-		};
+		const serialized = this.serializeDocument();
 		localforage.setItem(
 			`document:${this.props.documentID}:state`,
 			serialized,
