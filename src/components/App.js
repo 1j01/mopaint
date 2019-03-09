@@ -53,17 +53,14 @@ class App extends Component {
 		};
 		this.saveDebounced = debounce(this.save.bind(this), 500);
 	}
-	loadSerializedDocument(serialized) {
-		// TODO: extract document loading into a function
-		// to reuse for deserializing from files
-		// and maybe don't call it "state" when more explicitly loading a document, i.e. from a file
+	loadSerializedDocument(serialized, fromFile) {
+		const nounPhraseThingToLoad = fromFile ? "document" : "document state";
 		if (
 			typeof serialized.version !== "number" ||
 			serialized.version > CURRENT_SERIALIZATION_VERSION
 		) {
 			this.showError({
-				message:
-					"Can't load document state created by later version of the app",
+				message: `Can't load ${nounPhraseThingToLoad} created by later version of the app`,
 			});
 			this.setState({ loadFailed: true });
 			return;
@@ -78,7 +75,7 @@ class App extends Component {
 		// }
 		if (serialized.version < CURRENT_SERIALIZATION_VERSION) {
 			this.showError({
-				message: `Can't load document state created by old version of the app; there's no upgrade path from format version ${
+				message: `Can't load ${nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version ${
 					serialized.version
 				} to ${MINIMUM_LOADABLE_VERSION} currently`,
 			});
