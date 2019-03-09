@@ -38,8 +38,7 @@ class App extends Component {
 		this.documentCanvas.width = 640;
 		this.documentCanvas.height = 480;
 
-		// TODO: move cache state out here
-		this.thumbnailsByOperation = new Map(); // TODO: could use cache
+		this.thumbnailsByOperation = new Map(); // TODO: could use cache?
 
 		this.timeoutIDs = new Set();
 		const debounce = (func, delay) => {
@@ -94,7 +93,11 @@ class App extends Component {
 			this.showError({
 				message: `Can't load ${nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version ${
 					serialized.formatVersion
-				} to ${MINIMUM_LOADABLE_VERSION} currently`,
+				} to ${CURRENT_SERIALIZATION_VERSION}${
+					MINIMUM_LOADABLE_VERSION !== CURRENT_SERIALIZATION_VERSION
+						? ` (minimum loadable: ${MINIMUM_LOADABLE_VERSION})`
+						: ""
+				}`,
 			});
 			this.setState({ loadFailed: true });
 			return;
@@ -307,8 +310,8 @@ class App extends Component {
 			"beforeunload",
 			(this.beforeUnloadListener = (event) => {
 				// This isn't the only time we save -- that would be a terrible pattern! you can't rely on any 'event' in a power outage or crash --
-				// but it's good to have since there are places where we save after a timeout (i.e. debounced),
-				// so if you made a change and then quickly closed or reloaded the page (possibly by accident, and/or with auto reload in development),
+				// but it's good to have since there are places where we delay (i.e. debounce) saving for performance reasons
+				// so if you made a change and then quickly closed or reloaded the page (by accident, and/or with auto reload in development),
 				// it'll still save, and you won't lose anything. it's great. 🙂
 				this.save(true);
 			})
@@ -377,7 +380,7 @@ class App extends Component {
 			nextProps.documentID === this.props.documentID,
 			"App component is not designed to handle switching documents without reconstruction"
 		);
-		// TODO: make App handle switching documents
+		// TODO: make App component handle switching documents
 	}
 
 	// TODO: collaborative sync with undo/redo, showing operations from other users in realtime
