@@ -38,8 +38,7 @@ class App extends Component {
 		this.documentCanvas.width = 640;
 		this.documentCanvas.height = 480;
 
-		// TODO: move cache state out here
-		this.thumbnailsByOperation = new Map(); // TODO: could use cache
+		this.thumbnailsByOperation = new Map(); // TODO: could use cache?
 
 		this.timeoutIDs = new Set();
 		const debounce = (func, delay) => {
