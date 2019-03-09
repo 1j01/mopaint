@@ -289,8 +289,8 @@ class App extends Component {
 			"beforeunload",
 			(this.beforeUnloadListener = (event) => {
 				// This isn't the only time we save -- that would be a terrible pattern! you can't rely on any 'event' in a power outage or crash --
-				// but it's good to have since there are places where we save after a timeout (i.e. debounced),
-				// so if you made a change and then quickly closed or reloaded the page (possibly by accident, and/or with auto reload in development),
+				// but it's good to have since there are places where we delay (i.e. debounce) saving for performance reasons
+				// so if you made a change and then quickly closed or reloaded the page (by accident, and/or with auto reload in development),
 				// it'll still save, and you won't lose anything. it's great. 🙂
 				this.save(true);
 			})
@@ -359,7 +359,7 @@ class App extends Component {
 			nextProps.documentID === this.props.documentID,
 			"App component is not designed to handle switching documents without reconstruction"
 		);
-		// TODO: make App handle switching documents
+		// TODO: make App component handle switching documents
 	}
 
 	// TODO: collaborative sync with undo/redo, showing operations from other users in realtime
