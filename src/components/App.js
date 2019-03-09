@@ -93,7 +93,11 @@ class App extends Component {
 			this.showError({
 				message: `Can't load ${nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version ${
 					serialized.formatVersion
-				} to ${MINIMUM_LOADABLE_VERSION} currently`,
+				} to ${CURRENT_SERIALIZATION_VERSION}${
+					MINIMUM_LOADABLE_VERSION !== CURRENT_SERIALIZATION_VERSION
+						? ` (minimum loadable: ${MINIMUM_LOADABLE_VERSION})`
+						: ""
+				}`,
 			});
 			this.setState({ loadFailed: true });
 			return;
