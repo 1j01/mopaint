@@ -14,7 +14,7 @@ import tools from "../tools/";
 import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/new-document-importable.svg";
 
-const CURRENT_SERIALIZATION_VERSION = 1;
+const CURRENT_SERIALIZATION_VERSION = 0.1;
 
 class App extends Component {
 	constructor() {
@@ -56,8 +56,24 @@ class App extends Component {
 	loadSerializedDocument(serialized, fromFile) {
 		const nounPhraseThingToLoad = fromFile ? "document" : "document state";
 		if (
-			typeof serialized.version !== "number" ||
-			serialized.version > CURRENT_SERIALIZATION_VERSION
+			typeof serialized.formatVersion !== "number" &&
+			serialized.version === 1
+		) {
+			// TODO: get rid of this upgrade eventually
+			serialized.format = "mopaint";
+			serialized.formatVersion = 0.1;
+			delete serialized.version;
+		}
+		if (serialized.format !== "mopaint") {
+			this.showError({
+				message: `Can't load ${nounPhraseThingToLoad} - it does not appear to be a Mopaint document`,
+			});
+			this.setState({ loadFailed: true });
+			return;
+		}
+		if (
+			typeof serialized.formatVersion !== "number" ||
+			serialized.formatVersion > CURRENT_SERIALIZATION_VERSION
 		) {
 			this.showError({
 				message: `Can't load ${nounPhraseThingToLoad} created by later version of the app`,
@@ -65,18 +81,18 @@ class App extends Component {
 			this.setState({ loadFailed: true });
 			return;
 		}
-		const MINIMUM_LOADABLE_VERSION = 1;
+		const MINIMUM_LOADABLE_VERSION = 0.1;
 		// upgrading code can go here, incrementing the version number step by step
 		// e.g.
-		// if (serialized.version === 0) {
+		// if (serialized.formatVersion === 0.1) {
 		// 	serialized.newPropName = serialized.oldName;
 		// 	delete serialized.oldName;
-		// 	serialized.version = 1;
+		// 	serialized.formatVersion = 0.2;
 		// }
-		if (serialized.version < CURRENT_SERIALIZATION_VERSION) {
+		if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
 			this.showError({
 				message: `Can't load ${nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version ${
-					serialized.version
+					serialized.formatVersion
 				} to ${MINIMUM_LOADABLE_VERSION} currently`,
 			});
 			this.setState({ loadFailed: true });
@@ -187,7 +203,8 @@ class App extends Component {
 			};
 		};
 		return {
-			version: 1,
+			format: "mopaint",
+			formatVersion: 0.1,
 			palette: this.state.palette,
 			selectedSwatch: this.state.selectedSwatch,
 			selectedToolID: this.state.selectedTool.name,
