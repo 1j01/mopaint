@@ -3,6 +3,7 @@ import { List } from "immutable";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
+import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
@@ -12,7 +13,9 @@ import Warning from "./Warning.js";
 import defaultPalette from "../db32-palette.js";
 import tools from "../tools/";
 import "./App.css";
-import { ReactComponent as NewDocumentIcon } from "../icons/new-document-importable.svg";
+import { ReactComponent as NewDocumentIcon } from "../icons/breeze/document-new-importable.svg";
+import { ReactComponent as OpenDocumentIcon } from "../icons/breeze/document-open-importable.svg";
+import { ReactComponent as SaveDocumentIcon } from "../icons/breeze/document-save-importable.svg";
 
 const CURRENT_SERIALIZATION_VERSION = 0.1;
 
@@ -196,7 +199,6 @@ class App extends Component {
 	}
 	serializeDocument() {
 		// TODO: serialize tools as code (+ identifiers), and create a sandbox
-		// at least try to include code for future compatibility
 		const serializeOperation = (operation) => {
 			return {
 				id: operation.id,
@@ -220,7 +222,7 @@ class App extends Component {
 		if (!this.state.loaded) {
 			if (!leavingThisDocument) {
 				// TODO: allow drawing in not-loaded document and carry state over to a new document
-				// (and update the message to reflect that (clearly and reassuringly))
+				// (and update this message to reflect that (clearly, and reassuringly))
 				this.setState({ undos: new List(), redos: new List(), loaded: false });
 				this.showError({
 					message: `The document ${
@@ -303,6 +305,92 @@ class App extends Component {
 			}
 		);
 	}
+	saveDocumentAsPNG(serializedDocument) {
+		const json = JSON.stringify(serializedDocument);
+		const metadata = {
+			Software: "Mopaint",
+			"Mopaint Format Version": serializedDocument.formatVersion,
+			"Creation Time": new Date().toUTCString(),
+			"Program Source": json,
+		};
+
+		console.log("Save PNG with metadata", metadata);
+
+		// TODO: get this in a more "legit" way
+		const canvas = document.querySelector(".DrawingCanvas canvas");
+
+		const verifyEncodedBlob = (
+			encodedBlob,
+			verifiedCallback,
+			mismatchedCallback
+		) => {
+			const file_reader = new FileReader();
+			file_reader.onload = () => {
+				const array_buffer = file_reader.result;
+				const uint8_array = new Uint8Array(array_buffer);
+				const encodedMetadata = readMetadataSync(uint8_array);
+				if (encodedMetadata["Program Source"] === json) {
+					verifiedCallback();
+				} else {
+					mismatchedCallback();
+				}
+			};
+			file_reader.readAsArrayBuffer(encodedBlob);
+		};
+
+		canvas.toBlob((raw_image_blob) => {
+			debugger;
+			injectMetadataIntoBlob(raw_image_blob, metadata, (pngram_blob) => {
+				verifyEncodedBlob(
+					pngram_blob,
+					() => {
+						// TODO: free object URL eventually
+						const pngram_blob_url = URL.createObjectURL(pngram_blob);
+						// console.log("Blob URL, in case a.click() doesn't work:", pngram_blob_url);
+						const a = document.createElement("a");
+						a.download = "export.png";
+						a.href = pngram_blob_url;
+						a.click();
+						// this.showDialog({
+						// 	message: <div>
+						// 		Save as PNG and document/program hybrid!<br/>
+						// 		<a href={pngram_blob_url} download="Drawing.png">Save PNG Program</a><br/>
+						// 	</div>,
+						// });
+					},
+					() => {
+						const program_source_blob = new File(
+							[JSON.stringify(serializedDocument)],
+							"Drawing.mop",
+							{
+								type: "application/x-mopaint+json",
+							}
+						);
+						// TODO: free object URLs eventually
+						const raw_image_blob_url = URL.createObjectURL(raw_image_blob);
+						const program_source_blob_url = URL.createObjectURL(
+							program_source_blob
+						);
+						this.showError({
+							message: (
+								<div>
+									Failed to save document as PNG program!
+									<br />
+									<a href={raw_image_blob_url} download="Drawing (raw).png">
+										Save Raw Image (.png)
+									</a>
+									<br />
+									<a href={program_source_blob_url} download="Drawing.mop">
+										Save Program Source (.mop)
+									</a>
+								</div>
+							),
+						});
+					}
+				);
+			});
+		}, "image/png");
+	}
 	componentDidMount() {
 		this.load();
 
@@ -332,7 +420,7 @@ class App extends Component {
 
 		const handleDroppedFiles = (files) => {
 			if (files[0]) {
-				// TODO: handle image files, Photoshop documents, GIMP documents, etc.
+				// TODO: handle image files, Mopaint/Photoshop/GIMP/Paint.NET documents, etc.
 				loadPalette(files[0], (error, palette) => {
 					if (error) {
 						this.showError({
@@ -493,14 +581,8 @@ class App extends Component {
 					{/* prettier-ignore */}
 					<Warning>
 						⚠
-						The state of the app is persisted across reloads, but there's not yet a way to save a document file,
-						and as far as saving an image goes, all you've got is your browser's context menu, if it provides a "Save image as" option or similar.
-						<br/>
-						<br/>
 						This app is in very early stages of development,
-						and it doesn't represent the future vision for this project,
-						like at all. Except that there's (some sort of) a history view, pretty early on...
-						and that undo/redo history is persisted.
+						and it doesn't represent the future vision for this project.
 						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub for more info</a>.
 					</Warning>
 					<div id="documents-options">
@@ -525,11 +607,34 @@ class App extends Component {
 						<hr />
 						<button
 							id="new-document"
+							className="toolbar-button"
 							onClick={this.props.createNewDocument}
 							aria-label="New Document"
 							title="New Document"
 						>
 							<NewDocumentIcon width="3em" height="3em" />
+						</button>
+						<button
+							id="save-document"
+							className="toolbar-button"
+							onClick={() => {
+								this.saveDocumentAsPNG(this.serializeDocument());
+							}}
+							aria-label="Save Document"
+							title="Save Document"
+						>
+							<SaveDocumentIcon width="3em" height="3em" />
+						</button>
+						<button
+							id="open-document"
+							className="toolbar-button"
+							onClick={() => {
+								this.props.openDocument(this.loadSerializedDocument);
+							}}
+							aria-label="Open Document"
+							title="Open Document"
+						>
+							<OpenDocumentIcon width="3em" height="3em" />
 						</button>
 					</div>
 					<Toolbox

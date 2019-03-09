@@ -29,7 +29,7 @@ body,
 
 /* TODO: DRY button styling with .Toolbox-tool */
 
-#new-document {
+.toolbar-button {
 	display: inline-flex;
 	align-items: center;
 	background: none;
@@ -37,22 +37,22 @@ body,
 	padding: 8px;
 	border-radius: 50%;
 }
-#new-document:hover,
-#new-document:focus {
+.toolbar-button:hover,
+.toolbar-button:focus {
 	background: rgba(128, 128, 128, 0.4);
 }
 
-#new-document:hover:not([aria-checked]),
-#new-document:focus:not([aria-checked]) {
+.toolbar-button:hover:not([aria-checked]),
+.toolbar-button:focus:not([aria-checked]) {
 	background: #cbdbfc;
 	color: black;
 	outline: none;
 }
-#new-document:active:not([aria-checked]) {
+.toolbar-button:active:not([aria-checked]) {
 	background: rgb(214, 228, 255);
 	color: black;
 }
-#new-document[aria-checked] {
+.toolbar-button[aria-checked] {
 	background: #639bff;
 	color: white;
 }
