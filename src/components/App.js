@@ -195,7 +195,6 @@ class App extends Component {
 	}
 	serializeDocument() {
 		// TODO: serialize tools as code (+ identifiers), and create a sandbox
-		// at least try to include code for future compatibility
 		const serializeOperation = (operation) => {
 			return {
 				id: operation.id,
@@ -219,7 +218,7 @@ class App extends Component {
 		if (!this.state.loaded) {
 			if (!leavingThisDocument) {
 				// TODO: allow drawing in not-loaded document and carry state over to a new document
-				// (and update the message to reflect that (clearly and reassuringly))
+				// (and update this message to reflect that (clearly, and reassuringly))
 				this.setState({ undos: new List(), redos: new List(), loaded: false });
 				this.showError({
 					message: `The document ${
@@ -529,6 +528,22 @@ class App extends Component {
 							title="New Document"
 						>
 							<NewDocumentIcon width="3em" height="3em" />
+						</button>
+						<button
+							id="save-document"
+							onClick={() => {
+								this.props.saveDocument(this.serializeDocument());
+							}}
+						>
+							Save
+						</button>
+						<button
+							id="open-document"
+							onClick={() => {
+								this.props.openDocument(this.loadSerializedDocument);
+							}}
+						>
+							Open (TODO)
 						</button>
 					</div>
 					<Toolbox

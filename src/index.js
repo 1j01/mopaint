@@ -39,6 +39,18 @@ const updateDocumentsList = () =>
 		render();
 	});
 
+const saveDocument = (serializedDocument) => {
+	const blob = new File([JSON.stringify(serializedDocument)], "Drawing.mop", {
+		type: "application/x-mopaint",
+	});
+	const a = document.createElement("a");
+	a.href = URL.createObjectURL(blob);
+	a.download = "Drawing.mop";
+	a.click();
+};
+
+const openDocument = () => {};
+
 const render = () => {
 	const container = document.getElementById("root");
 	const documentID = getIDfromCurrentURL();
@@ -53,6 +65,8 @@ const render = () => {
 			documentIDs={documentIDs}
 			goToDocument={goToDocument}
 			createNewDocument={createNewDocument}
+			saveDocument={saveDocument}
+			openDocument={openDocument}
 		/>,
 		container
 	);
