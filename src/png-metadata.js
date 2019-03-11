@@ -55,10 +55,10 @@ export function readMetadataSync(uint8_array) {
 	const chunks = png_chunks_extract(uint8_array);
 
 	const textChunks = chunks
-		.filter(function(chunk) {
+		.filter((chunk) => {
 			return chunk.name === "tEXt";
 		})
-		.map(function(chunk) {
+		.map((chunk) => {
 			return png_chunk_text.decode(chunk.data);
 		});
 

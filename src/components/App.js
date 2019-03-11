@@ -3,6 +3,7 @@ import { List } from "immutable";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
+import isPNG from "is-png";
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
@@ -339,16 +340,15 @@ class App extends Component {
 		};
 
 		canvas.toBlob((raw_image_blob) => {
-			debugger;
 			injectMetadataIntoBlob(raw_image_blob, metadata, (pngram_blob) => {
 				verifyEncodedBlob(
 					pngram_blob,
 					() => {
 						// TODO: free object URL eventually
 						const pngram_blob_url = URL.createObjectURL(pngram_blob);
-						// console.log("Blob URL, in case a.click() doesn't work:", pngram_blob_url);
+						// TODO: create a save dialog so a.click() can work consistently (on a user gesture), and so you can choose a file name
 						const a = document.createElement("a");
-						a.download = "export.png";
+						a.download = "Drawing.png";
 						a.href = pngram_blob_url;
 						a.click();
 						// this.showDialog({
@@ -391,6 +391,83 @@ class App extends Component {
 			});
 		}, "image/png");
 	}
+	loadDocumentFromJSON(json) {
+		let serializedDocument;
+		try {
+			serializedDocument = JSON.parse(json);
+		} catch (error) {
+			// TODO: more details, namely the JSON
+			this.showError({
+				message: "Failed to load as Mopaint document, invalid JSON",
+				error,
+			});
+		}
+		console.log(serializedDocument);
+		// TODO: confirmation / create new document ID to load into
+		// this.loadSerializedDocument(serializedDocument);
+	}
+	handleDroppedOrOpenedFiles(files) {
+		// TODO: progress indication
+		const file = files[0];
+		if (file) {
+			const file_reader = new FileReader();
+			file_reader.onload = () => {
+				const array_buffer = file_reader.result;
+				const uint8_array = new Uint8Array(array_buffer);
+				if (isPNG(uint8_array)) {
+					const metadata = readMetadataSync(uint8_array);
+					const formatVersion = metadata["Mopaint Format Version"];
+					if (formatVersion) {
+						const json = metadata["Program Source"];
+						this.loadDocumentFromJSON(json);
+					} else {
+						// TODO: handle plain image files
+						this.showError({
+							message:
+								"Loading images is not supported yet (other than Mopaint PNG programs)",
+						});
+					}
+				} else if (uint8_array[0] === "{".charCodeAt(0)) {
+					const file_reader = new FileReader();
+					file_reader.onload = () => {
+						this.loadDocumentFromJSON(file_reader.result);
+					};
+					file_reader.readAsText(file);
+					//	TODO: handle palette json files
+				} else {
+					// TODO: handle plain image files, Photoshop/GIMP/Paint.NET documents, etc.
+					loadPalette(file, (error, palette) => {
+						if (error) {
+							this.showError({
+								message: `Failed to load file as a color palette.`, // TODO: more generic message? uh? er? hm? uh...
+								error,
+							});
+						} else {
+							this.setState(
+								{
+									palette: palette.map((color) => color.toString()),
+								},
+								this.saveDebounced.bind(this)
+							);
+						}
+					});
+				}
+			};
+			file_reader.readAsArrayBuffer(file);
+		}
+	}
+	openDocument() {
+		const input = document.createElement("input");
+		input.type = "file";
+		input.style.display = "none";
+		document.body.appendChild(input);
+		// input.multiple = true; // TODO once opening multiple images is a thing
+		input.addEventListener("change", () => {
+			this.handleDroppedOrOpenedFiles(input.files);
+			input.remove();
+		});
+		input.click();
+	}
 	componentDidMount() {
 		this.load();
 
@@ -418,27 +495,6 @@ class App extends Component {
 			})
 		);
 
-		const handleDroppedFiles = (files) => {
-			if (files[0]) {
-				// TODO: handle image files, Mopaint/Photoshop/GIMP/Paint.NET documents, etc.
-				loadPalette(files[0], (error, palette) => {
-					if (error) {
-						this.showError({
-							message: `Failed to load file as a color palette.`,
-							error,
-						});
-					} else {
-						this.setState(
-							{
-								palette: palette.map((color) => color.toString()),
-							},
-							this.saveDebounced.bind(this)
-						);
-					}
-				});
-			}
-		};
-
 		window.addEventListener(
 			"dragover",
 			(this.dragOverLister = (e) => {
@@ -449,7 +505,7 @@ class App extends Component {
 			"drop",
 			(this.dropListener = (e) => {
 				e.preventDefault();
-				handleDroppedFiles(e.dataTransfer.files);
+				this.handleDroppedOrOpenedFiles(e.dataTransfer.files);
 			})
 		);
 	}
@@ -629,7 +685,7 @@ class App extends Component {
 							id="open-document"
 							className="toolbar-button"
 							onClick={() => {
-								this.props.openDocument(this.loadSerializedDocument);
+								this.openDocument();
 							}}
 							aria-label="Open Document"
 							title="Open Document"
