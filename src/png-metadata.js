@@ -26,31 +26,6 @@ export function injectMetadataIntoBlob(blob, metadata, callback) {
 	});
 }
 
-// exports.inject_metadata = function(uint8_array, metadata) {
-// 	const chunks = png_chunks_extract(uint8_array)
-// 	for (let k in metadata){
-// 		chunks.splice(-1, 0, png_chunk_text.encode(k, metadata[k]))
-// 	}
-// 	const reencoded_buffer = png_chunks_encode(chunks)
-// 	const reencoded_blob = new Blob([reencoded_buffer], {type: "image/png"})
-// 	return reencoded_blob
-// }
-
-// export function readMetadataFromBlob(file, callback) {
-// 	const file_reader = new FileReader
-// 	file_reader.onload = function() {
-// 		const array_buffer = this.result
-// 		const uint8_array = new Uint8Array(array_buffer)
-// 		if (is_png(uint8_array)) {
-// 			const metadata = read_metadata(uint8_array)
-// 			callback(metadata);
-// 		}else{
-// 			throw new Error("not a PNG")
-// 		}
-// 	}
-// 	file_reader.readAsArrayBuffer(file)
-// };
-
 export function readMetadataSync(uint8_array) {
 	const chunks = png_chunks_extract(uint8_array);
 
