@@ -396,11 +396,21 @@ class App extends Component {
 		try {
 			serializedDocument = JSON.parse(json);
 		} catch (error) {
-			// TODO: more details, namely the JSON
 			this.showError({
-				message: "Failed to load as Mopaint document, invalid JSON",
+				message: (
+					<div>
+						Failed to load as Mopaint document, invalid JSON
+						<details>
+							<summary>JSON</summary>
+							<div className="actual-details">
+								<pre>{json}</pre>
+							</div>
+						</details>
+					</div>
+				),
 				error,
 			});
+			return;
 		}
 		console.log(serializedDocument);
 		// TODO: confirmation / create new document ID to load into
