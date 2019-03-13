@@ -186,6 +186,18 @@ class App extends Component {
 					this.setState({ loadFailed: true });
 					return;
 				}
+				if (this.props.serializedDocumentToLoad) {
+					if (!serialized) {
+						this.loadSerializedDocument(this.props.serializedDocumentToLoad);
+					} else {
+						this.showError({
+							message:
+								"Almost loaded a document over an existing document. This shouldn't happen!",
+							requestABugReport: true,
+						});
+					}
+					return;
+				}
 				if (!serialized) {
 					this.setState({ loaded: true });
 					console.log(
@@ -412,9 +424,7 @@ class App extends Component {
 			});
 			return;
 		}
-		console.log(serializedDocument);
-		// TODO: confirmation / create new document ID to load into
-		// this.loadSerializedDocument(serializedDocument);
+		this.props.loadNewDocument(serializedDocument);
 	}
 	handleDroppedOrOpenedFiles(files) {
 		// TODO: progress indication
@@ -763,6 +773,8 @@ App.propTypes = {
 	documentIDs: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 	goToDocument: PropTypes.func.isRequired,
 	createNewDocument: PropTypes.func.isRequired,
+	loadNewDocument: PropTypes.func.isRequired,
+	serializedDocumentToLoad: PropTypes.object,
 };
 
 export default App;

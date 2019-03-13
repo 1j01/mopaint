@@ -29,6 +29,14 @@ const createNewDocument = () => {
 	goToDocument(newDocumentID);
 };
 
+let serializedDocumentToLoad;
+const loadNewDocument = (serializedDocument) => {
+	console.log("Start new document from", serializedDocument);
+	serializedDocumentToLoad = serializedDocument;
+	createNewDocument();
+	serializedDocumentToLoad = null;
+};
+
 let documentIDs = []; // TODO: null, and loading indicators anywhere this state is used
 const updateDocumentsList = () =>
 	localforage.keys().then((keys) => {
@@ -53,6 +61,8 @@ const render = () => {
 			documentIDs={documentIDs}
 			goToDocument={goToDocument}
 			createNewDocument={createNewDocument}
+			loadNewDocument={loadNewDocument}
+			serializedDocumentToLoad={serializedDocumentToLoad}
 		/>,
 		container
 	);
