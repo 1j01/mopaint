@@ -1,6 +1,6 @@
 // Based on https://gist.github.com/timdown/021d9c8f2aabc7092df564996f5afbbf
 
-const trimCanvas = (function() {
+const trimCanvas = (() => {
 	function rowBlank(imageData, width, y) {
 		for (let x = 0; x < width; ++x) {
 			if (imageData.data[y * width * 4 + x * 4 + 3] !== 0) return false;
@@ -15,7 +15,7 @@ const trimCanvas = (function() {
 		return true;
 	}
 
-	return function(canvas) {
+	return (canvas) => {
 		const ctx = canvas.getContext("2d");
 		const width = canvas.width;
 		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);

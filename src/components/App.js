@@ -337,41 +337,41 @@ class App extends Component {
 			verifiedCallback,
 			mismatchedCallback
 		) => {
-			const file_reader = new FileReader();
-			file_reader.onload = () => {
-				const array_buffer = file_reader.result;
-				const uint8_array = new Uint8Array(array_buffer);
-				const encodedMetadata = readMetadataSync(uint8_array);
+			const fileReader = new FileReader();
+			fileReader.onload = () => {
+				const arrayBuffer = fileReader.result;
+				const uint8Array = new Uint8Array(arrayBuffer);
+				const encodedMetadata = readMetadataSync(uint8Array);
 				if (encodedMetadata["Program Source"] === json) {
 					verifiedCallback();
 				} else {
 					mismatchedCallback();
 				}
 			};
-			file_reader.readAsArrayBuffer(encodedBlob);
+			fileReader.readAsArrayBuffer(encodedBlob);
 		};
 
-		canvas.toBlob((raw_image_blob) => {
-			injectMetadataIntoBlob(raw_image_blob, metadata, (pngram_blob) => {
+		canvas.toBlob((rawImageBlob) => {
+			injectMetadataIntoBlob(rawImageBlob, metadata, (pngramBlob) => {
 				verifyEncodedBlob(
-					pngram_blob,
+					pngramBlob,
 					() => {
 						// TODO: free object URL eventually
-						const pngram_blob_url = URL.createObjectURL(pngram_blob);
+						const pngramBlobUrl = URL.createObjectURL(pngramBlob);
 						// TODO: create a save dialog so a.click() can work consistently (on a user gesture), and so you can choose a file name
 						const a = document.createElement("a");
 						a.download = "Drawing.png";
-						a.href = pngram_blob_url;
+						a.href = pngramBlobUrl;
 						a.click();
 						// this.showDialog({
 						// 	message: <div>
 						// 		Save as PNG and document/program hybrid!<br/>
-						// 		<a href={pngram_blob_url} download="Drawing.png">Save PNG Program</a><br/>
+						// 		<a href={pngramBlobUrl} download="Drawing.png">Save PNG Program</a><br/>
 						// 	</div>,
 						// });
 					},
 					() => {
-						const program_source_blob = new File(
+						const programSourceBlob = new File(
 							[JSON.stringify(serializedDocument)],
 							"Drawing.mop",
 							{
@@ -379,20 +379,18 @@ class App extends Component {
 							}
 						);
 						// TODO: free object URLs eventually
-						const raw_image_blob_url = URL.createObjectURL(raw_image_blob);
-						const program_source_blob_url = URL.createObjectURL(
-							program_source_blob
-						);
+						const rawImageBlobUrl = URL.createObjectURL(rawImageBlob);
+						const programSourceBlobUrl = URL.createObjectURL(programSourceBlob);
 						this.showError({
 							message: (
 								<div>
 									Failed to save document as PNG program!
 									<br />
-									<a href={raw_image_blob_url} download="Drawing (raw).png">
+									<a href={rawImageBlobUrl} download="Drawing (raw).png">
 										Save Raw Image (.png)
 									</a>
 									<br />
-									<a href={program_source_blob_url} download="Drawing.mop">
+									<a href={programSourceBlobUrl} download="Drawing.mop">
 										Save Program Source (.mop)
 									</a>
 								</div>
@@ -430,12 +428,12 @@ class App extends Component {
 		// TODO: progress indication
 		const file = files[0];
 		if (file) {
-			const file_reader = new FileReader();
-			file_reader.onload = () => {
-				const array_buffer = file_reader.result;
-				const uint8_array = new Uint8Array(array_buffer);
-				if (isPNG(uint8_array)) {
-					const metadata = readMetadataSync(uint8_array);
+			const fileReader = new FileReader();
+			fileReader.onload = () => {
+				const arrayBuffer = fileReader.result;
+				const uint8Array = new Uint8Array(arrayBuffer);
+				if (isPNG(uint8Array)) {
+					const metadata = readMetadataSync(uint8Array);
 					const formatVersion = metadata["Mopaint Format Version"];
 					if (formatVersion) {
 						const json = metadata["Program Source"];
@@ -447,12 +445,12 @@ class App extends Component {
 								"Loading images is not supported yet (other than Mopaint PNG programs)",
 						});
 					}
-				} else if (uint8_array[0] === "{".charCodeAt(0)) {
-					const file_reader = new FileReader();
-					file_reader.onload = () => {
-						this.loadDocumentFromJSON(file_reader.result);
+				} else if (uint8Array[0] === "{".charCodeAt(0)) {
+					const fileReader = new FileReader();
+					fileReader.onload = () => {
+						this.loadDocumentFromJSON(fileReader.result);
 					};
-					file_reader.readAsText(file);
+					fileReader.readAsText(file);
 					//	TODO: handle palette json files
 				} else {
 					// TODO: handle plain image files, Photoshop/GIMP/Paint.NET documents, etc.
@@ -473,7 +471,7 @@ class App extends Component {
 					});
 				}
 			};
-			file_reader.readAsArrayBuffer(file);
+			fileReader.readAsArrayBuffer(file);
 		}
 	}
 	openDocument() {

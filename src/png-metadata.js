@@ -1,41 +1,37 @@
-import png_chunks_extract from "png-chunks-extract";
-import png_chunks_encode from "png-chunks-encode";
-import png_chunk_text from "png-chunk-text";
+import pngChunksExtract from "png-chunks-extract";
+import pngChunksEncode from "png-chunks-encode";
+import pngChunkText from "png-chunk-text";
 
-const read_png_chunks_from_blob = function(blob, callback) {
-	const file_reader = new FileReader();
-	file_reader.onload = function() {
-		const array_buffer = this.result;
-		const uint8_array = new Uint8Array(array_buffer);
-		const chunks = png_chunks_extract(uint8_array);
+const readPngChunksFromBlob = (blob, callback) => {
+	const fileReader = new FileReader();
+	fileReader.onload = () => {
+		const arrayBuffer = fileReader.result;
+		const uint8Array = new Uint8Array(arrayBuffer);
+		const chunks = pngChunksExtract(uint8Array);
 		callback(chunks);
 	};
-	file_reader.readAsArrayBuffer(blob);
+	fileReader.readAsArrayBuffer(blob);
 };
 
 export function injectMetadataIntoBlob(blob, metadata, callback) {
-	read_png_chunks_from_blob(blob, function(chunks) {
+	readPngChunksFromBlob(blob, (chunks) => {
 		for (let k in metadata) {
 			if (metadata.hasOwnProperty(k)) {
-				chunks.splice(-1, 0, png_chunk_text.encode(k, metadata[k]));
+				chunks.splice(-1, 0, pngChunkText.encode(k, metadata[k]));
 			}
 		}
-		const reencoded_buffer = png_chunks_encode(chunks);
-		const reencoded_blob = new Blob([reencoded_buffer], { type: "image/png" });
-		callback(reencoded_blob);
+		const reencodedBuffer = pngChunksEncode(chunks);
+		const reencodedBlob = new Blob([reencodedBuffer], { type: "image/png" });
+		callback(reencodedBlob);
 	});
 }
 
-export function readMetadataSync(uint8_array) {
-	const chunks = png_chunks_extract(uint8_array);
+export function readMetadataSync(uint8Array) {
+	const chunks = pngChunksExtract(uint8Array);
 
 	const textChunks = chunks
-		.filter((chunk) => {
-			return chunk.name === "tEXt";
-		})
-		.map((chunk) => {
-			return png_chunk_text.decode(chunk.data);
-		});
+		.filter((chunk) => chunk.name === "tEXt")
+		.map((chunk) => pngChunkText.decode(chunk.data));
 
 	const metadata = {};
 

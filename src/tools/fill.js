@@ -37,95 +37,95 @@ const fill = (ctx, x, y, swatch) => {
 	y = Math.floor(y);
 
 	const stack = [[x, y]];
-	const image_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-	let pixel_index = (y * canvas.width + x) * 4;
-	const start_r = image_data.data[pixel_index + 0];
-	const start_g = image_data.data[pixel_index + 1];
-	const start_b = image_data.data[pixel_index + 2];
-	const start_a = image_data.data[pixel_index + 3];
+	const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	let pixelIndex = (y * canvas.width + x) * 4;
+	const startR = imageData.data[pixelIndex + 0];
+	const startG = imageData.data[pixelIndex + 1];
+	const startB = imageData.data[pixelIndex + 2];
+	const startA = imageData.data[pixelIndex + 3];
 
-	const one_pixel_canvas = document.createElement("canvas");
-	const one_pixel_canvas_ctx = one_pixel_canvas.getContext("2d");
-	one_pixel_canvas_ctx.fillStyle = swatch;
-	one_pixel_canvas_ctx.fillRect(0, 0, 1, 1);
-	const one_pixel_image_data = one_pixel_canvas_ctx.getImageData(0, 0, 1, 1);
-	const [fill_r, fill_g, fill_b, fill_a] = one_pixel_image_data.data;
+	const onePixelCanvas = document.createElement("canvas");
+	const onePixelCanvasCtx = onePixelCanvas.getContext("2d");
+	onePixelCanvasCtx.fillStyle = swatch;
+	onePixelCanvasCtx.fillRect(0, 0, 1, 1);
+	const onePixelImageData = onePixelCanvasCtx.getImageData(0, 0, 1, 1);
+	const [fillR, fillG, fillB, fillA] = onePixelImageData.data;
 
-	// console.log([start_r, start_g, start_b, start_a], [fill_r, fill_g, fill_b, fill_a]);
+	// console.log([startR, startG, startB, startA], [fillR, fillG, fillB, fillA]);
 
 	if (
-		fill_r === start_r &&
-		fill_g === start_g &&
-		fill_b === start_b &&
-		fill_a === start_a
+		fillR === startR &&
+		fillG === startG &&
+		fillB === startB &&
+		fillA === startA
 	) {
 		return;
 	}
 
 	while (stack.length) {
-		let new_pos, x, y, pixel_index, reach_left, reach_right;
-		new_pos = stack.pop();
-		x = new_pos[0];
-		y = new_pos[1];
+		let newPos, x, y, pixelIndex, reachLeft, reachRight;
+		newPos = stack.pop();
+		x = newPos[0];
+		y = newPos[1];
 
-		pixel_index = (y * canvas.width + x) * 4;
-		while (matches_start_color(pixel_index)) {
+		pixelIndex = (y * canvas.width + x) * 4;
+		while (matchesStartColor(pixelIndex)) {
 			y--;
-			pixel_index = (y * canvas.width + x) * 4;
+			pixelIndex = (y * canvas.width + x) * 4;
 		}
-		reach_left = false;
-		reach_right = false;
+		reachLeft = false;
+		reachRight = false;
 		while (true) {
 			y++;
-			pixel_index = (y * canvas.width + x) * 4;
+			pixelIndex = (y * canvas.width + x) * 4;
 
-			if (!(y < canvas.height && matches_start_color(pixel_index))) {
+			if (!(y < canvas.height && matchesStartColor(pixelIndex))) {
 				break;
 			}
 
-			color_pixel(pixel_index);
+			colorPixel(pixelIndex);
 
 			if (x > 0) {
-				if (matches_start_color(pixel_index - 4)) {
-					if (!reach_left) {
+				if (matchesStartColor(pixelIndex - 4)) {
+					if (!reachLeft) {
 						stack.push([x - 1, y]);
-						reach_left = true;
+						reachLeft = true;
 					}
-				} else if (reach_left) {
-					reach_left = false;
+				} else if (reachLeft) {
+					reachLeft = false;
 				}
 			}
 
 			if (x < canvas.width - 1) {
-				if (matches_start_color(pixel_index + 4)) {
-					if (!reach_right) {
+				if (matchesStartColor(pixelIndex + 4)) {
+					if (!reachRight) {
 						stack.push([x + 1, y]);
-						reach_right = true;
+						reachRight = true;
 					}
-				} else if (reach_right) {
-					reach_right = false;
+				} else if (reachRight) {
+					reachRight = false;
 				}
 			}
 
-			pixel_index += canvas.width * 4;
+			pixelIndex += canvas.width * 4;
 		}
 	}
-	ctx.putImageData(image_data, 0, 0);
+	ctx.putImageData(imageData, 0, 0);
 
-	function matches_start_color(pixel_index) {
+	function matchesStartColor(pixelIndex) {
 		return (
-			image_data.data[pixel_index + 0] === start_r &&
-			image_data.data[pixel_index + 1] === start_g &&
-			image_data.data[pixel_index + 2] === start_b &&
-			image_data.data[pixel_index + 3] === start_a
+			imageData.data[pixelIndex + 0] === startR &&
+			imageData.data[pixelIndex + 1] === startG &&
+			imageData.data[pixelIndex + 2] === startB &&
+			imageData.data[pixelIndex + 3] === startA
 		);
 	}
 
-	function color_pixel(pixel_index) {
-		image_data.data[pixel_index + 0] = fill_r;
-		image_data.data[pixel_index + 1] = fill_g;
-		image_data.data[pixel_index + 2] = fill_b;
-		image_data.data[pixel_index + 3] = fill_a;
+	function colorPixel(pixelIndex) {
+		imageData.data[pixelIndex + 0] = fillR;
+		imageData.data[pixelIndex + 1] = fillG;
+		imageData.data[pixelIndex + 2] = fillB;
+		imageData.data[pixelIndex + 3] = fillA;
 	}
 };
 
