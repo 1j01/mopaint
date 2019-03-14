@@ -503,13 +503,24 @@ class App extends Component {
 		window.addEventListener(
 			"keydown",
 			(this.keyDownListener = (event) => {
+				// TODO: metaKey for mac
 				if (event.ctrlKey) {
 					if (event.key === "z") {
 						this.undo();
 					} else if (event.key === "Z" || event.key === "y") {
 						this.redo();
+					} else if (event.key === "s") {
+						this.saveDocumentAsPNG(this.serializeDocument());
+						//this.showSaveDialog();
+					} else if (event.key === "o") {
+						this.openDocument();
+					} else {
+						return; // don't prevent default
 					}
+				} else {
+					return; // don't prevent default
 				}
+				event.preventDefault();
 			})
 		);
 
