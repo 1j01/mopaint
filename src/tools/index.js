@@ -4,6 +4,9 @@ import rectangle from "./rectangle.js";
 import fill from "./fill.js";
 import mirrorReflect from "./mirror-symmetry.js";
 import rotationallyReflect from "./rotational-symmetry.js";
+// import { ReactComponent as SymmetryIcon } from "../icons/noun-symmetry.svg";
+// import { ReactComponent as CelticKnotIcon } from "../icons/noun-celtic-knot.svg";
+import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket-flipped.svg";
 
 const tools = {
 	"Freeform Line": {
@@ -22,7 +25,7 @@ const tools = {
 		drawShape: rectangle,
 	},
 	Fill: {
-		icon: "flaticons-fill-bucket-flipped.svg",
+		Icon: FillBucketIcon,
 		// these UI function signatures are pretty arbitrary and would only get worse
 		// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
 		// and it doesn't help that there's this layer of indirection where I have to map these signatures
@@ -40,14 +43,14 @@ const pointModifiers = [
 		prefix: "Mirror Symmetric ",
 		// name: "Mirror Symmetry",
 		// name: "Mirror Reflect",
-		// icon: "noun-symmetry.svg",
+		// icon: SymmetryIcon,
 		pointToPoints: mirrorReflect,
 	},
 	{
 		prefix: "Rotationally Symmetric ",
 		// name: "Rotational Symmetry",
 		// name: "Point Reflect",
-		// icon: "noun-celtic-knot.svg",
+		// icon: CelticKnotIcon,
 		pointToPoints: rotationallyReflect,
 	},
 ];

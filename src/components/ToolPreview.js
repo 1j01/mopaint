@@ -7,15 +7,9 @@ import trimCanvas from "../trim-canvas.js";
 class ToolPreview extends Component {
 	render() {
 		const { width, height, tool } = this.props;
-		if (tool.icon) {
+		if (tool.Icon) {
 			return (
-				<img
-					className="ToolPreview"
-					src={"icons/" + tool.icon}
-					width={width}
-					height={height}
-					alt=""
-				/>
+				<tool.Icon className="ToolPreview" width={width} height={height} />
 			);
 		} else {
 			return (
