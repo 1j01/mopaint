@@ -510,8 +510,7 @@ class App extends Component {
 					} else if (event.key === "Z" || event.key === "y") {
 						this.redo();
 					} else if (event.key === "s") {
-						this.saveDocumentAsPNG(this.serializeDocument());
-						//this.showSaveDialog();
+						this.showSaveDialog();
 					} else if (event.key === "o") {
 						this.openDocument();
 					} else {
@@ -612,7 +611,7 @@ class App extends Component {
 			selectedTool,
 			palette,
 			undos,
-			errorState,
+			dialogState,
 		} = this.state;
 
 		const selectSwatch = (swatch) => {
@@ -703,7 +702,7 @@ class App extends Component {
 							id="save-document"
 							className="toolbar-button"
 							onClick={() => {
-								this.saveDocumentAsPNG(this.serializeDocument());
+								this.showSaveDialog();
 							}}
 							aria-label="Save Document"
 							title="Save Document"
@@ -756,24 +755,56 @@ class App extends Component {
 						thumbnailsByOperation={this.thumbnailsByOperation}
 					/>
 				</div>
-				{errorState && (
+				{dialogState && (
 					<Dialog
-						message={errorState.message}
-						error={errorState.error}
-						requestABugReport={errorState.requestABugReport}
-						extraButtons={errorState.extraButtons}
-						buttons={errorState.buttons}
-						close={this.clearError.bind(this)}
+						message={dialogState.message}
+						error={dialogState.error}
+						isError={dialogState.isError}
+						requestABugReport={dialogState.requestABugReport}
+						extraButtons={dialogState.extraButtons}
+						buttons={dialogState.buttons}
+						close={this.closeDialog.bind(this)}
 					/>
 				)}
 			</div>
 		);
 	}
-	showError(errorState) {
-		this.setState({ errorState });
+	showError(dialogState) {
+		dialogState = { isError: true, ...dialogState };
+		this.setState({ dialogState });
 	}
-	clearError() {
-		this.setState({ errorState: null });
+	showMessage(dialogState) {
+		dialogState = { isError: false, ...dialogState };
+		this.setState({ dialogState });
+	}
+	closeDialog() {
+		this.setState({ dialogState: null });
+	}
+	showSaveDialog() {
+		this.showMessage({
+			message: (
+				<div className="save-dialog-message">
+					<form className="save-dialog-form">
+						<label>
+							Name: <input type="text" placeholder="Drawing" autoFocus={true} />{" "}
+							{/*(TODO: actually select the contents of the field by default)*/}
+						</label>
+					</form>
+					This will save a hybrid file which can be shared as an image but also
+					loaded back into Mopaint with all document history.
+				</div>
+			),
+			extraButtons: (
+				<button
+					onClick={() => {
+						this.saveDocumentAsPNG(this.serializeDocument());
+						this.closeDialog();
+					}}
+				>
+					Save
+				</button>
+			),
+		});
 	}
 }
 

@@ -15,6 +15,7 @@ const ReportBugLink = (props) => (
 export default function Dialog({
 	message,
 	error,
+	isError,
 	requestABugReport,
 	close,
 	extraButtons,
@@ -68,6 +69,7 @@ export default function Dialog({
 Dialog.propTypes = {
 	message: PropTypes.node.isRequired,
 	error: PropTypes.object,
+	isError: PropTypes.bool,
 	requestABugReport: PropTypes.bool,
 	close: PropTypes.func,
 	extraButtons: PropTypes.node,
