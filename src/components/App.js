@@ -14,9 +14,9 @@ import Warning from "./Warning.js";
 import defaultPalette from "../db32-palette.js";
 import tools from "../tools/";
 import "./App.css";
-import { ReactComponent as NewDocumentIcon } from "../icons/breeze/document-new-importable.svg";
-import { ReactComponent as OpenDocumentIcon } from "../icons/breeze/document-open-importable.svg";
-import { ReactComponent as SaveDocumentIcon } from "../icons/breeze/document-save-importable.svg";
+import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
+import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
+import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
 
 const CURRENT_SERIALIZATION_VERSION = 0.1;
 
@@ -696,7 +696,7 @@ class App extends Component {
 							aria-label="New Document"
 							title="New Document"
 						>
-							<NewDocumentIcon width="3em" height="3em" />
+							<NewDocumentIcon width="48px" height="48px" />
 						</button>
 						<button
 							id="save-document"
@@ -707,7 +707,7 @@ class App extends Component {
 							aria-label="Save Document"
 							title="Save Document"
 						>
-							<SaveDocumentIcon width="3em" height="3em" />
+							<SaveDocumentIcon width="48px" height="48px" />
 						</button>
 						<button
 							id="open-document"
@@ -718,7 +718,7 @@ class App extends Component {
 							aria-label="Open Document"
 							title="Open Document"
 						>
-							<OpenDocumentIcon width="3em" height="3em" />
+							<OpenDocumentIcon width="48px" height="48px" />
 						</button>
 					</div>
 					<Toolbox
