@@ -503,6 +503,12 @@ class App extends Component {
 		window.addEventListener(
 			"keydown",
 			(this.keyDownListener = (event) => {
+				if (
+					document.activeElement &&
+					document.activeElement.matches("input, textarea")
+				) {
+					return;
+				}
 				// TODO: metaKey for mac
 				if (event.ctrlKey) {
 					if (event.key === "z") {
@@ -781,19 +787,43 @@ class App extends Component {
 		this.setState({ dialogState: null });
 	}
 	showSaveDialog() {
+		let name = "Drawing";
+		class SaveDialog extends Component {
+			constructor() {
+				super();
+				this.inputRef = React.createRef();
+			}
+			render() {
+				return (
+					<div className="save-dialog-message">
+						<form className="save-dialog-form">
+							<label>
+								Name:{" "}
+								<input
+									type="text"
+									value={name}
+									autoFocus={true}
+									onChange={(event) => {
+										name = event.target.value;
+										this.setState({ a: "b" });
+									}}
+									ref={this.inputRef}
+								/>
+							</label>
+						</form>
+						<p style={{ maxWidth: 500 }}>
+							This will save a hybrid file which can be shared as an image but
+							also loaded back into Mopaint with all document history.
+						</p>
+					</div>
+				);
+			}
+			componentDidMount() {
+				this.inputRef.current.select();
+			}
+		}
 		this.showMessage({
-			message: (
-				<div className="save-dialog-message">
-					<form className="save-dialog-form">
-						<label>
-							Name: <input type="text" placeholder="Drawing" autoFocus={true} />{" "}
-							{/*(TODO: actually select the contents of the field by default)*/}
-						</label>
-					</form>
-					This will save a hybrid file which can be shared as an image but also
-					loaded back into Mopaint with all document history.
-				</div>
-			),
+			message: <SaveDialog />,
 			extraButtons: (
 				<button
 					onClick={() => {
