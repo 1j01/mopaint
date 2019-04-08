@@ -596,9 +596,9 @@ class App extends Component {
 
 		const goToEntry = (entry) => {
 			const { undos, redos } = this.state;
-			var indexInUndos = undos.indexOf(entry);
-			var indexInRedos = redos.indexOf(entry);
-			var isCurrent = entry === undos.last();
+			const indexInUndos = undos.indexOf(entry);
+			const indexInRedos = redos.indexOf(entry);
+			const isCurrent = entry === undos.last();
 			if (isCurrent) {
 				return;
 			}

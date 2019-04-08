@@ -16,7 +16,7 @@ if (
 
 const urlForID = (documentID) =>
 	`${window.location.origin}${window.location.pathname}?document=${documentID}`;
-const getIDfromCurrentURL = () =>
+const getIDFromCurrentURL = () =>
 	(window.location.search.match(/document=([\w\-./]*)/) || [])[1];
 
 const goToDocument = (documentID) => {
@@ -49,7 +49,7 @@ const updateDocumentsList = () =>
 
 const render = () => {
 	const container = document.getElementById("root");
-	const documentID = getIDfromCurrentURL();
+	const documentID = getIDFromCurrentURL();
 	if (!documentID) {
 		createNewDocument();
 		return;
