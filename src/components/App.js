@@ -1,6 +1,6 @@
 import localforage from "localforage";
 import { List } from "immutable";
-import React, { Component } from "react";
+import React, { Component, useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
 import isPNG from "is-png";
@@ -318,7 +318,7 @@ class App extends Component {
 			}
 		);
 	}
-	saveDocumentAsPNG(serializedDocument) {
+	createPNGram(serializedDocument, callback, mismatchedCallback) {
 		const json = JSON.stringify(serializedDocument);
 		const metadata = {
 			Software: "Mopaint",
@@ -328,9 +328,6 @@ class App extends Component {
 		};
 
 		console.log("Save PNG with metadata", metadata);
-
-		// TODO: get this in a more "legit" way
-		const canvas = document.querySelector(".DrawingCanvas canvas");
 
 		const verifyEncodedBlob = (
 			encodedBlob,
@@ -351,55 +348,25 @@ class App extends Component {
 			fileReader.readAsArrayBuffer(encodedBlob);
 		};
 
-		canvas.toBlob((rawImageBlob) => {
+		this.createRawPNG((rawImageBlob) => {
 			injectMetadataIntoBlob(rawImageBlob, metadata, (pngramBlob) => {
 				verifyEncodedBlob(
 					pngramBlob,
 					() => {
-						// TODO: free object URL eventually
-						const pngramBlobUrl = URL.createObjectURL(pngramBlob);
-						// TODO: create a save dialog so a.click() can work consistently (on a user gesture), and so you can choose a file name
-						const a = document.createElement("a");
-						a.download = "Drawing.png";
-						a.href = pngramBlobUrl;
-						a.click();
-						// this.showDialog({
-						// 	message: <div>
-						// 		Save as PNG and document/program hybrid!<br/>
-						// 		<a href={pngramBlobUrl} download="Drawing.png">Save PNG Program</a><br/>
-						// 	</div>,
-						// });
+						callback(pngramBlob);
 					},
 					() => {
-						const programSourceBlob = new File(
-							[JSON.stringify(serializedDocument)],
-							"Drawing.mop",
-							{
-								type: "application/x-mopaint+json",
-							}
-						);
-						// TODO: free object URLs eventually
-						const rawImageBlobUrl = URL.createObjectURL(rawImageBlob);
-						const programSourceBlobUrl = URL.createObjectURL(programSourceBlob);
-						this.showError({
-							message: (
-								<div>
-									Failed to save document as PNG program!
-									<br />
-									<a href={rawImageBlobUrl} download="Drawing (raw).png">
-										Save Raw Image (.png)
-									</a>
-									<br />
-									<a href={programSourceBlobUrl} download="Drawing.mop">
-										Save Program Source (.mop)
-									</a>
-								</div>
-							),
-						});
+						mismatchedCallback();
 					}
 				);
 			});
-		}, "image/png");
+		});
+	}
+	createRawPNG(callback) {
+		// TODO: get this in a more "legit" way (i.e. refs)
+		const canvas = document.querySelector(".DrawingCanvas canvas");
+
+		canvas.toBlob(callback, "image/png");
 	}
 	loadDocumentFromJSON(json) {
 		let serializedDocument;
@@ -617,7 +584,7 @@ class App extends Component {
 			selectedTool,
 			palette,
 			undos,
-			dialogState,
+			dialog,
 		} = this.state;
 
 		const selectSwatch = (swatch) => {
@@ -761,80 +728,160 @@ class App extends Component {
 						thumbnailsByOperation={this.thumbnailsByOperation}
 					/>
 				</div>
-				{dialogState && (
-					<Dialog
-						message={dialogState.message}
-						error={dialogState.error}
-						isError={dialogState.isError}
-						requestABugReport={dialogState.requestABugReport}
-						extraButtons={dialogState.extraButtons}
-						buttons={dialogState.buttons}
-						close={this.closeDialog.bind(this)}
-					/>
-				)}
+				{dialog}
 			</div>
 		);
 	}
 	showError(dialogState) {
 		dialogState = { isError: true, ...dialogState };
-		this.setState({ dialogState });
+		this.showMessage(dialogState);
 	}
 	showMessage(dialogState) {
-		dialogState = { isError: false, ...dialogState };
-		this.setState({ dialogState });
+		this.showDialog(
+			<Dialog
+				message={dialogState.message}
+				error={dialogState.error}
+				isError={dialogState.isError}
+				requestABugReport={dialogState.requestABugReport}
+				extraButtons={dialogState.extraButtons}
+				buttons={dialogState.buttons}
+				close={this.closeDialog.bind(this)}
+			/>
+		);
+	}
+	showDialog(dialog) {
+		this.setState({ dialog });
 	}
 	closeDialog() {
-		this.setState({ dialogState: null });
+		this.setState({ dialog: null });
 	}
 	showSaveDialog() {
-		let name = "Drawing";
-		class SaveDialog extends Component {
-			constructor() {
-				super();
-				this.inputRef = React.createRef();
-			}
-			render() {
-				return (
-					<div className="save-dialog-message">
-						<form className="save-dialog-form">
-							<label>
-								Name:{" "}
-								<input
-									type="text"
-									value={name}
-									autoFocus={true}
-									onChange={(event) => {
-										name = event.target.value;
-										this.setState({ a: "b" });
-									}}
-									ref={this.inputRef}
-								/>
-							</label>
-						</form>
-						<p style={{ maxWidth: 500 }}>
-							This will save a hybrid file which can be shared as an image but
-							also loaded back into Mopaint with all document history.
-						</p>
-					</div>
-				);
-			}
-			componentDidMount() {
-				this.inputRef.current.select();
-			}
+		const createPNGram = this.createPNGram.bind(this);
+		const createRawPNG = this.createRawPNG.bind(this);
+		const serializeDocument = this.serializeDocument.bind(this);
+		const closeDialog = this.closeDialog.bind(this);
+		const showError = this.showError.bind(this);
+
+		const a = document.createElement("a");
+		a.className = "for-downloading-files";
+		a.tabIndex = -1;
+		document.body.appendChild(a);
+
+		function SaveDialog() {
+
+			const [saveType, setSaveType] = useState("hybrid");
+			const [name, setName] = useState("Drawing");
+			const [blobUrl, setBlobUrl] = useState(null);
+			const inputRef = useRef(null);
+
+			const fileExt = {
+				"hybrid": "png",
+				"raw-image": "png",
+				"program": "mop"
+			}[saveType];
+			const fileName = name.replace(new RegExp("\\." + fileExt + "$", "i"), "") + "." + fileExt;
+
+			const saveFileAndCloseDialog = () => {
+				a.download = fileName;
+				a.href = blobUrl;
+				console.log("Download", blobUrl);
+				a.click();
+				closeDialog();
+			};
+
+			useEffect(()=> {
+				inputRef.current.select();
+			}, []);
+
+			useEffect(()=> {
+				return ()=> {
+					URL.revokeObjectURL(blobUrl);
+					a.remove();
+				};
+			}, []);
+
+			useEffect(()=> {
+				URL.revokeObjectURL(blobUrl);
+				setBlobUrl(null);
+				if (saveType === "hybrid") {
+					const serializedDocument = serializeDocument();
+					createPNGram(serializedDocument, (pngramBlob)=> {
+						const pngramBlobUrl = URL.createObjectURL(pngramBlob);
+						setBlobUrl(pngramBlobUrl);
+					}, ()=> {
+						alert("Failed to save hybrid document (probably too large) - try the other save options.");
+					});
+				} else if(saveType === "raw-image") {
+					createRawPNG((rawPngBlob)=> {
+						const rawPngBlobUrl = URL.createObjectURL(rawPngBlob);
+						setBlobUrl(rawPngBlobUrl);
+					});
+				} else if(saveType === "program") {
+					const serializedDocument = serializeDocument();
+					const programSourceBlob = new File(
+						[JSON.stringify(serializedDocument)],
+						fileName,
+						{
+							type: "application/x-mopaint+json",
+						}
+					);
+					const programBlobUrl = URL.createObjectURL(programSourceBlob);
+					setBlobUrl(programBlobUrl);
+				} else {
+					showError({message: `This shouldn't happen, saveType=${saveType}`, requestABugReport: true});
+				}
+			}, [saveType]);
+
+			return (
+				<Dialog
+					message={
+						<div className="save-dialog-message">
+							<form
+								className="save-dialog-form"
+								onSubmit={(event)=> { event.preventDefault(); saveFileAndCloseDialog(); }}
+							>
+								<label>
+									Name:{" "}
+									<input
+										type="text"
+										value={name}
+										autoFocus={true}
+										onChange={(event) => {
+											setName(event.target.value);
+										}}
+										ref={inputRef}
+									/>
+								</label>
+								<div style={{marginTop: "1em"}}>
+									<select
+										value={saveType}
+										onChange={(event)=> setSaveType(event.target.value) }
+									>
+										<option value="hybrid">Hybrid Mopaint Document and Image (.png)</option>
+										<option value="program">Mopaint Document (.mop)</option>
+										<option value="raw-image">Raw Image (.png)</option>
+										{/*<option value="hybrid">Hybrid Mopaint Program and Image (.png)</option>*/}
+										{/*<option value="program">Mopaint Program (.mop)</option>*/}
+										{/*<option value="raw-image">Raw/Plain Dead Fish Image (.png)</option>*/}
+									</select>
+								</div>
+							</form>
+						</div>
+					}
+					close={closeDialog}
+					extraButtons={
+						<button
+							onClick={saveFileAndCloseDialog}
+							disabled={!blobUrl}
+						>
+							{/* TODO: loading spinner instead */}
+							Save {!blobUrl ? "(please wait...)" : ""}
+						</button>
+					}
+				/>
+			);
 		}
-		this.showMessage({
-			message: <SaveDialog />,
-			extraButtons: (
-				<button
-					onClick={() => {
-						this.saveDocumentAsPNG(this.serializeDocument());
-						this.closeDialog();
-					}}
-				>
-					Save
-				</button>
-			),
-		});
+		this.showDialog(<SaveDialog/>);
 	}
 }
 
