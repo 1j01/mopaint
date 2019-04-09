@@ -579,13 +579,7 @@ class App extends Component {
 	}
 
 	render() {
-		const {
-			selectedSwatch,
-			selectedTool,
-			palette,
-			undos,
-			dialog,
-		} = this.state;
+		const { selectedSwatch, selectedTool, palette, undos, dialog } = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch }, this.saveDebounced.bind(this));
@@ -765,7 +759,6 @@ class App extends Component {
 		document.body.appendChild(a);
 
 		function SaveDialog() {
-
 			const [saveType, setSaveType] = useState("hybrid");
 			const [name, setName] = useState("Drawing");
 			const [blobUrl, setBlobUrl] = useState(null);
@@ -786,34 +779,34 @@ class App extends Component {
 				closeDialog();
 			};
 
-			useEffect(()=> {
+			useEffect(() => {
 				inputRef.current.select();
 			}, []);
 
-			useEffect(()=> {
-				return ()=> {
+			useEffect(() => {
+				return () => {
 					URL.revokeObjectURL(blobUrl);
 					a.remove();
 				};
 			}, []);
 
-			useEffect(()=> {
+			useEffect(() => {
 				URL.revokeObjectURL(blobUrl);
 				setBlobUrl(null);
 				if (saveType === "hybrid") {
 					const serializedDocument = serializeDocument();
-					createPNGram(serializedDocument, (pngramBlob)=> {
+					createPNGram(serializedDocument, (pngramBlob) => {
 						const pngramBlobUrl = URL.createObjectURL(pngramBlob);
 						setBlobUrl(pngramBlobUrl);
-					}, ()=> {
+					}, () => {
 						alert("Failed to save hybrid document (probably too large) - try the other save options.");
 					});
-				} else if(saveType === "raw-image") {
-					createRawPNG((rawPngBlob)=> {
+				} else if (saveType === "raw-image") {
+					createRawPNG((rawPngBlob) => {
 						const rawPngBlobUrl = URL.createObjectURL(rawPngBlob);
 						setBlobUrl(rawPngBlobUrl);
 					});
-				} else if(saveType === "program") {
+				} else if (saveType === "program") {
 					const serializedDocument = serializeDocument();
 					const programSourceBlob = new File(
 						[JSON.stringify(serializedDocument)],
@@ -825,7 +818,7 @@ class App extends Component {
 					const programBlobUrl = URL.createObjectURL(programSourceBlob);
 					setBlobUrl(programBlobUrl);
 				} else {
-					showError({message: `This shouldn't happen, saveType=${saveType}`, requestABugReport: true});
+					showError({ message: `This shouldn't happen, saveType=${saveType}`, requestABugReport: true });
 				}
 			}, [saveType]);
 
@@ -835,7 +828,10 @@ class App extends Component {
 						<div className="save-dialog-message">
 							<form
 								className="save-dialog-form"
-								onSubmit={(event)=> { event.preventDefault(); saveFileAndCloseDialog(); }}
+								onSubmit={(event) => {
+									event.preventDefault();
+									saveFileAndCloseDialog();
+								}}
 							>
 								<label>
 									Name:{" "}
@@ -849,10 +845,10 @@ class App extends Component {
 										ref={inputRef}
 									/>
 								</label>
-								<div style={{marginTop: "1em"}}>
+								<div style={{ marginTop: "1em" }}>
 									<select
 										value={saveType}
-										onChange={(event)=> setSaveType(event.target.value) }
+										onChange={(event) => setSaveType(event.target.value)}
 									>
 										<option value="hybrid">Hybrid Mopaint Document and Image (.png)</option>
 										<option value="program">Mopaint Document (.mop)</option>
@@ -878,7 +874,7 @@ class App extends Component {
 				/>
 			);
 		}
-		this.showDialog(<SaveDialog/>);
+		this.showDialog(<SaveDialog />);
 	}
 }
 
