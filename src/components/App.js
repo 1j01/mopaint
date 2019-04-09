@@ -635,11 +635,8 @@ class App extends Component {
 		return (
 			<div className="App">
 				<main>
-					{/* prettier-ignore */}
 					<Warning>
-						⚠
-						This app is in very early stages of development,
-						and it doesn't represent the future vision for this project.
+						⚠ This app is in very early stages of development. There are Big Plans.
 						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub for more info</a>.
 					</Warning>
 					<div id="documents-options">
