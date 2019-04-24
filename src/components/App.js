@@ -56,6 +56,7 @@ class App extends Component {
 		};
 		this.saveDebounced = debounce(this.save.bind(this), 500);
 	}
+
 	loadSerializedDocument(serialized, fromFile) {
 		// TODO: maybe don't call it "state" when more explicitly loading a document, i.e. from a file
 		const nounPhraseThingToLoad = fromFile ? "document" : "document state";
@@ -97,11 +98,11 @@ class App extends Component {
 			this.showError({
 				message: `Can't load ${nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version ${
 					serialized.formatVersion
-				} to ${CURRENT_SERIALIZATION_VERSION}${
+					} to ${CURRENT_SERIALIZATION_VERSION}${
 					MINIMUM_LOADABLE_VERSION !== CURRENT_SERIALIZATION_VERSION
 						? ` (minimum loadable: ${MINIMUM_LOADABLE_VERSION})`
 						: ""
-				}`,
+					}`,
 			});
 			this.setState({ loadFailed: true });
 			return;
@@ -124,11 +125,11 @@ class App extends Component {
 			expectPropertiesToExist(
 				["id", "toolID", "points", "swatch"],
 				serializedOperation,
-				`on operation with ID ${serializedOperation.id}`
+				`on operation with ID ${serializedOperation.id}`,
 			);
 			const tool = findToolByID(
 				serializedOperation.toolID,
-				`on operation with ID ${serializedOperation.id}`
+				`on operation with ID ${serializedOperation.id}`,
 			);
 			return {
 				id: serializedOperation.id,
@@ -144,14 +145,14 @@ class App extends Component {
 			expectPropertiesToExist(
 				["palette", "selectedSwatch", "selectedToolID", "undos", "redos"],
 				serialized,
-				"on the root document object"
+				"on the root document object",
 			);
 			stateUpdates = {
 				palette: serialized.palette,
 				selectedSwatch: serialized.selectedSwatch,
 				selectedTool: findToolByID(
 					serialized.selectedToolID,
-					"(for the selected tool)"
+					"(for the selected tool)",
 				),
 				undos: new List(serialized.undos.map(deserializeOperation)),
 				redos: new List(serialized.redos.map(deserializeOperation)),
@@ -168,6 +169,7 @@ class App extends Component {
 			console.log(`Loaded ${this.props.documentID}`);
 		});
 	}
+
 	load() {
 		if (!this.props.documentID) {
 			console.log(`No document ID to load`);
@@ -201,15 +203,16 @@ class App extends Component {
 				if (!serialized) {
 					this.setState({ loaded: true });
 					console.log(
-						`State loaded as empty for document:${this.props.documentID}:state`
+						`State loaded as empty for document:${this.props.documentID}:state`,
 					);
 					return;
 				}
 				console.log(`Loaded data for ${this.props.documentID}`);
 				this.loadSerializedDocument(serialized);
-			}
+			},
 		);
 	}
+
 	serializeDocument() {
 		// TODO: serialize tools as code (+ identifiers), and create a sandbox
 		const serializeOperation = (operation) => {
@@ -231,6 +234,7 @@ class App extends Component {
 			redos: this.state.redos.toJS().map(serializeOperation),
 		};
 	}
+
 	save(leavingThisDocument) {
 		if (!this.state.loaded) {
 			if (!leavingThisDocument) {
@@ -240,7 +244,7 @@ class App extends Component {
 				this.showError({
 					message: `The document ${
 						this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
-					}. Start a new document?`,
+						}. Start a new document?`,
 					extraButtons: (
 						<button onClick={this.props.createNewDocument}>New Document</button>
 					),
@@ -274,7 +278,6 @@ class App extends Component {
 					// and the message(s) should be updated; no more need to delete all documents
 					if (error.name === "QuotaExceededError" && !error.message) {
 						this.showError({
-							// prettier-ignore
 							message: <div>
 								Failed to save {documentThatYouWereMaybeLeaving} into storage!
 								<br/><br/>
@@ -292,7 +295,6 @@ class App extends Component {
 						// but that's not a good way to get across the possibility of different scenarios;
 						// TODO: find a way to make this clear/better
 						this.showError({
-							// prettier-ignore
 							message: <div>
 								Failed to save {documentThatYouWereMaybeLeaving} into storage!
 								<br/><br/>
@@ -312,12 +314,13 @@ class App extends Component {
 					console.log(
 						`Saved ${this.props.documentID}${
 							leavingThisDocument ? " (leaving it)" : ""
-						}`
+							}`,
 					);
 				}
-			}
+			},
 		);
 	}
+
 	createPNGram(serializedDocument, callback, mismatchedCallback) {
 		const json = JSON.stringify(serializedDocument);
 		const metadata = {
@@ -332,7 +335,7 @@ class App extends Component {
 		const verifyEncodedBlob = (
 			encodedBlob,
 			verifiedCallback,
-			mismatchedCallback
+			mismatchedCallback,
 		) => {
 			const fileReader = new FileReader();
 			fileReader.onload = () => {
@@ -357,17 +360,19 @@ class App extends Component {
 					},
 					() => {
 						mismatchedCallback();
-					}
+					},
 				);
 			});
 		});
 	}
+
 	createRawPNG(callback) {
 		// TODO: get this in a more "legit" way (i.e. refs)
 		const canvas = document.querySelector(".DrawingCanvas canvas");
 
 		canvas.toBlob(callback, "image/png");
 	}
+
 	loadDocumentFromJSON(json) {
 		let serializedDocument;
 		try {
@@ -391,6 +396,7 @@ class App extends Component {
 		}
 		this.props.loadNewDocument(serializedDocument);
 	}
+
 	handleDroppedOrOpenedFiles(files) {
 		// TODO: progress indication
 		const file = files[0];
@@ -432,7 +438,7 @@ class App extends Component {
 								{
 									palette: palette.map((color) => color.toString()),
 								},
-								this.saveDebounced.bind(this)
+								this.saveDebounced.bind(this),
 							);
 						}
 					});
@@ -441,6 +447,7 @@ class App extends Component {
 			fileReader.readAsArrayBuffer(file);
 		}
 	}
+
 	openDocument() {
 		const input = document.createElement("input");
 		input.type = "file";
@@ -453,6 +460,7 @@ class App extends Component {
 		});
 		input.click();
 	}
+
 	componentDidMount() {
 		this.load();
 
@@ -464,7 +472,7 @@ class App extends Component {
 				// so if you made a change and then quickly closed or reloaded the page (by accident, and/or with auto reload in development),
 				// it'll still save, and you won't lose anything. it's great. 🙂
 				this.save(true);
-			})
+			}),
 		);
 
 		window.addEventListener(
@@ -493,23 +501,24 @@ class App extends Component {
 					return; // don't prevent default
 				}
 				event.preventDefault();
-			})
+			}),
 		);
 
 		window.addEventListener(
 			"dragover",
 			(this.dragOverLister = (e) => {
 				e.preventDefault();
-			})
+			}),
 		);
 		window.addEventListener(
 			"drop",
 			(this.dropListener = (e) => {
 				e.preventDefault();
 				this.handleDroppedOrOpenedFiles(e.dataTransfer.files);
-			})
+			}),
 		);
 	}
+
 	componentWillUnmount() {
 		this.save(true);
 		this.timeoutIDs.forEach((timeoutID) => {
@@ -520,10 +529,11 @@ class App extends Component {
 		window.removeEventListener("dragover", this.dragOverListener);
 		window.removeEventListener("drop", this.dropListener);
 	}
+
 	componentWillReceiveProps(nextProps) {
 		console.assert(
 			nextProps.documentID === this.props.documentID,
-			"App component is not designed to handle switching documents without reconstruction"
+			"App component is not designed to handle switching documents without reconstruction",
 		);
 		// TODO: make App component handle switching documents
 	}
@@ -536,15 +546,17 @@ class App extends Component {
 	addOperation(operation) {
 		this.setState(
 			{ undos: this.state.undos.push(operation) },
-			this.save.bind(this)
+			this.save.bind(this),
 		);
 	}
+
 	updateOperation(operation) {
 		// TODO: immutable operation objects probably (immutable.js has a Record class, I could use that)
 		// or append-only operation state?
 		// TODO: soft undo/redo / fundo/freedo / sliding/gliding/partial undo/redo
 		this.setState({ undos: this.state.undos }, this.saveDebounced.bind(this));
 	}
+
 	undo() {
 		const { undos, redos } = this.state;
 
@@ -558,9 +570,10 @@ class App extends Component {
 				undos: undos.pop(),
 				redos: redos.push(action),
 			},
-			this.saveDebounced.bind(this)
+			this.saveDebounced.bind(this),
 		);
 	}
+
 	redo() {
 		const { undos, redos } = this.state;
 
@@ -574,7 +587,7 @@ class App extends Component {
 				undos: undos.push(action),
 				redos: redos.pop(),
 			},
-			this.saveDebounced.bind(this)
+			this.saveDebounced.bind(this),
 		);
 	}
 
@@ -604,7 +617,7 @@ class App extends Component {
 						undos: undos.slice(0, indexInUndos + 1),
 						redos: redos.concat(actionsToUndo.reverse()),
 					},
-					this.saveDebounced.bind(this)
+					this.saveDebounced.bind(this),
 				);
 				return;
 			}
@@ -615,7 +628,7 @@ class App extends Component {
 						undos: undos.concat(actionsToRedo.reverse()),
 						redos: redos.slice(0, indexInRedos),
 					},
-					this.saveDebounced.bind(this)
+					this.saveDebounced.bind(this),
 				);
 				return;
 			}
@@ -652,7 +665,7 @@ class App extends Component {
 								})}
 							</select>
 						</label>
-						<hr />
+						<hr/>
 						<button
 							id="new-document"
 							className="toolbar-button"
@@ -660,7 +673,7 @@ class App extends Component {
 							aria-label="New Document"
 							title="New Document"
 						>
-							<NewDocumentIcon width="48px" height="48px" />
+							<NewDocumentIcon width="48px" height="48px"/>
 						</button>
 						<button
 							id="save-document"
@@ -671,7 +684,7 @@ class App extends Component {
 							aria-label="Save Document"
 							title="Save Document"
 						>
-							<SaveDocumentIcon width="48px" height="48px" />
+							<SaveDocumentIcon width="48px" height="48px"/>
 						</button>
 						<button
 							id="open-document"
@@ -682,7 +695,7 @@ class App extends Component {
 							aria-label="Open Document"
 							title="Open Document"
 						>
-							<OpenDocumentIcon width="48px" height="48px" />
+							<OpenDocumentIcon width="48px" height="48px"/>
 						</button>
 					</div>
 					<Toolbox
@@ -723,10 +736,12 @@ class App extends Component {
 			</div>
 		);
 	}
+
 	showError(dialogState) {
 		dialogState = { isError: true, ...dialogState };
 		this.showMessage(dialogState);
 	}
+
 	showMessage(dialogState) {
 		this.showDialog(
 			<Dialog
@@ -737,15 +752,18 @@ class App extends Component {
 				extraButtons={dialogState.extraButtons}
 				buttons={dialogState.buttons}
 				close={this.closeDialog.bind(this)}
-			/>
+			/>,
 		);
 	}
+
 	showDialog(dialog) {
 		this.setState({ dialog });
 	}
+
 	closeDialog() {
 		this.setState({ dialog: null });
 	}
+
 	showSaveDialog() {
 		const createPNGram = this.createPNGram.bind(this);
 		const createRawPNG = this.createRawPNG.bind(this);
@@ -767,7 +785,7 @@ class App extends Component {
 			const fileExt = {
 				"hybrid": "png",
 				"raw-image": "png",
-				"program": "mop"
+				"program": "mop",
 			}[saveType];
 			const fileName = name.replace(new RegExp("\\." + fileExt + "$", "i"), "") + "." + fileExt;
 
@@ -813,7 +831,7 @@ class App extends Component {
 						fileName,
 						{
 							type: "application/x-mopaint+json",
-						}
+						},
 					);
 					const programBlobUrl = URL.createObjectURL(programSourceBlob);
 					setBlobUrl(programBlobUrl);
@@ -874,7 +892,8 @@ class App extends Component {
 				/>
 			);
 		}
-		this.showDialog(<SaveDialog />);
+
+		this.showDialog(<SaveDialog/>);
 	}
 }
 

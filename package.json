@@ -28,16 +28,14 @@
 	],
 	"dependencies": {
 		"anypalette": "0.1.0",
+		"eslint": "^5.16.0",
 		"hash.js": "1.1.5",
-		"husky": "1.1.2",
 		"immutable": "3.8.2",
 		"is-png": "1.1.0",
 		"localforage": "1.7.2",
 		"png-chunk-text": "1.0.0",
 		"png-chunks-encode": "1.0.0",
 		"png-chunks-extract": "1.0.0",
-		"prettier": "1.14.3",
-		"pretty-quick": "1.8.0",
 		"prop-types": "15.6.2",
 		"react": "^16.8.6",
 		"react-dom": "^16.8.6",
@@ -49,9 +47,8 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test --env=jsdom",
 		"eject": "react-scripts eject",
-		"pretty-quick": "pretty-quick",
-		"pretty-all": "prettier \"**/*.{js,jsx,json,css}\" \"!.*/**/*\" \"!**/build/**\" --write",
-		"pretty-all-preview": "prettier \"**/*.{js,jsx,json,css}\" \"!.*/**/*\" \"!**/build/**\" --list-different"
+		"eslint-fix": "eslint --fix \"**/*.{js,jsx,json,css}\"",
+		"eslint": "eslint \"**/*.{js,jsx,json,css}\""
 	},
 	"husky": {
 		"hooks": {
