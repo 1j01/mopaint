@@ -506,7 +506,7 @@ class App extends Component {
 
 		window.addEventListener(
 			"dragover",
-			(this.dragOverLister = (e) => {
+			(this.dragOverListener = (e) => {
 				e.preventDefault();
 			}),
 		);
