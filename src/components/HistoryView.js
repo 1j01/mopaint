@@ -10,7 +10,7 @@ import "./HistoryView.css";
 // and support keyboard navigation! and scroll the view
 class HistoryView extends Component {
 	constructor(props) {
-		super();
+		super(props);
 		// TODO: cleanup how this works!
 		this.drawFunctions = [];
 	}

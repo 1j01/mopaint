@@ -21,8 +21,8 @@ import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/docume
 const CURRENT_SERIALIZATION_VERSION = 0.1;
 
 class App extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		// TODO: move state outside of the component
 		this.state = {
 			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept;

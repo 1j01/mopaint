@@ -16,7 +16,7 @@ const generateID = (length = 40) => {
 
 class DrawingCanvas extends Component {
 	constructor(props) {
-		super();
+		super(props);
 
 		this.operation = null;
 
