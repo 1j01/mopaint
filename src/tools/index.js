@@ -12,19 +12,19 @@ const tools = {
 	"Freeform Line": {
 		drawSegmentOfPath: line,
 	},
-	Line: {
+	"Line": {
 		drawShape: line,
 	},
 	"Freeform Circles": {
 		drawSegmentOfPath: circle,
 	},
-	Circle: {
+	"Circle": {
 		drawShape: circle,
 	},
-	Rectangle: {
+	"Rectangle": {
 		drawShape: rectangle,
 	},
-	Fill: {
+	"Fill": {
 		Icon: FillBucketIcon,
 		// these UI function signatures are pretty arbitrary and would only get worse
 		// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
