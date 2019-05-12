@@ -10,7 +10,7 @@ function importModuleFromCode(code) {
 		const loaderBlobUrl = URL.createObjectURL(loaderBlob);
 
 		const script = document.createElement("script");
-		const destructor = () => {
+		const cleanUp = () => {
 			delete window[globalVarName];
 			script.remove();
 			URL.revokeObjectURL(codeBlobUrl);
@@ -20,11 +20,11 @@ function importModuleFromCode(code) {
 		script.type = "module";
 		script.onerror = () => {
 			reject(new Error(`Failed to import module from code.`));
-			destructor();
+			cleanUp();
 		};
 		script.onload = () => {
 			resolve(window[globalVarName]);
-			destructor();
+			cleanUp();
 		};
 		script.src = loaderBlobUrl;
 
