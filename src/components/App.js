@@ -17,6 +17,20 @@ import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
 import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
+import importModuleFromCodeIfTrusted from "../pseudo-sandbox";
+
+importModuleFromCodeIfTrusted(`const circle = (ctx, x1, y1, x2, y2, swatch) => {
+	const radius = Math.hypot(x2 - x1, y2 - y1);
+	ctx.beginPath();
+	ctx.arc(x1, y1, radius, 0, Math.PI * 2);
+	ctx.fillStyle = swatch;
+	ctx.fill();
+};
+
+export default circle;`).then((module)=> {
+	const toolFunction = module.default;
+	console.log(toolFunction);
+});
 
 const CURRENT_SERIALIZATION_VERSION = 0.1;
 
