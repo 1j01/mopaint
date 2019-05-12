@@ -21,7 +21,7 @@ function importModuleFromCode(code) {
 		script.defer = true;
 		script.type = "module";
 		script.onerror = () => {
-			reject(new Error(`Failed to import: ${code}`));
+			reject(new Error(`Failed to import module from code.`));
 			destructor();
 		};
 		script.onload = () => {

@@ -12,11 +12,24 @@ function sha256(message) {
 	return window.crypto.subtle.digest("SHA-256", data);
 }
 
-const allowedCodeDigestHexStrings = [
+const allowedDigestHexStrings = [
 	"3a99b642793122283c10b1bc4ec26eca73d2b10cd0ce03d5277816c779af1984", // circle.js
 ];
 
-const code = `const circle = (ctx, x1, y1, x2, y2, swatch) => {
+export default function importModuleFromCodeIfTrusted(code) {
+	return sha256(code).then(digestValue => {
+		const digestHex = hexString(digestValue);
+		console.log(digestHex);
+		const allowed = allowedDigestHexStrings.includes(digestHex);
+		console.log(allowed);
+		if (allowed) {
+			return importModuleFromCode(code);
+		} else {
+			throw new Error(`Untrusted code. (Digest '${digestHex}' is not in the list of allowed digests.)`);
+		}
+	});
+};
+importModuleFromCodeIfTrusted(`const circle = (ctx, x1, y1, x2, y2, swatch) => {
 	const radius = Math.hypot(x2 - x1, y2 - y1);
 	ctx.beginPath();
 	ctx.arc(x1, y1, radius, 0, Math.PI * 2);
@@ -24,16 +37,7 @@ const code = `const circle = (ctx, x1, y1, x2, y2, swatch) => {
 	ctx.fill();
 };
 
-export default circle;`;
-
-sha256(code).then(digestValue => {
-	const digestHex = hexString(digestValue);
-	console.log(digestHex);
-	const allowed = allowedCodeDigestHexStrings.includes(digestHex);
-	console.log(allowed);
-	if (allowed) {
-		importModuleFromCode(code).then((module)=> {
-			console.log(module.default)
-		});
-	}
+export default circle;`).then((module)=> {
+	const toolFunction = module.default;
+	console.log(toolFunction);
 });
