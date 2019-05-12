@@ -12,8 +12,6 @@ function importModuleFromCode(code) {
 		const script = document.createElement("script");
 		const destructor = () => {
 			delete window[globalVarName];
-			// script.onerror = null;
-			// script.onload = null;
 			script.remove();
 			URL.revokeObjectURL(codeBlobUrl);
 			URL.revokeObjectURL(loaderBlobUrl);
