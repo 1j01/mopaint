@@ -6,21 +6,21 @@ function hexString(buffer) {
 	return hexCodes.join("");
 }
 
-function sha256(message) {
+export function hash(message) {
 	const encoder = new TextEncoder();
 	const data = encoder.encode(message);
 	return window.crypto.subtle.digest("SHA-256", data);
 }
 
-const allowedDigestHexStrings = [
+const trustedHashes = [
 	"3a99b642793122283c10b1bc4ec26eca73d2b10cd0ce03d5277816c779af1984", // circle.js
 ];
 
 export default function importModuleFromCodeIfTrusted(code) {
-	return sha256(code).then(digestValue => {
+	return hash(code).then(digestValue => {
 		const digestHex = hexString(digestValue);
 		console.log(digestHex);
-		const allowed = allowedDigestHexStrings.includes(digestHex);
+		const allowed = trustedHashes.includes(digestHex);
 		console.log(allowed);
 		if (allowed) {
 			return importModuleFromCode(code);
