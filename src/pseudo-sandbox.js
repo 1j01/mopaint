@@ -9,7 +9,10 @@ function hexString(buffer) {
 export function hash(message) {
 	const encoder = new TextEncoder();
 	const data = encoder.encode(message);
-	return window.crypto.subtle.digest("SHA-256", data);
+	return window.crypto.subtle.digest("SHA-256", data).then((digestValue)=> {
+		const digestHex = hexString(digestValue);
+		return digestHex;
+	});
 }
 
 const trustedHashes = [
@@ -17,9 +20,7 @@ const trustedHashes = [
 ];
 
 export default function importModuleFromCodeIfTrusted(code) {
-	return hash(code).then(digestValue => {
-		const digestHex = hexString(digestValue);
-		console.log(digestHex);
+	return hash(code).then(digestHex => {
 		const allowed = trustedHashes.includes(digestHex);
 		console.log(allowed);
 		if (allowed) {
