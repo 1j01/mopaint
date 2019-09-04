@@ -5,7 +5,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./DrawingCanvas.css";
 
-// TODO: more efficient IDs (don't need to restrict the alphabet to hex!)
+// TODO maybe: more efficient IDs (don't need to restrict the alphabet to hex)
 const byteToHex = (byte) => `0${byte.toString(16)}`.slice(-2);
 const generateID = (length = 40) => {
 	// length must be an even number (default: 40)
@@ -65,58 +65,6 @@ class DrawingCanvas extends Component {
 		const ctx = canvas.getContext("2d");
 
 		documentContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
-
-		// Goals for the caching computation system:
-		/*
-		A tree of computation.
-			Any self contained (that is, independent) operations can stay valid in the cache.
-			For instance, a smudge/smear tool would need the underlying canvas data as an input, so it would be
-			dependent on previous operations, but a simple shape could be rendered separately and then only the compositing
-			would be dependent on the underlying canvas and thus previous operations.
-			And perhaps the simple shape has an expensive shader that makes it worth caching.
-		Persist the cache locally, and even share it over the network in a collaborative setting
-			As part of the document.
-			With peers that have more computing power, computation could be distributed in the form of cache sharing
-				Imagine an artist (or artists) live streaming their work,
-					and a random viewer providing extra juice since they happen to have a powerful computer.
-				Or as a slightly simpler scenario, an artist working on a laptop/phone/tablet could connect a beefy computer into their session to speed things up
-					and continue working on the less powerful device (which might be a better form factor, e.g. with a stylus perhaps, or just mobility).
-				Peers could try to compute things in different order from each other in order to maximize parallelization.
-					(don't all do the same work and then try to share it with eachother but by then everybody's already computed it)
-				There is of course the possibility of bad actors - clients or peers that could give bad data
-					maliciously / for fun / out of curiosity / accidentally / because of bugs / runtime version mismatches* / GPU differences etc.
-						(*Should probably be a bug if it tries to use mismatching runtime versions.)
-					Ultimately you either have to trust the peer and accept the results,
-						or don't in which case there's no possibility of a performance boost.
-					It could mark operations as fulfilled by a peer so you could purge results from a given peer to distrust them.
-						(It would be good to be able to selectively distrust because otherwise the trolling thing to do would be to first
-							helpfully compute as many things as possible and then backstabbingly insert some advertising or pornography or whatever)
-			It should try to fetch the most pertinent state first, whilst also computing it locally.
-				> pertinent state:
-					(e.g. It should try to fetch the most up to date state of the document first.
-					Then if the user hits undo, the next most up to date state available.)
-						(Can it request e.g. "the next latest fully cached state before X"? probably! that should be feasible)
-					Also thumbnails (those that are in view! and then later those that aren't)
-				> whilst also computing it locally:
-					Simultaneously kick off rendering and request data from peers,
-					so whichever is faster can win and show you the results.
-				(Also, while idle, it could compute locally things that aren't needed right now but may be soon, like redos)
-		Keep memory and storage usage down.
-			- Invalidate/purge entries from the cache.
-			- Use bounding boxes for image data.
-			- When saving, allow optimizing for size (less/no caching) or speed* (caching)
-				*speed of loading/editing the document, and not of loading as say a PNG, if it's a pngram - PNG loading would likely be slower
-
-		Use heuristics to keep pertinent steps cached, based on:
-			- How long an operation takes to complete
-				(this may vary based on the inputs, even exponentially potentially (etc.) but should still be useful,
-				i.e. if an operation takes less than a frame to compute, if it can render in realtime,
-				there's probably no point caching it)
-				(this should be able to get rid of the "updatingContinously" thing)
-			- How recent it is in history (for fast undo/redo)
-			- How many operations have gone in between
-				(so there can be periodic caching, so you can jump to any point with limited computation needed)
-		*/
 
 		const runningHash = sha256();
 		operations.forEach((operation, operationIndex) => {

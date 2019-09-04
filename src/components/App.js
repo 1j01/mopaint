@@ -12,7 +12,7 @@ import HistoryView from "./HistoryView.js";
 import Dialog from "./Dialog.js";
 import Warning from "./Warning.js";
 import defaultPalette from "../db32-palette.js";
-import tools from "../tools/";
+import loadTools from "../tools/";
 import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
@@ -25,17 +25,20 @@ class App extends Component {
 		super(props);
 		// TODO: move state outside of the component
 		this.state = {
-			palette: defaultPalette, // TODO: eventually remove the "palette" state as a concept;
+			palette: defaultPalette, // TODO: eventually probably remove the "palette" state as a concept;
 			// I don't think this feature is special enough to warrant special handling (except for parsing palette files)
 			// It can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
 			// (and images could be used as palettes by sampling from them)
 			selectedSwatch: defaultPalette[0],
-			selectedTool: tools[0],
+			selectedTool: null,
+			tools: null,
 			undos: new List(),
 			redos: new List(),
 			// operations: new List(),
 			loaded: false,
 			loadFailed: false,
+			loadedTools: false,
+			loadToolsFailed: false,
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
@@ -57,7 +60,7 @@ class App extends Component {
 		this.saveDebounced = debounce(this.save.bind(this), 500);
 	}
 
-	loadSerializedDocument(serialized, fromFile) {
+	async loadSerializedDocument(serialized, fromFile) {
 		// TODO: maybe don't call it "state" when more explicitly loading a document, i.e. from a file
 		const nounPhraseThingToLoad = fromFile ? "document" : "document state";
 		if (
@@ -107,13 +110,13 @@ class App extends Component {
 			this.setState({ loadFailed: true });
 			return;
 		}
-		const findToolByID = (toolID, locationMessage) => {
+		async function loadTool(toolID, locationMessage) {
 			const tool = tools.find((tool) => tool.name === toolID);
 			if (!tool) {
 				throw new TypeError(`unknown tool '${toolID}' ${locationMessage}`);
 			}
 			return tool;
-		};
+		}
 		const expectPropertiesToExist = (properties, object, locationMessage) => {
 			properties.forEach((key) => {
 				if (!object[key]) {
@@ -150,7 +153,7 @@ class App extends Component {
 			stateUpdates = {
 				palette: serialized.palette,
 				selectedSwatch: serialized.selectedSwatch,
-				selectedTool: findToolByID(
+				selectedTool: await loadTool(
 					serialized.selectedToolID,
 					"(for the selected tool)",
 				),
@@ -463,6 +466,11 @@ class App extends Component {
 
 	componentDidMount() {
 		this.load();
+		loadTools().then((tools)=> {
+			this.setState({tools, toolsLoaded: true});
+		}, (error)=> {
+			this.setState({toolsLoadFailed: true});
+		});
 
 		window.addEventListener(
 			"beforeunload",
@@ -699,7 +707,7 @@ class App extends Component {
 						</button>
 					</div>
 					<Toolbox
-						tools={tools}
+						tools={this.state.tools}
 						selectedTool={selectedTool}
 						selectTool={selectTool}
 					/>
