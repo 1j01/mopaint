@@ -188,6 +188,9 @@ class DrawingCanvas extends Component {
 		// this.operation.points.push(pos);
 
 		const { updateOperation } = this.props;
+		if (!this.operation) {
+			return;
+		}
 		delete this.operation.updatingContinously; // bit of a hack so let's uh clean it up / make it less present in the document store... (as opposed to setting it to false)
 		updateOperation(this.operation);
 

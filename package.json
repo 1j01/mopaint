@@ -24,7 +24,10 @@
 		"art",
 		"drawing",
 		"drawing-tool",
-		"symmetry"
+		"symmetry",
+		"programming-system",
+		"multiism",
+		"composition"
 	],
 	"dependencies": {
 		"anypalette": "0.1.0",

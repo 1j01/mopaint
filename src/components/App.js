@@ -191,8 +191,8 @@ class App extends Component {
 					serialized.selectedToolID,
 					"(for the selected tool)",
 				),
-				undos: new List(serialized.undos.map(deserializeOperation)),
-				redos: new List(serialized.redos.map(deserializeOperation)),
+				undos: new List(await Promise.all(serialized.undos.map(deserializeOperation))),
+				redos: new List(await Promise.all(serialized.redos.map(deserializeOperation))),
 				loaded: true,
 			};
 		} catch (error) {
@@ -266,7 +266,7 @@ class App extends Component {
 			formatVersion: 0.1,
 			palette: this.state.palette,
 			selectedSwatch: this.state.selectedSwatch,
-			selectedToolID: "Freeform Lines",//this.state.selectedTool.name,
+			selectedToolID: "Freeform Line",//this.state.selectedTool.name,
 			undos: this.state.undos.toJS().map(serializeOperation),
 			redos: this.state.redos.toJS().map(serializeOperation),
 		};
