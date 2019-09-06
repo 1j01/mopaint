@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
 import isPNG from "is-png";
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
+import importModuleFromCodeIfTrusted, { hash } from "../pseudo-sandbox.js"
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
@@ -12,7 +13,6 @@ import HistoryView from "./HistoryView.js";
 import Dialog from "./Dialog.js";
 import Warning from "./Warning.js";
 import defaultPalette from "../db32-palette.js";
-import loadTools from "../tools/";
 import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
@@ -110,13 +110,44 @@ class App extends Component {
 			this.setState({ loadFailed: true });
 			return;
 		}
-		async function loadTool(toolID, locationMessage) {
-			const tool = tools.find((tool) => tool.name === toolID);
-			if (!tool) {
-				throw new TypeError(`unknown tool '${toolID}' ${locationMessage}`);
+
+		
+		// const memoize = (fn)=> {
+		// 	let cache = {};
+		// 	return async function() {
+		// 		let args = JSON.stringify(arguments);
+		// 		cache[args] = cache[args] || fn.apply(this, arguments);
+		// 		return cache[args];
+		// 	};
+		// };
+		
+		const memoizeOnOnlyFirstArgument = (fn)=> {
+			let cache = {};
+			return async function(key) {
+				cache[key] = cache[key] || fn.apply(this, arguments);
+				return cache[key];
+			};
+		};
+
+		window.digestsToMaybeTrust = [];
+		const loadTool = memoizeOnOnlyFirstArgument(async (toolID, locationMessage) => {
+			// TODO: use content-addressable storage
+			const path = `tools/${toolID.toLowerCase().replace(/\s/g, "-")}.js`;
+			const response = await fetch(path);
+			if (response.ok) {
+				const code = await response.text();
+				hash(code).then((digest)=> window.digestsToMaybeTrust.push(digest));
+				const module = await importModuleFromCodeIfTrusted(code);
+				const toolFunction = module.default;
+				console.log(toolFunction);
+				return toolFunction;
+			} else {
+				if (response.status === 404) {
+					throw new Error(`unknown tool '${toolID}' ${locationMessage} - didn't find ${path}`);
+				}
+				throw new Error(`network response was not ok. (got HTTP status ${response.status})`);
 			}
-			return tool;
-		}
+		});
 		const expectPropertiesToExist = (properties, object, locationMessage) => {
 			properties.forEach((key) => {
 				if (!object[key]) {
@@ -124,13 +155,13 @@ class App extends Component {
 				}
 			});
 		};
-		const deserializeOperation = (serializedOperation) => {
+		const deserializeOperation = async (serializedOperation) => {
 			expectPropertiesToExist(
 				["id", "toolID", "points", "swatch"],
 				serializedOperation,
 				`on operation with ID ${serializedOperation.id}`,
 			);
-			const tool = findToolByID(
+			const tool = await loadTool(
 				serializedOperation.toolID,
 				`on operation with ID ${serializedOperation.id}`,
 			);
@@ -232,7 +263,7 @@ class App extends Component {
 			formatVersion: 0.1,
 			palette: this.state.palette,
 			selectedSwatch: this.state.selectedSwatch,
-			selectedToolID: this.state.selectedTool.name,
+			selectedToolID: "Freeform Lines",//this.state.selectedTool.name,
 			undos: this.state.undos.toJS().map(serializeOperation),
 			redos: this.state.redos.toJS().map(serializeOperation),
 		};
@@ -466,11 +497,11 @@ class App extends Component {
 
 	componentDidMount() {
 		this.load();
-		loadTools().then((tools)=> {
-			this.setState({tools, toolsLoaded: true});
-		}, (error)=> {
-			this.setState({toolsLoadFailed: true});
-		});
+		// loadTools().then((tools)=> {
+		// 	this.setState({tools, toolsLoaded: true});
+		// }, (error)=> {
+		// 	this.setState({toolsLoadFailed: true});
+		// });
 
 		window.addEventListener(
 			"beforeunload",

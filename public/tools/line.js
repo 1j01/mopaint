@@ -11,3 +11,8 @@ const line = (ctx, x1, y1, x2, y2, swatch) => {
 };
 
 export default line;
+
+export const tool = {
+	name: "Line",
+	drawShape: line,
+};

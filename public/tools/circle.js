@@ -7,3 +7,8 @@ const circle = (ctx, x1, y1, x2, y2, swatch) => {
 };
 
 export default circle;
+
+export const tool = {
+	name: "Circle",
+	drawShape: circle,
+};

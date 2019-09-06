@@ -230,7 +230,7 @@ class DrawingCanvas extends Component {
 DrawingCanvas.propTypes = {
 	documentCanvas: PropTypes.object.isRequired,
 	documentContext: PropTypes.object.isRequired,
-	selectedTool: PropTypes.object.isRequired,
+	selectedTool: PropTypes.object,
 	selectedSwatch: PropTypes.oneOfType([
 		PropTypes.string,
 		PropTypes.instanceOf(CanvasGradient),

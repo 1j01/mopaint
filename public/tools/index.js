@@ -37,33 +37,33 @@
 // 	console.log("trusted hashes from built-in code: ", trustedHashes);
 // });
 
-// const tools = {
-// 	"Freeform Line": {
-// 		drawSegmentOfPath: line,
-// 	},
-// 	"Line": {
-// 		drawShape: line,
-// 	},
-// 	"Freeform Circles": {
-// 		drawSegmentOfPath: circle,
-// 	},
-// 	"Circle": {
-// 		drawShape: circle,
-// 	},
-// 	"Rectangle": {
-// 		drawShape: rectangle,
-// 	},
-// 	"Fill": {
-// 		Icon: FillBucketIcon,
-// 		// these UI function signatures are pretty arbitrary and would only get worse
-// 		// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
-// 		// and it doesn't help that there's this layer of indirection where I have to map these signatures
-// 		click: function(opCtx, x, y, swatch, documentCtx) {
-// 			opCtx.drawImage(documentCtx.canvas, 0, 0);
-// 			fill(opCtx, x, y, swatch);
-// 		},
-// 	},
-// };
+const tools = {
+	"Freeform Line": {
+		drawSegmentOfPath: line,
+	},
+	"Line": {
+		drawShape: line,
+	},
+	"Freeform Circles": {
+		drawSegmentOfPath: circle,
+	},
+	"Circle": {
+		drawShape: circle,
+	},
+	"Rectangle": {
+		drawShape: rectangle,
+	},
+	"Fill": {
+		Icon: FillBucketIcon,
+		// these UI function signatures are pretty arbitrary and would only get worse
+		// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
+		// and it doesn't help that there's this layer of indirection where I have to map these signatures
+		click: function(opCtx, x, y, swatch, documentCtx) {
+			opCtx.drawImage(documentCtx.canvas, 0, 0);
+			fill(opCtx, x, y, swatch);
+		},
+	},
+};
 
 // // TODO: allow the USER to compose tools (dynamically)
 // // TODO: show preview of multiple points the user will interact with if they interact

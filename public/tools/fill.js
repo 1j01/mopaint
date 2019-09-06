@@ -130,3 +130,16 @@ const fill = (ctx, x, y, swatch) => {
 };
 
 export default fill;
+
+export const tool = {
+	name: "Fill",
+	// Icon: FillBucketIcon, // TODO?
+
+	// these UI function signatures are pretty arbitrary and would only get worse
+	// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
+	// and it doesn't help that there's this layer of indirection where I have to map these signatures
+	click: function(opCtx, x, y, swatch, documentCtx) {
+		opCtx.drawImage(documentCtx.canvas, 0, 0);
+		fill(opCtx, x, y, swatch);
+	},
+};

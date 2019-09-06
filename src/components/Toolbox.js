@@ -5,7 +5,8 @@ import "./Toolbox.css";
 
 class Toolbox extends Component {
 	render() {
-		const { tools, selectedTool, selectTool } = this.props;
+		var { tools, selectedTool, selectTool } = this.props;
+		tools = tools || []; // TODO: loading state
 		return (
 			<div className="Toolbox" role="radiogroup">
 				{tools.map((tool) => {
@@ -32,7 +33,7 @@ class Toolbox extends Component {
 }
 
 Toolbox.propTypes = {
-	tools: PropTypes.array.isRequired,
+	tools: PropTypes.array,
 	selectedTool: PropTypes.object,
 	selectTool: PropTypes.func.isRequired,
 };

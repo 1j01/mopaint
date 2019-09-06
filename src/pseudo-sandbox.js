@@ -16,7 +16,7 @@ export function hash(message) {
 }
 
 const trustedHashes = [
-	"3a99b642793122283c10b1bc4ec26eca73d2b10cd0ce03d5277816c779af1984", // circle.js
+	"81cd2def6f244a63bfd6fe9c6d471b2f66c75b0f2d14dbd7682195ab2128a108"
 ];
 
 export default function importModuleFromCodeIfTrusted(code) {
