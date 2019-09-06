@@ -90,7 +90,7 @@ class App extends Component {
 		if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
 			const gitBranchName = `format-version-${serialized.formatVersion}`;
 			this.showError({
-				message: <>
+				message: <React.Fragment>
 					<p>
 						Can't load {nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version {
 							serialized.formatVersion
@@ -104,7 +104,7 @@ class App extends Component {
 						To load this {nounPhraseThingToLoad}, use the version of Mopaint at the Git branch&nbsp;
 						<a href={`https://github.com/1j01/mopaint/tree/${gitBranchName}`} style={{fontFamily: "monospace"}}>{gitBranchName}</a>
 					</p>
-				</>
+				</React.Fragment>
 			});
 			this.setState({ loadFailed: true });
 			return;
