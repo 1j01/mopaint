@@ -18,7 +18,7 @@ import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/documen
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
 import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
 
-const CURRENT_SERIALIZATION_VERSION = 0.1;
+const CURRENT_SERIALIZATION_VERSION = 0.2;
 
 class App extends Component {
 	constructor(props) {
@@ -62,15 +62,6 @@ class App extends Component {
 
 	async loadSerializedDocument(serialized, fromFile) {
 		const nounPhraseThingToLoad = fromFile ? "document" : "document state";
-		if (
-			typeof serialized.formatVersion !== "number" &&
-			serialized.version === 1
-		) {
-			// TODO: get rid of this upgrade eventually
-			serialized.format = "mopaint";
-			serialized.formatVersion = 0.1;
-			delete serialized.version;
-		}
 		if (serialized.format !== "mopaint") {
 			this.showError({
 				message: `Can't load ${nounPhraseThingToLoad} - it does not appear to be a Mopaint document`,
@@ -88,23 +79,32 @@ class App extends Component {
 			this.setState({ loadFailed: true });
 			return;
 		}
-		const MINIMUM_LOADABLE_VERSION = 0.1;
+		const MINIMUM_LOADABLE_VERSION = 0.2;
 		// upgrading code can go here, incrementing the version number step by step
 		// e.g.
-		// if (serialized.formatVersion === 0.1) {
+		// if (serialized.formatVersion === 0.2) {
 		// 	serialized.newPropName = serialized.oldName;
 		// 	delete serialized.oldName;
-		// 	serialized.formatVersion = 0.2;
+		// 	serialized.formatVersion = 0.3;
 		// }
 		if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
+			const gitBranchName = `format-version-${serialized.formatVersion}`;
 			this.showError({
-				message: `Can't load ${nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version ${
-					serialized.formatVersion
-				} to ${CURRENT_SERIALIZATION_VERSION}${
-					MINIMUM_LOADABLE_VERSION !== CURRENT_SERIALIZATION_VERSION
-						? ` (minimum loadable: ${MINIMUM_LOADABLE_VERSION})`
-						: ""
-				}`,
+				message: <>
+					<p>
+						Can't load {nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version {
+							serialized.formatVersion
+						} to {CURRENT_SERIALIZATION_VERSION}{
+							MINIMUM_LOADABLE_VERSION !== CURRENT_SERIALIZATION_VERSION
+								? ` (minimum loadable: ${MINIMUM_LOADABLE_VERSION})`
+								: ""
+						}
+					</p>
+					<p>
+						To load this {nounPhraseThingToLoad}, use the version of Mopaint at the Git branch&nbsp;
+						<a href={`https://github.com/1j01/mopaint/tree/${gitBranchName}`} style={{fontFamily: "monospace"}}>{gitBranchName}</a>
+					</p>
+				</>
 			});
 			this.setState({ loadFailed: true });
 			return;
@@ -263,7 +263,7 @@ class App extends Component {
 		};
 		return {
 			format: "mopaint",
-			formatVersion: 0.1,
+			formatVersion: CURRENT_SERIALIZATION_VERSION,
 			palette: this.state.palette,
 			selectedSwatch: this.state.selectedSwatch,
 			selectedToolID: "Freeform Line",//this.state.selectedTool.name,
