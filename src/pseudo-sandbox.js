@@ -15,13 +15,15 @@ export function hash(message) {
 	});
 }
 
-const trustedHashes = [
-	"81cd2def6f244a63bfd6fe9c6d471b2f66c75b0f2d14dbd7682195ab2128a108"
+window.digestHexesToMaybeTrust = [];
+const trustedDigestHexes = [
+	"8c783d1d71013d93bc6667e6af3001fa3c32cbbcbf2e067771baf2ee015f95e4"
 ];
 
 export default function importModuleFromCodeIfTrusted(code) {
 	return hash(code).then(digestHex => {
-		const allowed = trustedHashes.includes(digestHex);
+		window.digestHexesToMaybeTrust.push(digestHex);
+		const allowed = trustedDigestHexes.includes(digestHex) || (()=> { try { return localStorage.disableSecurityAndTrustAnything } catch (e) {} })();
 		console.log(allowed);
 		if (allowed) {
 			return importModuleFromCode(code);

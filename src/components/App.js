@@ -129,14 +129,12 @@ class App extends Component {
 			};
 		};
 
-		window.digestsToMaybeTrust = [];
 		const loadTool = memoizeOnOnlyFirstArgument(async (toolID, locationMessage) => {
 			// TODO: use content-addressable storage
 			const path = `tools/${toolID.toLowerCase().replace(/\s/g, "-")}.js`;
 			const response = await fetch(path);
 			if (response.ok) {
 				const code = await response.text();
-				hash(code).then((digest)=> window.digestsToMaybeTrust.push(digest));
 				const module = await importModuleFromCodeIfTrusted(code);
 				const toolFunction = module.default;
 				console.log(toolFunction);
@@ -778,6 +776,9 @@ class App extends Component {
 
 	showError(dialogState) {
 		dialogState = { isError: true, ...dialogState };
+		if (window.console && dialogState.error) {
+			console.error("(Error details:)", dialogState.error);
+		}
 		this.showMessage(dialogState);
 	}
 
