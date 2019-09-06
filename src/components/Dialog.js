@@ -16,7 +16,7 @@ export default function Dialog({
 	message,
 	error,
 	isError,
-	requestABugReport,
+	requestBugReport,
 	close,
 	extraButtons,
 	buttons,
@@ -52,7 +52,7 @@ export default function Dialog({
 						</div>
 					</details>
 				)}
-				{requestABugReport && (
+				{requestBugReport && (
 					<div>
 						You should <ReportBugLink>report this bug</ReportBugLink>.
 					</div>
@@ -70,7 +70,7 @@ Dialog.propTypes = {
 	message: PropTypes.node.isRequired,
 	error: PropTypes.object,
 	isError: PropTypes.bool,
-	requestABugReport: PropTypes.bool,
+	requestBugReport: PropTypes.bool,
 	close: PropTypes.func,
 	extraButtons: PropTypes.node,
 	buttons: PropTypes.node,

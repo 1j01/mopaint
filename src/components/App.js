@@ -232,7 +232,7 @@ class App extends Component {
 						this.showError({
 							message:
 								"Almost loaded a document over an existing document. This shouldn't happen!",
-							requestABugReport: true,
+							requestBugReport: true,
 						});
 					}
 					return;
@@ -677,7 +677,7 @@ class App extends Component {
 			this.showError({
 				message:
 					"Something bad happened and somehow the entry wasn't found in undos or redos.",
-				requestABugReport: true,
+				requestBugReport: true,
 			});
 		};
 
@@ -793,7 +793,7 @@ class App extends Component {
 				message={dialogState.message}
 				error={dialogState.error}
 				isError={dialogState.isError}
-				requestABugReport={dialogState.requestABugReport}
+				requestBugReport={dialogState.requestBugReport}
 				extraButtons={dialogState.extraButtons}
 				buttons={dialogState.buttons}
 				close={this.closeDialog.bind(this)}
@@ -881,7 +881,7 @@ class App extends Component {
 					const programBlobUrl = URL.createObjectURL(programSourceBlob);
 					setBlobUrl(programBlobUrl);
 				} else {
-					showError({ message: `This shouldn't happen, saveType=${saveType}`, requestABugReport: true });
+					showError({ message: `This shouldn't happen, saveType=${saveType}`, requestBugReport: true });
 				}
 			}, [saveType]);
 
