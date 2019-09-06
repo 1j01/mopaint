@@ -148,6 +148,9 @@ class DrawingCanvas extends Component {
 		event.preventDefault();
 
 		const pos = this.toCanvasCoords(event);
+		if (!this.operation) {
+			return;
+		}
 		this.operation.points.push(pos);
 
 		const { updateOperation } = this.props;
@@ -159,6 +162,10 @@ class DrawingCanvas extends Component {
 		}
 		event.preventDefault();
 		const { selectedSwatch, selectedTool } = this.props;
+		if (!selectedTool) {
+			console.warn("no tool selected");
+			return;
+		}
 		const pos = this.toCanvasCoords(event);
 		this.operation = {
 			id: generateID(10),

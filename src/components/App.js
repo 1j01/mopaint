@@ -61,7 +61,6 @@ class App extends Component {
 	}
 
 	async loadSerializedDocument(serialized, fromFile) {
-		// TODO: maybe don't call it "state" when more explicitly loading a document, i.e. from a file
 		const nounPhraseThingToLoad = fromFile ? "document" : "document state";
 		if (
 			typeof serialized.formatVersion !== "number" &&
@@ -110,7 +109,7 @@ class App extends Component {
 			this.setState({ loadFailed: true });
 			return;
 		}
-
+	
 		
 		// const memoize = (fn)=> {
 		// 	let cache = {};
@@ -133,15 +132,21 @@ class App extends Component {
 			// TODO: use content-addressable storage
 			const path = `tools/${toolID.toLowerCase().replace(/\s/g, "-")}.js`;
 			const response = await fetch(path);
+			const notFound = ()=> {
+				throw new Error(`unknown tool '${toolID}' ${locationMessage} - didn't find ${path}`);
+			};
 			if (response.ok) {
 				const code = await response.text();
+				if (code.match(/^\s*<!\s*doctype\s*html\s*>/)) { // create-react-app's dev server returns index.html instead of giving 404s (for single page app blah functionality)
+					return notFound();
+				}
 				const module = await importModuleFromCodeIfTrusted(code);
-				const toolFunction = module.default;
+				const toolFunction = module.tool;
 				console.log(toolFunction);
 				return toolFunction;
 			} else {
 				if (response.status === 404) {
-					throw new Error(`unknown tool '${toolID}' ${locationMessage} - didn't find ${path}`);
+					return notFound();
 				}
 				throw new Error(`network response was not ok. (got HTTP status ${response.status})`);
 			}

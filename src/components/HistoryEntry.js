@@ -142,7 +142,6 @@ class HistoryEntry extends Component {
 				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
 				<Thumbnail
-					entryThatMightHaveAnImage={entry}
 					width={24}
 					height={24}
 					indexInListForAnimationOffset={indexInListForAnimationOffset}
