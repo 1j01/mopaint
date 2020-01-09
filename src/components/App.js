@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
 import isPNG from "is-png";
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
-import importModuleFromCodeIfTrusted, { hash } from "../pseudo-sandbox.js"
+import importModuleFromCodeIfTrusted from "../pseudo-sandbox.js"
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
@@ -693,7 +693,9 @@ class App extends Component {
 				<main>
 					<Warning>
 						⚠ This app is in very early stages of development. There are Big Plans.
-						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank">README on GitHub for more info</a>.
+						See the <a href="https://github.com/1j01/mopaint#mopaint" target="_blank" rel="noopener noreferrer">
+							README on GitHub for more info
+						</a>.
 					</Warning>
 					<div id="documents-options">
 						<label>
