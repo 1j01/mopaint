@@ -20,6 +20,47 @@ import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/docume
 
 const CURRENT_SERIALIZATION_VERSION = 0.2;
 
+// const memoize = (fn)=> {
+// 	let cache = {};
+// 	return async function() {
+// 		let args = JSON.stringify(arguments);
+// 		cache[args] = cache[args] || fn.apply(this, arguments);
+// 		return cache[args];
+// 	};
+// };
+
+const memoizeOnOnlyFirstArgument = (fn)=> {
+	let cache = {};
+	return async function(key) {
+		cache[key] = cache[key] || fn.apply(this, arguments);
+		return cache[key];
+	};
+};
+
+const loadTool = memoizeOnOnlyFirstArgument(async (toolID, locationMessage) => {
+	// TODO: use content-addressable storage
+	const path = `tools/${toolID.toLowerCase().replace(/\s/g, "-")}.js`;
+	const response = await fetch(path);
+	const notFound = ()=> {
+		throw new Error(`unknown tool '${toolID}' ${locationMessage} - didn't find ${path}`);
+	};
+	if (response.ok) {
+		const code = await response.text();
+		if (code.match(/^\s*<!\s*doctype\s*html\s*>/)) { // create-react-app's dev server returns index.html instead of giving 404s (for single page app blah functionality)
+			return notFound();
+		}
+		const module = await importModuleFromCodeIfTrusted(code);
+		const toolFunction = module.tool;
+		console.log(toolFunction);
+		return toolFunction;
+	} else {
+		if (response.status === 404) {
+			return notFound();
+		}
+		throw new Error(`network response was not ok. (got HTTP status ${response.status})`);
+	}
+});
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -58,6 +99,13 @@ class App extends Component {
 			};
 		};
 		this.saveDebounced = debounce(this.save.bind(this), 500);
+
+		loadTool(
+			"Freeform Line",
+			"(for the initially selected tool)",
+		).then((tool)=> {
+			this.setState({selectedTool: tool});
+		});
 	}
 
 	async loadSerializedDocument(serialized, fromFile) {
@@ -110,47 +158,6 @@ class App extends Component {
 			return;
 		}
 	
-		
-		// const memoize = (fn)=> {
-		// 	let cache = {};
-		// 	return async function() {
-		// 		let args = JSON.stringify(arguments);
-		// 		cache[args] = cache[args] || fn.apply(this, arguments);
-		// 		return cache[args];
-		// 	};
-		// };
-		
-		const memoizeOnOnlyFirstArgument = (fn)=> {
-			let cache = {};
-			return async function(key) {
-				cache[key] = cache[key] || fn.apply(this, arguments);
-				return cache[key];
-			};
-		};
-
-		const loadTool = memoizeOnOnlyFirstArgument(async (toolID, locationMessage) => {
-			// TODO: use content-addressable storage
-			const path = `tools/${toolID.toLowerCase().replace(/\s/g, "-")}.js`;
-			const response = await fetch(path);
-			const notFound = ()=> {
-				throw new Error(`unknown tool '${toolID}' ${locationMessage} - didn't find ${path}`);
-			};
-			if (response.ok) {
-				const code = await response.text();
-				if (code.match(/^\s*<!\s*doctype\s*html\s*>/)) { // create-react-app's dev server returns index.html instead of giving 404s (for single page app blah functionality)
-					return notFound();
-				}
-				const module = await importModuleFromCodeIfTrusted(code);
-				const toolFunction = module.tool;
-				console.log(toolFunction);
-				return toolFunction;
-			} else {
-				if (response.status === 404) {
-					return notFound();
-				}
-				throw new Error(`network response was not ok. (got HTTP status ${response.status})`);
-			}
-		});
 		const expectPropertiesToExist = (properties, object, locationMessage) => {
 			properties.forEach((key) => {
 				if (!object[key]) {
