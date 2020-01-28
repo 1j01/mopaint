@@ -16,10 +16,11 @@ export async function hash(message) {
 
 window.digestHexesToMaybeTrust = [];
 const trustedDigestHexes = [
-	"8c783d1d71013d93bc6667e6af3001fa3c32cbbcbf2e067771baf2ee015f95e4"
+	"2b26cb2f286c66a802693fd3012623d1d95a3ac27723324b46190248be97be21"
 ];
 
 export default async function importModuleFromCodeIfTrusted(code) {
+	code = code.replace(/\r\n/g, "\n");
 	const digestHex = await hash(code);
 	window.digestHexesToMaybeTrust.push(digestHex);
 	const allowed = trustedDigestHexes.includes(digestHex) || (() => {
