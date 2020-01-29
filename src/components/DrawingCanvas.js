@@ -20,13 +20,6 @@ class DrawingCanvas extends Component {
 
 		this.operation = null;
 
-		this.opCanvas = document.createElement("canvas");
-		this.opCtx = this.opCanvas.getContext("2d");
-
-		const { width, height } = props.documentCanvas;
-		this.opCanvas.width = width;
-		this.opCanvas.height = height;
-
 		this.canvasRef = React.createRef();
 
 		this.cache = {};
@@ -34,21 +27,20 @@ class DrawingCanvas extends Component {
 		this.hashInDocumentByOperation = new Map();
 	}
 	render() {
-		const { width, height } = this.props.documentCanvas;
 		if (this.animationFrameID) {
 			cancelAnimationFrame(this.animationFrameID);
 		}
 		this.animationFrameID = requestAnimationFrame(()=> {
 			draw({
-				documentCanvas: this.props.documentCanvas,
-				displayCanvas: this.canvasRef.current,
-				opCanvas: this.opCanvas,
+				documentCanvas: this.canvasRef.current,
 				operations: this.props.operations,
 				thumbnailsByOperation: this.props.thumbnailsByOperation,
 				cache: this.cache,
 				hashInDocumentByOperation: this.hashInDocumentByOperation,
 			});
 		});
+		const width = 640;
+		const height = 480;
 		return (
 			<div className="DrawingCanvas" style={{ width, height }}>
 				<canvas width={width} height={height} ref={this.canvasRef} />
@@ -158,8 +150,6 @@ class DrawingCanvas extends Component {
 }
 
 DrawingCanvas.propTypes = {
-	documentCanvas: PropTypes.object.isRequired,
-	documentContext: PropTypes.object.isRequired,
 	selectedTool: PropTypes.object,
 	selectedSwatch: PropTypes.oneOfType([
 		PropTypes.string,

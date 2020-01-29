@@ -1,29 +1,33 @@
 import sha256 from "hash.js/lib/hash/sha/256";
 
-export const draw = ({documentCanvas, displayCanvas, opCanvas, operations, thumbnailsByOperation, cache, hashInDocumentByOperation})=> {
+const opCanvas = document.createElement("canvas");
+const opContext = opCanvas.getContext("2d");
+
+export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, hashInDocumentByOperation})=> {
 	const documentContext = documentCanvas.getContext("2d");
-	const opCtx = opCanvas.getContext("2d");
-	const displayCtx = displayCanvas.getContext("2d");
 
 	documentContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
+
+	opCanvas.width = documentCanvas.width;
+	opCanvas.height = documentCanvas.height;
 
 	const runningHash = sha256();
 	operations.forEach((operation, operationIndex) => {
 		runningHash.update(JSON.stringify(operation));
 		const operationHash = runningHash.digest("hex");
-		opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
+		opContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
 		if (cache[operationHash]) {
 			// console.log("cache hit");
 			documentContext.drawImage(cache[operationHash], 0, 0);
 		} else {
-			// opCtx.clearRect(0, 0, opCanvas.width, opCanvas.height);
+			// opContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
 			// console.log("cache miss");
 			const { points, tool, swatch } = operation;
 			const startPos = points[0];
 			const lastPos = points[points.length - 1];
 			if (tool.drawShape) {
 				tool.drawShape(
-					opCtx,
+					opContext,
 					startPos.x,
 					startPos.y,
 					lastPos.x,
@@ -35,7 +39,7 @@ export const draw = ({documentCanvas, displayCanvas, opCanvas, operations, thumb
 				// TODO: allow for smoothing (rather than just plain segments)
 				for (let i1 = 0, i2 = 1; i2 < points.length; i1 += 1, i2 += 1) {
 					tool.drawSegmentOfPath(
-						opCtx,
+						opContext,
 						points[i1].x,
 						points[i1].y,
 						points[i2].x,
@@ -45,7 +49,7 @@ export const draw = ({documentCanvas, displayCanvas, opCanvas, operations, thumb
 				}
 			}
 			if (tool.click) {
-				tool.click(opCtx, startPos.x, startPos.y, swatch, documentContext);
+				tool.click(opContext, startPos.x, startPos.y, swatch, documentContext);
 			}
 
 			documentContext.drawImage(opCanvas, 0, 0);
@@ -80,9 +84,6 @@ export const draw = ({documentCanvas, displayCanvas, opCanvas, operations, thumb
 			// });
 		}
 	});
-
-	displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
-	displayCtx.drawImage(documentCanvas, 0, 0);
 }
 
 /*

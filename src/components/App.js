@@ -37,10 +37,6 @@ class App extends Component {
 			loaded: false,
 			loadFailed: false,
 		};
-		this.documentCanvas = document.createElement("canvas");
-		this.documentContext = this.documentCanvas.getContext("2d");
-		this.documentCanvas.width = 640;
-		this.documentCanvas.height = 480;
 
 		this.thumbnailsByOperation = new Map(); // TODO: could use cache?
 
@@ -701,7 +697,6 @@ class App extends Component {
 						selectedSwatch={selectedSwatch}
 						selectedTool={selectedTool}
 						documentContext={this.documentContext}
-						documentCanvas={this.documentCanvas}
 						addOperation={this.addOperation.bind(this)}
 						updateOperation={this.updateOperation.bind(this)}
 						operations={undos}
