@@ -833,7 +833,13 @@ class App extends Component {
 		function SaveDialog() {
 			const [saveType, setSaveType] = useState("hybrid");
 			const [name, setName] = useState("Drawing");
-			const [blobUrl, setBlobUrl] = useState(null);
+			const [blobUrl, setBlobUrlWithoutRevokingOld] = useState(null);
+			const revokeOldAndSetBlobUrl = (newBlobUrl)=> {
+				setBlobUrlWithoutRevokingOld((oldBlobUrl)=> {
+					URL.revokeObjectURL(oldBlobUrl);
+					return newBlobUrl;
+				});
+			};
 			const inputRef = useRef(null);
 
 			const fileExt = {
@@ -857,38 +863,36 @@ class App extends Component {
 
 			useEffect(() => {
 				return () => {
-					URL.revokeObjectURL(blobUrl);
+					revokeOldAndSetBlobUrl(null);
 					a.remove();
 				};
 			}, []);
 
 			useEffect(() => {
-				URL.revokeObjectURL(blobUrl);
-				setBlobUrl(null);
+				revokeOldAndSetBlobUrl(null);
 				if (saveType === "hybrid") {
 					const serializedDocument = serializeDocument();
 					createPNGram(serializedDocument, (pngramBlob) => {
 						const pngramBlobUrl = URL.createObjectURL(pngramBlob);
-						setBlobUrl(pngramBlobUrl);
+						revokeOldAndSetBlobUrl(pngramBlobUrl);
 					}, () => {
 						alert("Failed to save hybrid document (probably too large) - try the other save options.");
 					});
 				} else if (saveType === "raw-image") {
 					createRawPNG((rawPngBlob) => {
 						const rawPngBlobUrl = URL.createObjectURL(rawPngBlob);
-						setBlobUrl(rawPngBlobUrl);
+						revokeOldAndSetBlobUrl(rawPngBlobUrl);
 					});
 				} else if (saveType === "program") {
 					const serializedDocument = serializeDocument();
-					const programSourceBlob = new File(
+					const programSourceBlob = new Blob(
 						[JSON.stringify(serializedDocument)],
-						fileName,
 						{
 							type: "application/x-mopaint+json",
 						},
 					);
 					const programBlobUrl = URL.createObjectURL(programSourceBlob);
-					setBlobUrl(programBlobUrl);
+					revokeOldAndSetBlobUrl(programBlobUrl);
 				} else {
 					showError({ message: `This shouldn't happen, saveType=${saveType}`, requestBugReport: true });
 				}
