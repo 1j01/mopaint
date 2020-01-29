@@ -72,7 +72,7 @@ class App extends Component {
 			this.setState({ loadFailed: true });
 			return;
 		}
-		const MINIMUM_LOADABLE_VERSION = 0.3;
+		const MINIMUM_LOADABLE_VERSION = 0.1;
 		// upgrading code can go here, incrementing the version number step by step
 		// e.g.
 		// if (serialized.formatVersion === 0.2) {
@@ -80,6 +80,11 @@ class App extends Component {
 		// 	delete serialized.oldName;
 		// 	serialized.formatVersion = 0.3;
 		// }
+		if (serialized.formatVersion === 0.1) {
+			// literally no change afaik, just internals
+			// just skipping over version 0.2, which was a dead end
+			serialized.formatVersion = 0.3;
+		}
 		if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
 			const gitBranchName = `format-version-${serialized.formatVersion}`;
 			this.showError({
