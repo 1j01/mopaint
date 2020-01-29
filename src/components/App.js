@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
 import isPNG from "is-png";
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
-import importModuleFromCodeIfTrusted from "../pseudo-sandbox.js"
+import tools, { toolsByName } from "../tools";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
 import Colorbox from "./Colorbox.js";
@@ -18,48 +18,7 @@ import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/documen
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
 import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
 
-const CURRENT_SERIALIZATION_VERSION = 0.2;
-
-// const memoize = (fn)=> {
-// 	let cache = {};
-// 	return async function() {
-// 		let args = JSON.stringify(arguments);
-// 		cache[args] = cache[args] || fn.apply(this, arguments);
-// 		return cache[args];
-// 	};
-// };
-
-const memoizeOnOnlyFirstArgument = (fn)=> {
-	let cache = {};
-	return async function(key) {
-		cache[key] = cache[key] || fn.apply(this, arguments);
-		return cache[key];
-	};
-};
-
-const loadTool = memoizeOnOnlyFirstArgument(async (toolID, locationMessage) => {
-	// TODO: use content-addressable storage
-	const path = `tools/${toolID.toLowerCase().replace(/\s/g, "-")}.js`;
-	const response = await fetch(path);
-	const notFound = ()=> {
-		throw new Error(`unknown tool '${toolID}' ${locationMessage} - didn't find ${path}`);
-	};
-	if (response.ok) {
-		const code = await response.text();
-		if (code.match(/^\s*<!\s*doctype\s*html\s*>/)) { // create-react-app's dev server returns index.html instead of giving 404s (for single page app blah functionality)
-			return notFound();
-		}
-		const module = await importModuleFromCodeIfTrusted(code);
-		const toolFunction = module.tool;
-		console.log(toolFunction);
-		return toolFunction;
-	} else {
-		if (response.status === 404) {
-			return notFound();
-		}
-		throw new Error(`network response was not ok. (got HTTP status ${response.status})`);
-	}
-});
+const CURRENT_SERIALIZATION_VERSION = 0.3;
 
 class App extends Component {
 	constructor(props) {
@@ -71,15 +30,12 @@ class App extends Component {
 			// It can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
 			// (and images could be used as palettes by sampling from them)
 			selectedSwatch: defaultPalette[0],
-			selectedTool: null,
-			tools: null,
+			selectedTool: toolsByName["Freeform Line"],
 			undos: new List(),
 			redos: new List(),
 			// operations: new List(),
 			loaded: false,
 			loadFailed: false,
-			loadedTools: false,
-			loadToolsFailed: false,
 		};
 		this.documentCanvas = document.createElement("canvas");
 		this.documentContext = this.documentCanvas.getContext("2d");
@@ -99,13 +55,6 @@ class App extends Component {
 			};
 		};
 		this.saveDebounced = debounce(this.save.bind(this), 500);
-
-		loadTool(
-			"Freeform Line",
-			"(for the initially selected tool)",
-		).then((tool)=> {
-			this.setState({selectedTool: tool});
-		});
 	}
 
 	async loadSerializedDocument(serialized, fromFile) {
@@ -127,7 +76,7 @@ class App extends Component {
 			this.setState({ loadFailed: true });
 			return;
 		}
-		const MINIMUM_LOADABLE_VERSION = 0.2;
+		const MINIMUM_LOADABLE_VERSION = 0.3;
 		// upgrading code can go here, incrementing the version number step by step
 		// e.g.
 		// if (serialized.formatVersion === 0.2) {
@@ -171,10 +120,7 @@ class App extends Component {
 				serializedOperation,
 				`on operation with ID ${serializedOperation.id}`,
 			);
-			const tool = await loadTool(
-				serializedOperation.toolID,
-				`on operation with ID ${serializedOperation.id}`,
-			);
+			const tool = toolsByName[serializedOperation.toolID];
 			return {
 				id: serializedOperation.id,
 				tool: tool,
@@ -194,10 +140,7 @@ class App extends Component {
 			stateUpdates = {
 				palette: serialized.palette,
 				selectedSwatch: serialized.selectedSwatch,
-				selectedTool: await loadTool(
-					serialized.selectedToolID,
-					"(for the selected tool)",
-				),
+				selectedTool: toolsByName[serialized.selectedToolID],
 				undos: new List(await Promise.all(serialized.undos.map(deserializeOperation))),
 				redos: new List(await Promise.all(serialized.redos.map(deserializeOperation))),
 				loaded: true,
@@ -273,7 +216,7 @@ class App extends Component {
 			formatVersion: CURRENT_SERIALIZATION_VERSION,
 			palette: this.state.palette,
 			selectedSwatch: this.state.selectedSwatch,
-			selectedToolID: "Freeform Line",//this.state.selectedTool.name,
+			selectedToolID: this.state.selectedTool.name,
 			undos: this.state.undos.toJS().map(serializeOperation),
 			redos: this.state.redos.toJS().map(serializeOperation),
 		};
@@ -507,11 +450,6 @@ class App extends Component {
 
 	componentDidMount() {
 		this.load();
-		// loadTools().then((tools)=> {
-		// 	this.setState({tools, toolsLoaded: true});
-		// }, (error)=> {
-		// 	this.setState({toolsLoadFailed: true});
-		// });
 
 		window.addEventListener(
 			"beforeunload",
@@ -750,7 +688,7 @@ class App extends Component {
 						</button>
 					</div>
 					<Toolbox
-						tools={this.state.tools}
+						tools={tools}
 						selectedTool={selectedTool}
 						selectTool={selectTool}
 					/>

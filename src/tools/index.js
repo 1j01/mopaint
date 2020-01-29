@@ -1,41 +1,13 @@
-// import line from "./line.js";
-// // import circle from "./circle.js";
-// import rectangle from "./rectangle.js";
-// import fill from "./fill.js";
-// import mirrorReflect from "./mirror-symmetry.js";
-// import rotationallyReflect from "./rotational-symmetry.js";
+import line from "./line.js";
+import circle from "./circle.js";
+import rectangle from "./rectangle.js";
+import fill from "./fill.js";
+import mirrorReflect from "./mirror-symmetry.js";
+import rotationallyReflect from "./rotational-symmetry.js";
 // // import { ReactComponent as SymmetryIcon } from "../icons/noun-symmetry.svg";
 // // import { ReactComponent as CelticKnotIcon } from "../icons/noun-celtic-knot.svg";
-// import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket-flipped.svg";
-// import importModuleFromCodeIfTrusted, { hash } from "../pseudo-sandbox.js"
+import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket-flipped.svg";
 
-// const trustedCodes = [];
-// const registerCode = (code)=> {
-// 	trustedCodes.push(code);
-// 	return code;
-// };
-// const getTrustedHashes = ()=> {
-// 	return Promise.all(trustedCodes.map(hash));
-// };
-
-// importModuleFromCodeIfTrusted(registerCode(
-// `const circle = (ctx, x1, y1, x2, y2, swatch) => {
-// 	const radius = Math.hypot(x2 - x1, y2 - y1);
-// 	ctx.beginPath();
-// 	ctx.arc(x1, y1, radius, 0, Math.PI * 2);
-// 	ctx.fillStyle = swatch;
-// 	ctx.fill();
-// };
-
-// export default circle;`
-// )).then((module)=> {
-// 	const toolFunction = module.default;
-// 	console.log(toolFunction);
-// });
-
-// getTrustedHashes().then((trustedHashes)=> {
-// 	console.log("trusted hashes from built-in code: ", trustedHashes);
-// });
 
 const tools = {
 	"Freeform Line": {
@@ -153,9 +125,11 @@ const tools = {
 // 	});
 // });
 
-// const toolsArray = Object.keys(tools).map((key) => {
-// 	const tool = tools[key];
-// 	return { name: key, ...tool };
-// });
+const toolsArray = Object.keys(tools).map((key) => {
+	const tool = tools[key];
+	tool.name = key;
+	return tool;
+});
 
-// export default toolsArray;
+export default toolsArray;
+export const toolsByName = tools;
