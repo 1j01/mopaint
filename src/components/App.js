@@ -35,7 +35,8 @@ class App extends Component {
 		this.state = {
 			palette: defaultPalette, // TODO: eventually probably remove the "palette" state as a concept;
 			// I don't think this feature is special enough to warrant special handling (except for parsing palette files)
-			// It can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
+			// It can be part of the document, and more dynamic (gradients and patterns),
+			// and could be shared with other documents the same way(s) as tools should be able to be
 			// (and images could be used as palettes by sampling from them)
 			selectedSwatch: defaultPalette[0],
 			selectedTool: getToolByName("Freeform Line"),
