@@ -71,6 +71,16 @@ Object.keys(tools).forEach((key) => {
 				);
 			}
 		};
+		tool.getPreviewGesturePoints = (width, height)=> {
+			const points = [];
+			for (let i = 0; i < 20; i += 2) {
+				points.push({
+					x: width / 2 + 48 * Math.sin(Math.sin((i * i) / 302)),
+					y: height / 2 + 48 * Math.cos(Math.sin(i / 5)),
+				});
+			}
+			return points;
+		};
 	}
 	if (tool.drawShape) {
 		tool.drawFromGesturePoints = (opContext, points, swatch)=> {
@@ -85,11 +95,20 @@ Object.keys(tools).forEach((key) => {
 				swatch
 			);
 		};
+		tool.getPreviewGesturePoints = (width, height)=> {
+			return [
+				{ x: width / 2, y: height / 2 },
+				{ x: width - 20, y: height - 20 },
+			];
+		};
 	}
 	if (tool.click) {
 		tool.drawFromGesturePoints = (opContext, points, swatch, documentContext)=> {
 			const startPos = points[0];
 			tool.click(opContext, startPos.x, startPos.y, swatch, documentContext);
+		};
+		tool.getPreviewGesturePoints = (width, height)=> {
+			return { x: width / 2, y: height / 2 };
 		};
 	}
 });
@@ -124,6 +143,7 @@ pointModifiers.forEach((modifier) => {
 					originalTool.drawFromGesturePoints(opContext, points, swatch, documentContext);
 				}
 			};
+			newTool.getPreviewGesturePoints = originalTool.getPreviewGesturePoints;
 		}
 	});
 });
