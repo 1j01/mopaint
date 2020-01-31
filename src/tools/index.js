@@ -125,6 +125,46 @@ pointModifiers.forEach((modifier) => {
 	});
 });
 
+Object.keys(tools).forEach((key) => {
+	const tool = tools[key];
+
+	// if (tool.drawSegmentOfPath || tool.drawShape || tool.click) {
+	if (tool.drawSegmentOfPath) {
+		// TODO: do smoothing (rather than just plain segments) for brush tool(s)
+		tool.drawFromGesturePoints = (opContext, points, swatch)=> {
+			for (let i1 = 0, i2 = 1; i2 < points.length; i1 += 1, i2 += 1) {
+				tool.drawSegmentOfPath(
+					opContext,
+					points[i1].x,
+					points[i1].y,
+					points[i2].x,
+					points[i2].y,
+					swatch
+				);
+			}
+		};
+	}
+	if (tool.drawShape) {
+		tool.drawFromGesturePoints = (opContext, points, swatch)=> {
+			const startPos = points[0];
+			const lastPos = points[points.length - 1];
+			tool.drawShape(
+				opContext,
+				startPos.x,
+				startPos.y,
+				lastPos.x,
+				lastPos.y,
+				swatch
+			);
+		};
+	}
+	if (tool.click) {
+		tool.drawFromGesturePoints = (opContext, points, swatch, documentContext)=> {
+			const startPos = points[0];
+			tool.click(opContext, startPos.x, startPos.y, swatch, documentContext);
+		};
+	}
+});
 const toolsArray = Object.keys(tools).map((key) => {
 	const tool = tools[key];
 	tool.name = key;

@@ -23,34 +23,8 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 			// opContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
 			// console.log("cache miss");
 			const { points, tool, swatch } = operation;
-			const startPos = points[0];
-			const lastPos = points[points.length - 1];
-			if (tool.drawShape) {
-				tool.drawShape(
-					opContext,
-					startPos.x,
-					startPos.y,
-					lastPos.x,
-					lastPos.y,
-					swatch
-				);
-			}
-			if (tool.drawSegmentOfPath) {
-				// TODO: allow for smoothing (rather than just plain segments)
-				for (let i1 = 0, i2 = 1; i2 < points.length; i1 += 1, i2 += 1) {
-					tool.drawSegmentOfPath(
-						opContext,
-						points[i1].x,
-						points[i1].y,
-						points[i2].x,
-						points[i2].y,
-						swatch
-					);
-				}
-			}
-			if (tool.click) {
-				tool.click(opContext, startPos.x, startPos.y, swatch, documentContext);
-			}
+
+			tool.drawFromGesturePoints(opContext, points, swatch, documentContext);
 
 			documentContext.drawImage(opCanvas, 0, 0);
 
