@@ -20,6 +20,14 @@ import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/docume
 
 const CURRENT_SERIALIZATION_VERSION = 0.3;
 
+const getToolByName = (toolID)=> {
+	const tool = toolsByName[toolID];
+	if (!tool) {
+		throw new Error(`Tool not found with name '${toolID}'`);
+	}
+	return tool;
+};
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -30,7 +38,7 @@ class App extends Component {
 			// It can be part of the document, and more dynamic, and could be shared with other documents the same way(s) as tools
 			// (and images could be used as palettes by sampling from them)
 			selectedSwatch: defaultPalette[0],
-			selectedTool: toolsByName["Freeform Line"],
+			selectedTool: getToolByName("Freeform Line"),
 			undos: new List(),
 			redos: new List(),
 			// operations: new List(),
@@ -121,7 +129,7 @@ class App extends Component {
 				serializedOperation,
 				`on operation with ID ${serializedOperation.id}`,
 			);
-			const tool = toolsByName[serializedOperation.toolID];
+			const tool = getToolByName(serializedOperation.toolID);
 			return {
 				id: serializedOperation.id,
 				tool: tool,
@@ -141,7 +149,7 @@ class App extends Component {
 			stateUpdates = {
 				palette: serialized.palette,
 				selectedSwatch: serialized.selectedSwatch,
-				selectedTool: toolsByName[serialized.selectedToolID],
+				selectedTool: getToolByName(serialized.selectedToolID),
 				undos: new List(await Promise.all(serialized.undos.map(deserializeOperation))),
 				redos: new List(await Promise.all(serialized.redos.map(deserializeOperation))),
 				loaded: true,
