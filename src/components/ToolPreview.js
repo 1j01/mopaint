@@ -55,9 +55,6 @@ class ToolPreview extends Component {
 			);
 		}
 		if (tool.drawSegmentOfPath) {
-			// TODO: smoothing (instead of just segments)
-
-			// (not very constant, but the references are const)
 			const lastPos = { x: 2, y: 2 };
 			const pos = { x: 2, y: 2 };
 			for (let i = 0; i < 20; i += 2) {
@@ -80,7 +77,6 @@ class ToolPreview extends Component {
 			}
 		}
 		if (tool.click) {
-			// TODO: represent fill tool better, and/or at LEAST different from the rectangle tool
 			tool.click(opCtx, opCanvas.width / 2, opCanvas.height / 2, swatch, ctx);
 		}
 

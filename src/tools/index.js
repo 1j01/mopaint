@@ -55,82 +55,10 @@ const pointModifiers = [
 		pointToPoints: rotationallyReflect,
 	},
 ];
-// TODO: for now I'm relying on a sort of set of separate APIs for tools based on certain kinds of geometry they can take
-// something better might involve streams of events / geometry, or just generally be more general
-
-pointModifiers.forEach((modifier) => {
-	Object.keys(tools).forEach((key) => {
-		const originalTool = tools[key];
-		const newKey = modifier.prefix + key;
-
-		// if (originalTool.drawSegmentOfPath || originalTool.drawShape || originalTool.click) {
-		// TODO: DRY and rework all this, make all this unnecessary and obsolete
-		if (originalTool.drawSegmentOfPath) {
-			const newTool = (tools[newKey] = {});
-			newTool.drawSegmentOfPath = (ctx, x1, y1, x2, y2, swatch) => {
-				const starts = modifier.pointToPoints(x1, y1, ctx);
-				const ends = modifier.pointToPoints(x2, y2, ctx);
-				for (let i = 0; i < starts.length; i++) {
-					const start = starts[i];
-					const end = ends[i];
-					originalTool.drawSegmentOfPath(
-						ctx,
-						start.x,
-						start.y,
-						end.x,
-						end.y,
-						swatch
-					);
-				}
-			};
-		}
-		if (originalTool.drawShape) {
-			const newTool = (tools[newKey] = {});
-			newTool.drawShape = (ctx, x1, y1, x2, y2, swatch) => {
-				const starts = modifier.pointToPoints(x1, y1, ctx);
-				const ends = modifier.pointToPoints(x2, y2, ctx);
-				for (let i = 0; i < starts.length; i++) {
-					const start = starts[i];
-					const end = ends[i];
-					originalTool.drawShape(ctx, start.x, start.y, end.x, end.y, swatch);
-				}
-			};
-		}
-		// TODO: sub-operations for symmetric fill so that it can use the underlying image data of the canvas
-		// consistently when called multiple times in an operation
-		// (The fill tool could also work by accepting multiple starting points (easily),
-		// but it's a matter of complicating the external code (and the boundary/API),
-		// and I think generally we want it to act as if there were simply multiple separate clicks/gestures,
-		// so more tools can work without change, so it would be good to do that earlier on.
-		// Other tools like the line tool could benefit from taking the geometry of multiple lines to draw all at once as an optimization,
-		// so maybe there could be a way for tools to opt in to handling batching for optimization)
-		// if (originalTool.click) {
-		// 	const newTool = (tools[newKey] = {});
-		// 	newTool.click = (ctx, x, y, swatch, documentCtx) => {
-		// 		const starts = modifier.pointToPoints(x, y, ctx);
-		// 		// console.log(starts);
-		// 		for(let i = 0; i < starts.length; i++){
-		// 			// break;
-		// 			const start = starts[i];
-		// 			originalTool.click(
-		// 				ctx,
-		// 				start.x,
-		// 				start.y,
-		// 				swatch,
-		// 				documentCtx
-		// 			);
-		// 		}
-		// 	};
-		// }
-	});
-});
-
 Object.keys(tools).forEach((key) => {
 	const tool = tools[key];
 
-	// if (tool.drawSegmentOfPath || tool.drawShape || tool.click) {
 	if (tool.drawSegmentOfPath) {
-		// TODO: do smoothing (rather than just plain segments) for brush tool(s)
 		tool.drawFromGesturePoints = (opContext, points, swatch)=> {
 			for (let i1 = 0, i2 = 1; i2 < points.length; i1 += 1, i2 += 1) {
 				tool.drawSegmentOfPath(
@@ -165,6 +93,41 @@ Object.keys(tools).forEach((key) => {
 		};
 	}
 });
+
+pointModifiers.forEach((modifier) => {
+	Object.keys(tools).forEach((key) => {
+		const originalTool = tools[key];
+		const newKey = modifier.prefix + key;
+
+		if (originalTool.click) {
+			return; // skip Fill tool for now
+			// TODO: either pass multiple starting points to the Fill tool at once,
+			// or set it up so the document is updated between multiple calls to the Fill tool
+			// (could do some sort of "sub-operations" thing for the latter, or something simpler)
+			// (OR set it up to isolate the fill region on the opCanvas and then combine the fill regions from multiple calls,
+			// but that would be inefficient, processing areas multiple times)
+			// Other tools like the line tool could benefit from taking the geometry of multiple lines to draw all at once as an optimization,
+			// so maybe there could be a way for tools to opt in to handling batching for optimization?
+		}
+		if (originalTool.drawFromGesturePoints) {
+			const newTool = (tools[newKey] = {});
+			newTool.drawFromGesturePoints = (opContext, gesturePoints, swatch, documentContext) => {
+				const pointses = []; // very silly name
+				for (const gesturePoint of gesturePoints) {
+					const symmetricPoints = modifier.pointToPoints(gesturePoint.x, gesturePoint.y, opContext);
+					for (let i = 0; i < symmetricPoints.length; i++) {
+						pointses[i] = pointses[i] || [];
+						pointses[i].push(symmetricPoints[i]);
+					}
+				}
+				for (const points of pointses) {
+					originalTool.drawFromGesturePoints(opContext, points, swatch, documentContext);
+				}
+			};
+		}
+	});
+});
+
 const toolsArray = Object.keys(tools).map((key) => {
 	const tool = tools[key];
 	tool.name = key;

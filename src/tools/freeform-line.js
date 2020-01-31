@@ -14,5 +14,6 @@ export default line;
 
 export const tool = {
 	name: "Freeform Line",
+	// TODO: smooth (rather than just plain segments)
 	drawSegmentOfPath: line,
 };
