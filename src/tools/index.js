@@ -97,8 +97,8 @@ Object.keys(tools).forEach((key) => {
 		};
 		tool.getPreviewGesturePoints = (width, height)=> {
 			return [
-				{ x: width / 2, y: height / 2 },
-				{ x: width - 20, y: height - 20 },
+				{ x: width * 0.5, y: height * 0.5 },
+				{ x: width * 0.8, y: height * 0.8 },
 			];
 		};
 	}
@@ -143,7 +143,8 @@ pointModifiers.forEach((modifier) => {
 					originalTool.drawFromGesturePoints(opContext, points, swatch, documentContext);
 				}
 			};
-			newTool.getPreviewGesturePoints = originalTool.getPreviewGesturePoints;
+			newTool.getPreviewGesturePoints = (width, height)=>
+				originalTool.getPreviewGesturePoints(width/2, height/2);
 		}
 	});
 });
