@@ -7,8 +7,8 @@ Prototype. Work in progress. Nothing to see yet.
 #### Principles
 
 - Holistic design
-- Don't destroy data by default.
-- Let users explore *fearlessly*.
+- Don't Destroy Data by Default
+- Fearless exploration
 
 Don't destroy data by default, only by explicit user action.
 
@@ -40,7 +40,7 @@ What might we stand to gain?
 - **mo**tion (i.e. animation)
 - e**mo**tion
 - **mo**re!
-- maybe some [custom, dynamic e**mo**ji](https://github.com/multiism/emoji))
+- maybe some [custom, dynamic e**mo**ji](https://github.com/multiism/emoji)
 - maybe 3D **mo**deling (**m**ake **o**bjects **p**retty **a**rtistically **in** **t**his thing)
 - but the document **mo**del is the important part
 

@@ -37,24 +37,6 @@ const tools = {
 	},
 };
 
-// TODO: allow the USER to compose tools (dynamically)
-// TODO: show preview of multiple points the user will interact with if they interact
-const pointModifiers = [
-	{
-		prefix: "Mirror Symmetric ",
-		// name: "Mirror Symmetry",
-		// name: "Mirror Reflect",
-		// icon: SymmetryIcon,
-		pointToPoints: mirrorReflect,
-	},
-	{
-		prefix: "Rotationally Symmetric ",
-		// name: "Rotational Symmetry",
-		// name: "Point Reflect",
-		// icon: CelticKnotIcon,
-		pointToPoints: rotationallyReflect,
-	},
-];
 Object.keys(tools).forEach((key) => {
 	const tool = tools[key];
 
@@ -113,6 +95,24 @@ Object.keys(tools).forEach((key) => {
 	}
 });
 
+// TODO: allow the USER to compose tools (dynamically)
+// TODO: show preview of multiple points the user will interact with if they interact
+const pointModifiers = [
+	{
+		prefix: "Mirror Symmetric ",
+		// name: "Mirror Symmetry",
+		// name: "Mirror Reflect",
+		// icon: SymmetryIcon,
+		pointToPoints: mirrorReflect,
+	},
+	{
+		prefix: "Rotationally Symmetric ",
+		// name: "Rotational Symmetry",
+		// name: "Point Reflect",
+		// icon: CelticKnotIcon,
+		pointToPoints: rotationallyReflect,
+	},
+];
 pointModifiers.forEach((modifier) => {
 	Object.keys(tools).forEach((key) => {
 		const originalTool = tools[key];
@@ -132,8 +132,10 @@ pointModifiers.forEach((modifier) => {
 			const newTool = (tools[newKey] = {});
 			newTool.drawFromGesturePoints = (opContext, gesturePoints, swatch, documentContext) => {
 				const pointses = []; // very silly name
+				const centerX = opContext.canvas.width / 2;
+				const centerY = opContext.canvas.height / 2;
 				for (const gesturePoint of gesturePoints) {
-					const symmetricPoints = modifier.pointToPoints(gesturePoint.x, gesturePoint.y, opContext);
+					const symmetricPoints = modifier.pointToPoints(gesturePoint.x, gesturePoint.y, centerX, centerY);
 					for (let i = 0; i < symmetricPoints.length; i++) {
 						pointses[i] = pointses[i] || [];
 						pointses[i].push(symmetricPoints[i]);

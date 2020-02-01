@@ -1,8 +1,6 @@
-const getMirrorSymmetryPoints = (x, y, ctx) => {
+const getMirrorSymmetryPoints = (x, y, flipCenterX, flipCenterY) => {
 	// const angle = 0;
-	const flipCenterX = ctx.canvas.width / 2;
-	// const flipCenterY = ctx.canvas.height / 2;
-	// TODO: user-configurable axis
+	// TODO: let user choose symmetry line
 
 	const reflectPoint = (x, y) => ({
 		// TODO: work with arbitrary angle

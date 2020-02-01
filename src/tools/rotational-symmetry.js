@@ -1,12 +1,10 @@
-// TODO: user-configurable center and number of repetitions and everything
+// TODO: let user choose center and number of repetitions and everything
 
 // Returns an array of {x, y} objects representing the symmetries of the given coordinates.
 // Based on https://www.nayuki.io/page/symmetry-sketcher-javascript
-const getRotationalSymmetryPoints = (x, y, ctx) => {
+const getRotationalSymmetryPoints = (x, y, centerX, centerY) => {
 	const offsetAngle = 0; // Radians
 	const repetitions = 6;
-	const centerX = ctx.canvas.width / 2;
-	const centerY = ctx.canvas.height / 2;
 
 	// up = 0 degrees, right = 90 deg, down = 180 deg, left = 270 deg
 	const relativeX = x - centerX;
