@@ -35,11 +35,14 @@ What might we stand to gain?
 - **m**assively **o**penended
 - **mo**dern
 - **mo**dular
-- maybe 3D **mo**deling (**m**ake **o**bjects **p**retty **a**rtistically **in** **t**his thing)
-- **mo**tion (animation) (maybe even make full-blown **mo**vies)
-- e**mo**tional paintings
-- maybe some [custom, dynamic e**mo**ji](https://github.com/multiism/emoji))
+- **mo**rphing images
+- **mo**ckups
+- **mo**tion (i.e. animation)
+- e**mo**tion
 - **mo**re!
+- maybe some [custom, dynamic e**mo**ji](https://github.com/multiism/emoji))
+- maybe 3D **mo**deling (**m**ake **o**bjects **p**retty **a**rtistically **in** **t**his thing)
+- but the document **mo**del is the important part
 
 Mopaint. More than paint.
 
