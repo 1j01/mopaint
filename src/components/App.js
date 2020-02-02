@@ -89,6 +89,7 @@ class App extends Component {
 			return;
 		}
 		console.log(`Load ${this.props.documentID}`);
+		const {serializedDocumentToLoad} = this.props;
 		localforage.getItem(
 			`document:${this.props.documentID}:state`,
 			(error, serialized) => {
@@ -101,9 +102,9 @@ class App extends Component {
 					this.setState({ loadFailed: true });
 					return;
 				}
-				if (this.props.serializedDocumentToLoad) {
+				if (serializedDocumentToLoad) {
 					if (!serialized) {
-						this.loadSerializedDocument(this.props.serializedDocumentToLoad);
+						this.loadSerializedDocument(serializedDocumentToLoad);
 					} else {
 						this.showError({
 							message:
