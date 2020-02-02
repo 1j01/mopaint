@@ -385,7 +385,7 @@ class App extends Component {
 						this.undo();
 					} else if (event.key === "Z" || event.key === "y") {
 						this.redo();
-					} else if (event.key === "s") {
+					} else if (event.key === "s" || event.key === "S") { // Save and Save As shortcuts same for now
 						this.showSaveDialog();
 					} else if (event.key === "o") {
 						this.openDocument();
