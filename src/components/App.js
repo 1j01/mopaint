@@ -369,6 +369,10 @@ class App extends Component {
 		window.addEventListener(
 			"keydown",
 			(this.keyDownListener = (event) => {
+				if (event.key === "Escape") {
+					this.closeDialog();
+					return;
+				}
 				if (
 					document.activeElement &&
 					document.activeElement.matches("input, textarea")
