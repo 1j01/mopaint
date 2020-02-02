@@ -125,19 +125,20 @@ Thumbnail.propTypes = {
 class HistoryEntry extends Component {
 	render() {
 		const {
-			selected,
+			current,
+			ancestorOfCurrent,
 			onClick,
-			entry,
+			operation,
 			indexInListForAnimationOffset,
 			drawFunctionsArrayToAddTo,
 			getThumbnailImageMaybe,
 		} = this.props;
-		// NOTE: className, role, and aria-checked all relied upon in HistoryView
+		// NOTE: className, role, and aria-checked are all relied upon in HistoryView
 		return (
 			<button
-				className="HistoryEntry"
+				className={"HistoryEntry" + (ancestorOfCurrent ? " ancestor-of-current" : "")}
 				role="radio"
-				aria-checked={selected ? "aria-checked" : null}
+				aria-checked={current ? "aria-checked" : null}
 				onClick={onClick} // for keyboard accessibility
 				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
@@ -148,16 +149,17 @@ class HistoryEntry extends Component {
 					drawFunctionsArrayToAddTo={drawFunctionsArrayToAddTo}
 					getImageMaybe={getThumbnailImageMaybe}
 				/>
-				<ToolPreview tool={entry.tool} width={16} height={16} />
-				{entry.tool.name}
+				<ToolPreview tool={operation.tool} width={16} height={16} />
+				{operation.tool.name}
 			</button>
 		);
 	}
 }
 
 HistoryEntry.propTypes = {
-	entry: PropTypes.object.isRequired,
-	selected: PropTypes.bool.isRequired,
+	operation: PropTypes.object.isRequired,
+	current: PropTypes.bool.isRequired,
+	ancestorOfCurrent: PropTypes.bool.isRequired,
 	onClick: PropTypes.func.isRequired,
 };
 

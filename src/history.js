@@ -119,7 +119,7 @@ function redo(){
 	return true;
 }
 
-function get_history_ancestors(node) {
+export function getHistoryAncestors(node) {
 	const ancestors = [];
 	for (node = node.parent; node; node = node.parent) {
 		ancestors.push(node);
@@ -133,58 +133,6 @@ function show_document_history() {
 	const $history_view = $w.$content.find(".history-view");
 
 	let previous_scroll_position = 0;
-
-	let rendered_$entries = [];
-
-	function render_tree_from_node(node) {
-		const $entry = $(`
-			<div class="history-entry">
-				<div class="history-entry-icon-area"></div>
-				<div class="history-entry-name"></div>
-			</div>
-		`);
-		$entry.find(".history-entry-name").text(node.name || "Unknown");
-		$entry.find(".history-entry-icon-area").append(node.icon);
-		if (node === current_history_node) {
-			$entry.addClass("current");
-			requestAnimationFrame(()=> {
-				$history_view.scrollTop(previous_scroll_position);
-				$entry[0].scrollIntoView({block: "nearest"});
-			});
-		} else {
-			const history_ancestors = get_history_ancestors(current_history_node);
-			if (history_ancestors.indexOf(node) > -1) {
-				$entry.addClass("ancestor-of-current");
-			}
-		}
-		for (const sub_node of node.futures) {
-			render_tree_from_node(sub_node);
-		}
-		$entry.on("click", ()=> {
-			go_to_history_node(node);
-		});
-		$entry.history_node = node;
-		rendered_$entries.push($entry);
-	}
-	const render_tree = ()=> {
-		previous_scroll_position = $history_view.scrollTop();
-		$history_view.empty();
-		rendered_$entries = [];
-		render_tree_from_node(root_history_node);
-		rendered_$entries.sort(($a, $b)=> {
-			if ($a.history_node.timestamp < $b.history_node.timestamp) {
-				return -1;
-			}
-			if ($b.history_node.timestamp < $a.history_node.timestamp) {
-				return +1;
-			}
-			return 0;
-		});
-		rendered_$entries.forEach(($entry)=> {
-			$history_view.append($entry);
-		});
-	};
-	render_tree();
 
 	$G.on("history-update", render_tree);
 	$w.on("close", ()=> {
