@@ -62,7 +62,7 @@ class App extends Component {
 		this.saveDebounced = debounce(this.save.bind(this), 500);
 	}
 
-	async loadSerializedDocument(serialized, fromFile) {
+	loadSerializedDocument(serialized, fromFile) {
 		const nounPhraseThingToLoad = fromFile ? "document" : "document state";
 		if (serialized.format !== "mopaint") {
 			this.showError({
@@ -124,7 +124,7 @@ class App extends Component {
 				}
 			});
 		};
-		const deserializeOperation = async (serializedOperation) => {
+		const deserializeOperation = (serializedOperation) => {
 			expectPropertiesToExist(
 				["id", "toolID", "points", "swatch"],
 				serializedOperation,
@@ -151,8 +151,8 @@ class App extends Component {
 				palette: serialized.palette,
 				selectedSwatch: serialized.selectedSwatch,
 				selectedTool: getToolByName(serialized.selectedToolID),
-				undos: new List(await Promise.all(serialized.undos.map(deserializeOperation))),
-				redos: new List(await Promise.all(serialized.redos.map(deserializeOperation))),
+				undos: new List(serialized.undos.map(deserializeOperation)),
+				redos: new List(serialized.redos.map(deserializeOperation)),
 				loaded: true,
 			};
 		} catch (error) {
