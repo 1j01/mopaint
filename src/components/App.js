@@ -548,14 +548,16 @@ class App extends Component {
 									this.props.goToDocument(event.target.value)
 								}
 							>
-								>
-								{[this.props.documentID, ...this.props.documentIDs.filter((id)=> id !== this.props.documentID)].map((documentID) => {
-									return (
-										<option value={documentID} key={documentID}>
-											Untitled ({documentID})
-										</option>
-									);
-								})}
+								{
+									// documentID may not be in documentIDs if the document is not yet saved
+									[this.props.documentID, ...this.props.documentIDs.filter((id)=> id !== this.props.documentID)].map((documentID) => {
+										return (
+											<option value={documentID} key={documentID}>
+												Untitled ({documentID})
+											</option>
+										);
+									})
+								}
 							</select>
 						</label>
 						<hr/>
