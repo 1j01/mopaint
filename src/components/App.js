@@ -549,7 +549,7 @@ class App extends Component {
 								}
 							>
 								>
-								{this.props.documentIDs.map((documentID) => {
+								{[this.props.documentID, ...this.props.documentIDs.filter((id)=> id !== this.props.documentID)].map((documentID) => {
 									return (
 										<option value={documentID} key={documentID}>
 											Untitled ({documentID})
