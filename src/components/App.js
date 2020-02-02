@@ -66,11 +66,10 @@ class App extends Component {
 		try {
 			[errorInfo, stateUpdates] = deserializeDocument(serialized, fromFile, getToolByName);
 		} catch (error) {
-			this.showError({
+			errorInfo = {
 				message: "Failed to load document!",
 				error,
-			});
-			this.setState({ loadFailed: true });
+			};
 		}
 		if (errorInfo) {
 			this.showError(errorInfo);
