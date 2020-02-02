@@ -29,12 +29,15 @@ const createNewDocument = () => {
 	goToDocument(newDocumentID);
 };
 
-let serializedDocumentToLoad;
+let toLoad = {
+	serializedDocument: null,
+	documentID: null,
+};
 const loadNewDocument = (serializedDocument) => {
-	console.log("Start new document from", serializedDocument);
-	serializedDocumentToLoad = serializedDocument;
-	createNewDocument();
-	serializedDocumentToLoad = null;
+	const documentID = shortid.generate();
+	toLoad = {serializedDocument, documentID};
+	console.log(`Start new document (${documentID}) from`, serializedDocument);
+	goToDocument(documentID);
 };
 
 let documentIDs = []; // TODO: null, and loading indicators anywhere this state is used
@@ -53,6 +56,14 @@ const render = () => {
 	if (!documentID) {
 		createNewDocument();
 		return;
+	}
+	let serializedDocumentToLoad;
+	if (documentID === toLoad.documentID) {
+		serializedDocumentToLoad = toLoad.serializedDocument;
+		toLoad = {
+			serializedDocument: null,
+			documentID: null,
+		};
 	}
 	ReactDOM.render(
 		<App
