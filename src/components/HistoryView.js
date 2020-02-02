@@ -60,7 +60,7 @@ class HistoryView extends Component {
 	}
 	onComponentDidMount() {
 		if (this.currentEntryRef.current) {
-			// this.scrollableRef.current.scrollTop(this.previous_scroll_position);
+			// this.scrollableRef.current.scrollTop(this.previousScrollPosition);
 			this.currentEntryRef.current.scrollIntoView({block: "nearest"});
 		}
 	}
@@ -81,10 +81,10 @@ class HistoryView extends Component {
 
 		let entries = [];
 
-		function render_tree_from_node(node) {
-			const history_ancestors = getHistoryAncestors(current_history_node);
-			const ancestorOfCurrent = history_ancestors.indexOf(node) > -1;
-			const current = node === current_history_node;
+		function renderTreeFromNode(node) {
+			const historyAncestors = getHistoryAncestors(currentHistoryNode);
+			const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
+			const current = node === currentHistoryNode;
 			const entry =
 				<HistoryEntry
 					key={entry.id}
@@ -97,28 +97,28 @@ class HistoryView extends Component {
 					drawFunctionsArrayToAddTo={this.drawFunctions}
 					getThumbnailImageMaybe={() => thumbnailsByOperation.get(entry)}
 				/>;
-			entry.history_node = node; // HACK
-			for (const sub_node of node.futures) {
-				render_tree_from_node(sub_node);
+			entry.historyNode = node; // HACK
+			for (const subNode of node.futures) {
+				renderTreeFromNode(subNode);
 			}
 			$entry.on("click", ()=> {
-				go_to_history_node(node);
+				goToHistoryNode(node);
 			});
-			$entry.history_node = node;
+			$entry.historyNode = node;
 			entries.push(entry);
 		}
 
 		if (this.scrollableRef.current) {
-			this.previous_scroll_position = this.scrollableRef.current.scrollTop;
+			this.previousScrollPosition = this.scrollableRef.current.scrollTop;
 		}
 
-		render_tree_from_node(root_history_node);
+		renderTreeFromNode(rootHistoryNode);
 		entries.sort(($a, $b)=> {
 			// HACK
-			if ($a.history_node.timestamp < $b.history_node.timestamp) {
+			if ($a.historyNode.timestamp < $b.historyNode.timestamp) {
 				return -1;
 			}
-			if ($b.history_node.timestamp < $a.history_node.timestamp) {
+			if ($b.historyNode.timestamp < $a.historyNode.timestamp) {
 				return +1;
 			}
 			return 0;
