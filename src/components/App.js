@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { load as loadPalette } from "anypalette";
 import isPNG from "is-png";
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
+import { serializeDocument, CURRENT_SERIALIZATION_VERSION } from "../document-format"; 
 import tools, { toolsByName } from "../tools";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
@@ -17,8 +18,6 @@ import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
 import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
-
-const CURRENT_SERIALIZATION_VERSION = 0.3;
 
 const getToolByName = (toolID)=> {
 	const tool = toolsByName[toolID];
@@ -210,28 +209,6 @@ class App extends Component {
 		);
 	}
 
-	serializeDocument() {
-		// TODO: serialize tools as code (+ identifiers), and create a sandbox
-		const serializeOperation = (operation) => {
-			return {
-				id: operation.id,
-				toolID: operation.tool.name,
-				// toolCode: operation.tool.toString(), // not enough to define it; will need the whole module
-				points: operation.points,
-				swatch: operation.swatch,
-			};
-		};
-		return {
-			format: "mopaint",
-			formatVersion: CURRENT_SERIALIZATION_VERSION,
-			palette: this.state.palette,
-			selectedSwatch: this.state.selectedSwatch,
-			selectedToolID: this.state.selectedTool.name,
-			undos: this.state.undos.toJS().map(serializeOperation),
-			redos: this.state.redos.toJS().map(serializeOperation),
-		};
-	}
-
 	save(leavingThisDocument) {
 		if (!this.state.loaded) {
 			if (!leavingThisDocument) {
@@ -249,7 +226,7 @@ class App extends Component {
 			}
 			return;
 		}
-		const serialized = this.serializeDocument();
+		const serialized = serializeDocument(this.state);
 		localforage.setItem(
 			`document:${this.props.documentID}:state`,
 			serialized,
@@ -768,9 +745,9 @@ class App extends Component {
 	showSaveDialog() {
 		const createPNGram = this.createPNGram.bind(this);
 		const createRawPNG = this.createRawPNG.bind(this);
-		const serializeDocument = this.serializeDocument.bind(this);
 		const closeDialog = this.closeDialog.bind(this);
 		const showError = this.showError.bind(this);
+		const state = this.state;
 
 		const a = document.createElement("a");
 		a.className = "for-downloading-files";
@@ -818,7 +795,7 @@ class App extends Component {
 			useEffect(() => {
 				revokeOldAndSetBlobUrl(null);
 				if (saveType === "hybrid") {
-					const serializedDocument = serializeDocument();
+					const serializedDocument = serializeDocument(state);
 					createPNGram(serializedDocument, (pngramBlob) => {
 						const pngramBlobUrl = URL.createObjectURL(pngramBlob);
 						revokeOldAndSetBlobUrl(pngramBlobUrl);
@@ -831,7 +808,7 @@ class App extends Component {
 						revokeOldAndSetBlobUrl(rawPngBlobUrl);
 					});
 				} else if (saveType === "program") {
-					const serializedDocument = serializeDocument();
+					const serializedDocument = serializeDocument(state);
 					const programSourceBlob = new Blob(
 						[JSON.stringify(serializedDocument)],
 						{
