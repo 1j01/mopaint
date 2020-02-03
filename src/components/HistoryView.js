@@ -12,11 +12,8 @@ class HistoryView extends Component {
 	constructor(props) {
 		super(props);
 
-		this.scrollableRef = React.createRef();
 		this.currentEntryRef = React.createRef();
 		
-		this.previousScrollPosition = 0;
-
 		// TODO: cleanup how this works!
 		this.drawFunctions = [];
 	}
@@ -40,7 +37,6 @@ class HistoryView extends Component {
 	scrollSelectedEntryIntoView() {
 		const entryEl = this.currentEntryRef.current && ReactDOM.findDOMNode(this.currentEntryRef.current);
 		if (entryEl) {
-			// this.scrollableRef.current.scrollTop(this.previousScrollPosition);
 			entryEl.scrollIntoView({
 				behavior: "instant",
 				block: "nearest",
@@ -64,12 +60,8 @@ class HistoryView extends Component {
 		const historyAncestors = getHistoryAncestors(currentHistoryNode);
 		const allHistoryNodes = getAllHistoryNodesSortedByTimestamp(currentHistoryNode);
 
-		if (this.scrollableRef.current) {
-			this.previousScrollPosition = this.scrollableRef.current.scrollTop;
-		}
-
 		return (
-			<div className="HistoryView" role="radiogroup" ref={this.scrollableRef}>
+			<div className="HistoryView" role="radiogroup">
 				{allHistoryNodes.map((node)=> {
 					const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
 					const current = node === currentHistoryNode;
