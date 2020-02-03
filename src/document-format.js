@@ -47,7 +47,7 @@ export function serializeDocument({palette, selectedSwatch, selectedTool, undos,
 	const toID = (historyNode)=> historyNode.id;
 
 	const historyNodesByID = {};
-	allHistoryNodes.map((historyNode)=> {
+	allHistoryNodes.forEach((historyNode)=> {
 		historyNodesByID[historyNode.id] = {
 			parentHNID: historyNode.parentNode && historyNode.parentNode.id,
 			childHNIDs: historyNode.futures.map(toID),
@@ -100,7 +100,10 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		serialized.formatVersion = 0.3;
 	}
 	// if (serialized.formatVersion === 0.3) {
-
+	// 	// TODO
+	// 	// necessary lies:
+	// 	// time (previously not recorded)
+	// 	// document structure (previously not recorded / already a lie)
 	// 	const rootHistoryNode = ...;
 	// 	for (undos, redos...) {
 

@@ -47,8 +47,7 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 			thumbnail.getContext("2d").drawImage(opCanvas, 0, 0, 64, 64);
 			thumbnailsByOperation.set(operation, thumbnail);
 
-			// invalidate the cache for any future operations
-			// TODO: need to invalidate "redos"
+			// TODO: cache invalidation
 			// // console.log("invalidate", operations, operationIndex + 1);
 			// operations.slice(operationIndex + 1).forEach((operation)=> {
 			// 	// TODO: unless self-contained
