@@ -1,6 +1,7 @@
 import { List } from "immutable";
 
-export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undos}) {
+export function goToHistoryNode(targetHistoryNode, {currentHistoryNode, redos, undos}) {
+	const fromHistoryNode = currentHistoryNode;
 	const oldHistoryPath =
 		redos.length > 0 ?
 			[redos[0], ...getHistoryAncestors(redos[0])] :
@@ -17,7 +18,7 @@ export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undo
 	window.console && console.log("targetHistoryNode:", targetHistoryNode);
 	window.console && console.log("ancestorsOfTarget:", ancestorsOfTarget);
 	window.console && console.log("oldHistoryPath:", oldHistoryPath);
-	redos = [];
+	redos = new List();
 
 	let latestNode = targetHistoryNode;
 	while (latestNode.futures.length > 0) {
@@ -32,7 +33,7 @@ export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undo
 			return 0;
 		});
 		latestNode = futures[0];
-		redos.unshift(latestNode);
+		redos = redos.unshift(latestNode);
 	}
 	window.console && console.log("new undos:", undos);
 	window.console && console.log("new redos:", redos);

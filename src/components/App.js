@@ -632,7 +632,7 @@ class App extends Component {
 						currentHistoryNode={this.state.currentHistoryNode}
 						undos={this.state.undos}
 						redos={this.state.redos}
-						goToHistoryNode={this.goToHistoryNode}
+						goToHistoryNode={this.goToHistoryNode.bind(this)}
 						thumbnailsByOperation={this.thumbnailsByOperation}
 					/>
 				</div>
