@@ -7,6 +7,13 @@ import "./HistoryView.css";
 import {getHistoryAncestors, goToHistoryNode} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
 
+const getRoot = (historyNode)=> {
+	while (historyNode.parentNode) {
+		historyNode = historyNode.parentNode;
+	}
+	return historyNode;
+};
+
 // TODO: DRY Toolbox + Palette + HistoryView maybe
 // should refactor it so the list is separate from the history entry display!
 // and support keyboard navigation! and scroll the view
@@ -72,19 +79,20 @@ class HistoryView extends Component {
 
 		const { currentHistoryNode, thumbnailsByOperation } = this.props;
 
-		const rootHistoryNode = getHistoryAncestors(currentHistoryNode)[0];//maybe TODO
-		console.log("root", rootHistoryNode, rootHistoryNode.parentNode);
+		const rootHistoryNode = getRoot(currentHistoryNode);
+		console.log("rootHistoryNode", rootHistoryNode);
 
 		let entries = [];
 
-		function renderTreeFromNode(node) {
+		const renderTreeFromNode = (node)=> {
 			const historyAncestors = getHistoryAncestors(currentHistoryNode);
 			const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
 			const current = node === currentHistoryNode;
+			const operation = node.operation;
 			const entry =
 				<HistoryEntry
-					key={entry.id}
-					entry={entry}
+					key={node.id}
+					operation={operation}
 					current={current}
 					ref={current && this.currentEntryRef}
 					ancestorOfCurrent={ancestorOfCurrent}
@@ -98,7 +106,7 @@ class HistoryView extends Component {
 				renderTreeFromNode(subNode);
 			}
 			entries.push(entry);
-		}
+		};
 
 		if (this.scrollableRef.current) {
 			this.previousScrollPosition = this.scrollableRef.current.scrollTop;

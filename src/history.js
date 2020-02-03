@@ -14,9 +14,9 @@ export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undo
 	undos = [...ancestorsOfTarget];
 	undos.reverse();
 
-	// window.console && console.log("targetHistoryNode:", targetHistoryNode);
-	// window.console && console.log("ancestorsOfTarget:", ancestorsOfTarget);
-	// window.console && console.log("oldHistoryPath:", oldHistoryPath);
+	window.console && console.log("targetHistoryNode:", targetHistoryNode);
+	window.console && console.log("ancestorsOfTarget:", ancestorsOfTarget);
+	window.console && console.log("oldHistoryPath:", oldHistoryPath);
 	redos = [];
 
 	let latestNode = targetHistoryNode;
@@ -34,8 +34,8 @@ export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undo
 		latestNode = futures[0];
 		redos.unshift(latestNode);
 	}
-	// window.console && console.log("new undos:", undos);
-	// window.console && console.log("new redos:", redos);
+	window.console && console.log("new undos:", undos);
+	window.console && console.log("new redos:", redos);
 
 
 	return { currentHistoryNode: targetHistoryNode, undos, redos };
@@ -88,8 +88,8 @@ function makeOrUpdateUndoable(undoableMeta, undoableAction) {
 	}
 }
 */
-function undo({currentHistoryNode, undos, redos}){
-	if(undos.length<1){ return false; }
+export function undo({currentHistoryNode, undos, redos}){
+	if (undos.length < 1) { return false; }
 
 	redos.push(currentHistoryNode);
 	let targetHistoryNode = undos.pop();
@@ -99,8 +99,8 @@ function undo({currentHistoryNode, undos, redos}){
 	return true;
 }
 
-function redo({currentHistoryNode, undos, redos}){
-	if(redos.length<1){
+export function redo({currentHistoryNode, undos, redos}){
+	if (redos.length < 1) {
 		// if (!historyWindowOpen && !historyPromptOpen) {
 		// 	showMessage({
 		// 		// message: <>Press <kbd>Ctrl+Shift+Y</kbd> at any time to open the History window.</>,

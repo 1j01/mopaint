@@ -18,6 +18,7 @@ import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
 import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
+import HistoryNode from "../HistoryNode.js";
 
 const getToolByName = (toolID)=> {
 	const tool = toolsByName[toolID];
@@ -41,7 +42,7 @@ class App extends Component {
 			selectedTool: getToolByName("Freeform Line"),
 			undos: new List(),
 			redos: new List(),
-			// operations: new List(),
+			currentHistoryNode: new HistoryNode({name: "Not Loaded Properly"}),
 			loaded: false,
 			loadFailed: false,
 		};
@@ -623,7 +624,7 @@ class App extends Component {
 				{/* TODO: resizable sidebar */}
 				<div className="sidebar">
 					<HistoryView
-						// operations={this.state.operations}
+						currentHistoryNode={this.state.currentHistoryNode}
 						undos={this.state.undos}
 						redos={this.state.redos}
 						goToEntry={goToEntry}
