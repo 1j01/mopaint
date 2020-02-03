@@ -19,6 +19,9 @@
 .HistoryEntry[aria-checked] {
 	background: rgb(99, 155, 255);
 }
+.HistoryEntry:not([aria-checked]):not(.ancestor-of-current) {
+	color: gray;
+}
 .HistoryEntry canvas,
 .HistoryEntry .ToolPreview {
 	margin-right: 5px;

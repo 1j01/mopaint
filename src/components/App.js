@@ -43,7 +43,7 @@ class App extends Component {
 			selectedTool: getToolByName("Freeform Line"),
 			undos: new List(),
 			redos: new List(),
-			currentHistoryNode: new HistoryNode({name: "Not Loaded Properly"}),
+			currentHistoryNode: new HistoryNode({name: "New Document"}),
 			loaded: false,
 			loadFailed: false,
 		};
@@ -537,6 +537,7 @@ class App extends Component {
 					operations.push(historyNode.operation);
 				}
 			}
+			operations.reverse();
 		};
 		collectOperations(currentHistoryNode);
 

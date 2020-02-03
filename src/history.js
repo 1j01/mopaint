@@ -124,7 +124,7 @@ export function redo({currentHistoryNode, undos, redos}){
 
 export function getHistoryAncestors(node) {
 	const ancestors = [];
-	for (node = node.parent; node; node = node.parent) {
+	for (node = node.parentNode; node; node = node.parentNode) {
 		ancestors.push(node);
 	}
 	return ancestors;

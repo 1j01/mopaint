@@ -14,7 +14,7 @@ export default class HistoryNode {
 	constructor({parentNode, timestamp, operation, name, id}) {
 		this.parentNode = parentNode;
 		this.futures = []; // TODO: rename childNodes?
-		this.timestamp = timestamp;
+		this.timestamp = timestamp || Date.now();
 		this.operation = operation;
 		this.name = name;
 		this.id = id || generateID();
