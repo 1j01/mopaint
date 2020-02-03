@@ -2,7 +2,7 @@ import React from "react";
 import { List } from "immutable";
 import HistoryNode from "./HistoryNode";
 import {generateID} from "./helpers.js";
-import {getRoot} from "./history.js";
+import {getAllHistoryNodesSortedByTimestamp} from "./history.js";
 
 export const CURRENT_SERIALIZATION_VERSION = 0.4;
 
@@ -17,26 +17,7 @@ export function serializeDocument({palette, selectedSwatch, selectedTool, undos,
 			swatch: operation.swatch,
 		};
 	};
-
-	// TODO: DRY
-	const rootHistoryNode = getRoot(currentHistoryNode);
-	const allHistoryNodes = [];
-	const collectNodes = (node)=> {
-		for (const subNode of node.futures) {
-			collectNodes(subNode);
-		}
-		allHistoryNodes.push(node);
-	};
-	collectNodes(rootHistoryNode);
-	allHistoryNodes.sort((a, b)=> {
-		if (a.timestamp < b.timestamp) {
-			return -1;
-		}
-		if (b.timestamp < a.timestamp) {
-			return +1;
-		}
-		return 0;
-	});
+	const allHistoryNodes = getAllHistoryNodesSortedByTimestamp(currentHistoryNode);
 
 	const toID = (historyNode)=> historyNode.id;
 

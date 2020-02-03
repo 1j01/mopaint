@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
 import "./HistoryView.css";
-import {getHistoryAncestors, getRoot} from "../history.js";
+import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
 
 // TODO: DRY Toolbox + Palette + HistoryView maybe
@@ -71,26 +71,7 @@ class HistoryView extends Component {
 		const { currentHistoryNode, goToHistoryNode, thumbnailsByOperation } = this.props;
 
 		const historyAncestors = getHistoryAncestors(currentHistoryNode);
-		const rootHistoryNode = getRoot(currentHistoryNode);
-
-		const allHistoryNodes = [];
-		const collectNodes = (node)=> {
-			for (const subNode of node.futures) {
-				collectNodes(subNode);
-			}
-			allHistoryNodes.push(node);
-		};
-		collectNodes(rootHistoryNode);
-
-		allHistoryNodes.sort((a, b)=> {
-			if (a.timestamp < b.timestamp) {
-				return -1;
-			}
-			if (b.timestamp < a.timestamp) {
-				return +1;
-			}
-			return 0;
-		});
+		const allHistoryNodes = getAllHistoryNodesSortedByTimestamp(currentHistoryNode);
 
 		if (this.scrollableRef.current) {
 			this.previousScrollPosition = this.scrollableRef.current.scrollTop;

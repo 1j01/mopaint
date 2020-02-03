@@ -76,9 +76,34 @@ export function getHistoryAncestors(node) {
 	return ancestors;
 }
 
-export const getRoot = (historyNode)=> {
+function getRoot(historyNode) {
 	while (historyNode.parentNode) {
 		historyNode = historyNode.parentNode;
 	}
 	return historyNode;
-};
+}
+
+export function getAllHistoryNodesSortedByTimestamp(anyHistoryNodeInGraph) {
+	const rootHistoryNode = getRoot(anyHistoryNodeInGraph);
+
+	const allHistoryNodes = [];
+	const collectNodes = (node)=> {
+		for (const subNode of node.futures) {
+			collectNodes(subNode);
+		}
+		allHistoryNodes.push(node);
+	};
+	collectNodes(rootHistoryNode);
+
+	allHistoryNodes.sort((a, b)=> {
+		if (a.timestamp < b.timestamp) {
+			return -1;
+		}
+		if (b.timestamp < a.timestamp) {
+			return +1;
+		}
+		return 0;
+	});
+
+	return allHistoryNodes;
+}
