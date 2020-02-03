@@ -1,5 +1,6 @@
 import React from "react";
 import { List } from "immutable";
+import HistoryNode from "./HistoryNode";
 
 export const CURRENT_SERIALIZATION_VERSION = 0.4;
 
@@ -150,15 +151,28 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		};
 	};
 	expectPropertiesToExist(
-		["palette", "selectedSwatch", "selectedToolID", "undos", "redos", "currentHistoryNodeID"],
+		["palette", "selectedSwatch", "selectedToolID", "undoHNIDs", "redoHNIDs", "currentHNID", "historyNodesByID"],
 		serialized,
 		"on the root document object",
 	);
+	const historyNodesByID = {};
+	for (const [historyNodeID, historyNodeData] of Object.entries(serialized.historyNodesByID)) {
+		historyNodesByID[historyNodeID] = new HistoryNode(historyNodeData);
+		if (historyNodeData.operation) {
+			historyNodesByID[historyNodeID].operation = deserializeOperation(historyNodeData.operation);
+		}
+	}
+	const fromHNID = (historyNodeID)=> historyNodesByID[historyNodeID];
+	for (const [historyNodeID, historyNodeData] of Object.entries(serialized.historyNodesByID)) {
+		historyNodesByID[historyNodeID].parentNode = historyNodesByID[historyNodeData.parentHNID];
+		historyNodesByID[historyNodeID].futures = historyNodeData.childHNIDs.map(fromHNID);
+	}
 	return [null, {
 		palette: serialized.palette,
 		selectedSwatch: serialized.selectedSwatch,
 		selectedTool: getToolByName(serialized.selectedToolID),
-		undos: new List(serialized.undos.map(deserializeOperation)),
-		redos: new List(serialized.redos.map(deserializeOperation)),
+		undos: new List(serialized.undoHNIDs.map(fromHNID)),
+		redos: new List(serialized.redoHNIDs.map(fromHNID)),
+		currentHistoryNode: fromHNID(serialized.currentHNID),
 	}];
 }
