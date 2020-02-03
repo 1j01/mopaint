@@ -136,7 +136,7 @@ class HistoryEntry extends Component {
 			getThumbnailReactElementMaybe,
 		} = this.props;
 		const {operation} = historyNode;
-		// NOTE: className, role, and aria-checked are all relied upon in HistoryView
+		// NOTE: role works together with role in HistoryView
 		return (
 			<button
 				className={
@@ -146,7 +146,7 @@ class HistoryEntry extends Component {
 				}
 				role="radio"
 				aria-checked={current ? "aria-checked" : null}
-				onClick={onClick} // for keyboard accessibility
+				onClick={onClick} // for keyboard accessibility (?)
 				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
 				{getThumbnailReactElementMaybe?.() ??

@@ -38,17 +38,14 @@ class HistoryView extends Component {
 		}
 	}
 	scrollSelectedEntryIntoView() {
-		const thisEl = ReactDOM.findDOMNode(this);
-		const entryEl = thisEl.querySelector(
-			".HistoryEntry[aria-checked=aria-checked]"
-		);
+		const entryEl = this.currentEntryRef.current && ReactDOM.findDOMNode(this.currentEntryRef.current);
 		if (entryEl) {
+			// this.scrollableRef.current.scrollTop(this.previousScrollPosition);
 			entryEl.scrollIntoView({
 				behavior: "instant",
 				block: "nearest",
 				inline: "nearest",
 			});
-			// This would work for old browser compatibility:
 			// entryEl.parentElement.scrollTop =
 			// 	Math.min(
 			// 		entryEl.offsetTop,
@@ -58,11 +55,6 @@ class HistoryView extends Component {
 			// 		)
 			// 	);
 		}
-		// TODO:
-		// if (this.currentEntryRef.current) {
-		// 	// this.scrollableRef.current.scrollTop(this.previousScrollPosition);
-		// 	this.currentEntryRef.current.scrollIntoView({block: "nearest"});
-		// }
 	}
 	render() {
 		this.drawFunctions = [];
