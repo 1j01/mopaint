@@ -139,7 +139,11 @@ class HistoryEntry extends Component {
 		// NOTE: className, role, and aria-checked are all relied upon in HistoryView
 		return (
 			<button
-				className={"HistoryEntry" + (ancestorOfCurrent ? " ancestor-of-current" : "")}
+				className={
+					"HistoryEntry" +
+					(current ? " current" : "") +
+					(ancestorOfCurrent ? " ancestor-of-current" : "")
+				}
 				role="radio"
 				aria-checked={current ? "aria-checked" : null}
 				onClick={onClick} // for keyboard accessibility

@@ -19,7 +19,7 @@
 .HistoryEntry[aria-checked] {
 	background: rgb(99, 155, 255);
 }
-.HistoryEntry:not([aria-checked]):not(.ancestor-of-current) {
+.HistoryEntry:not(.current):not(.ancestor-of-current) {
 	color: gray;
 }
 .HistoryEntry canvas,

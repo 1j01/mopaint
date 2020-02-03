@@ -7,9 +7,7 @@ import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../histo
 import HistoryNode from "../HistoryNode.js";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 
-// TODO: DRY Toolbox + Palette + HistoryView maybe
-// should refactor it so the list is separate from the history entry display!
-// and support keyboard navigation! and scroll the view
+// TODO: keyboard navigation
 class HistoryView extends Component {
 	constructor(props) {
 		super(props);
