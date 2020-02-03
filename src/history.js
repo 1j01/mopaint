@@ -3,8 +3,8 @@ import { List } from "immutable";
 export function goToHistoryNode(targetHistoryNode, {currentHistoryNode, redos, undos}) {
 	const fromHistoryNode = currentHistoryNode;
 	const oldHistoryPath =
-		redos.length > 0 ?
-			[redos[0], ...getHistoryAncestors(redos[0])] :
+		redos.size > 0 ?
+			[redos.first(), ...getHistoryAncestors(redos.first())] :
 			[fromHistoryNode, ...getHistoryAncestors(fromHistoryNode)];
 
 	// finalizeAnyOperation();
@@ -90,18 +90,19 @@ function makeOrUpdateUndoable(undoableMeta, undoableAction) {
 }
 */
 export function undo({currentHistoryNode, undos, redos}){
-	if (undos.length < 1) {
+	if (undos.size < 1) {
 		return {currentHistoryNode, undos, redos};
 	}
 
-	redos.push(currentHistoryNode);
-	let targetHistoryNode = undos.pop();
+	redos = redos.push(currentHistoryNode);
+	let targetHistoryNode = undos.last();
+	undos = undos.pop();
 
 	return goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
 }
 
 export function redo({currentHistoryNode, undos, redos}){
-	if (redos.length < 1) {
+	if (redos.size < 1) {
 		// if (!historyWindowOpen && !historyPromptOpen) {
 		// 	showMessage({
 		// 		// message: <>Press <kbd>Ctrl+Shift+Y</kbd> at any time to open the History window.</>,
@@ -114,8 +115,9 @@ export function redo({currentHistoryNode, undos, redos}){
 		return {currentHistoryNode, undos, redos};
 	}
 
-	undos.push(currentHistoryNode);
-	let targetHistoryNode = redos.pop();
+	undos = undos.push(currentHistoryNode);
+	let targetHistoryNode = redos.last();
+	redos = redos.pop();
 
 	return goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
 }
