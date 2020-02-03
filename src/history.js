@@ -89,14 +89,14 @@ function makeOrUpdateUndoable(undoableMeta, undoableAction) {
 }
 */
 export function undo({currentHistoryNode, undos, redos}){
-	if (undos.length < 1) { return false; }
+	if (undos.length < 1) {
+		return {currentHistoryNode, undos, redos};
+	}
 
 	redos.push(currentHistoryNode);
 	let targetHistoryNode = undos.pop();
 
-	goToHistoryNode(targetHistoryNode);
-
-	return true;
+	return goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
 }
 
 export function redo({currentHistoryNode, undos, redos}){
@@ -110,15 +110,13 @@ export function redo({currentHistoryNode, undos, redos}){
 		// 		</React.Fragment>,
 		// 	});
 		// }
-		return false;
+		return {currentHistoryNode, undos, redos};
 	}
 
 	undos.push(currentHistoryNode);
 	let targetHistoryNode = redos.pop();
 
-	goToHistoryNode(targetHistoryNode);
-
-	return true;
+	return goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
 }
 
 export function getHistoryAncestors(node) {

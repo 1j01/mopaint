@@ -19,6 +19,7 @@ import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/documen
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
 import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
 import HistoryNode from "../HistoryNode.js";
+import { undo, redo, goToHistoryNode } from "../history.js";
 
 const getToolByName = (toolID)=> {
 	const tool = toolsByName[toolID];
@@ -454,34 +455,42 @@ class App extends Component {
 	}
 
 	undo() {
-		const { undos, redos } = this.state;
+		const { currentHistoryNode, undos, redos } = this.state;
 
-		if (undos.size < 1) {
-			return false;
-		}
-
-		const action = undos.last();
+		const newState = undo({currentHistoryNode, undos, redos});
 		this.setState(
 			{
-				undos: undos.pop(),
-				redos: redos.push(action),
+				currentHistoryNode: newState.currentHistoryNode,
+				undos: newState.undos,
+				redos: newState.redos,
 			},
 			this.saveDebounced.bind(this),
 		);
 	}
 
 	redo() {
-		const { undos, redos } = this.state;
+		const { currentHistoryNode, undos, redos } = this.state;
 
-		if (redos.size < 1) {
-			return false;
-		}
-
-		const action = redos.last();
+		const newState = redo({currentHistoryNode, undos, redos});
 		this.setState(
 			{
-				undos: undos.push(action),
-				redos: redos.pop(),
+				currentHistoryNode: newState.currentHistoryNode,
+				undos: newState.undos,
+				redos: newState.redos,
+			},
+			this.saveDebounced.bind(this),
+		);
+	}
+
+	goToHistoryNode(targetHistoryNode) {
+		const { currentHistoryNode, undos, redos } = this.state;
+
+		const newState = goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
+		this.setState(
+			{
+				currentHistoryNode: newState.currentHistoryNode,
+				undos: newState.undos,
+				redos: newState.redos,
 			},
 			this.saveDebounced.bind(this),
 		);
@@ -495,44 +504,6 @@ class App extends Component {
 		};
 		const selectTool = (tool) => {
 			this.setState({ selectedTool: tool }, this.saveDebounced.bind(this));
-		};
-
-		const goToEntry = (entry) => {
-			const { undos, redos } = this.state;
-			const indexInUndos = undos.indexOf(entry);
-			const indexInRedos = redos.indexOf(entry);
-			const isCurrent = entry === undos.last();
-			if (isCurrent) {
-				return;
-			}
-			// the item you click on should become the last item in undos
-			if (indexInUndos > -1) {
-				const actionsToUndo = undos.slice(indexInUndos + 1, undos.size);
-				this.setState(
-					{
-						undos: undos.slice(0, indexInUndos + 1),
-						redos: redos.concat(actionsToUndo.reverse()),
-					},
-					this.saveDebounced.bind(this),
-				);
-				return;
-			}
-			if (indexInRedos > -1) {
-				const actionsToRedo = redos.slice(indexInRedos, redos.size);
-				this.setState(
-					{
-						undos: undos.concat(actionsToRedo.reverse()),
-						redos: redos.slice(0, indexInRedos),
-					},
-					this.saveDebounced.bind(this),
-				);
-				return;
-			}
-			this.showError({
-				message:
-					"Something bad happened and somehow the entry wasn't found in undos or redos.",
-				requestBugReport: true,
-			});
 		};
 
 		return (
@@ -627,7 +598,7 @@ class App extends Component {
 						currentHistoryNode={this.state.currentHistoryNode}
 						undos={this.state.undos}
 						redos={this.state.redos}
-						goToEntry={goToEntry}
+						goToHistoryNode={this.goToHistoryNode}
 						thumbnailsByOperation={this.thumbnailsByOperation}
 					/>
 				</div>

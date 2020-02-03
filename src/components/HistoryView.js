@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
 import "./HistoryView.css";
-import {getHistoryAncestors, goToHistoryNode} from "../history.js";
+import {getHistoryAncestors} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
 
 const getRoot = (historyNode)=> {
@@ -76,7 +76,7 @@ class HistoryView extends Component {
 	render() {
 		this.drawFunctions = [];
 
-		const { currentHistoryNode, thumbnailsByOperation } = this.props;
+		const { currentHistoryNode, goToHistoryNode, thumbnailsByOperation } = this.props;
 
 		const rootHistoryNode = getRoot(currentHistoryNode);
 
@@ -131,6 +131,8 @@ class HistoryView extends Component {
 
 HistoryView.propTypes = {
 	currentHistoryNode: PropTypes.instanceOf(HistoryNode).isRequired,
+	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
+	goToHistoryNode: PropTypes.func.isRequired,
 };
 
 export default HistoryView;
