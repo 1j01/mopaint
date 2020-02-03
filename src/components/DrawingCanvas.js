@@ -4,15 +4,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./DrawingCanvas.css";
 import {draw} from "../engine.js";
-
-// TODO maybe: more efficient IDs (don't need to restrict the alphabet to hex)
-const byteToHex = (byte) => `0${byte.toString(16)}`.slice(-2);
-const generateID = (length = 40) => {
-	// length must be an even number (default: 40)
-	const array = new Uint8Array(length / 2);
-	crypto.getRandomValues(array);
-	return Array.from(array, byteToHex).join("");
-};
+import {generateID} from "../helpers.js";
 
 class DrawingCanvas extends Component {
 	constructor(props) {

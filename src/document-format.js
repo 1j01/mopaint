@@ -1,6 +1,7 @@
 import React from "react";
 import { List } from "immutable";
 import HistoryNode from "./HistoryNode";
+import {generateID} from "./helpers.js";
 
 export const CURRENT_SERIALIZATION_VERSION = 0.4;
 
@@ -86,31 +87,107 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 			message: `Can't load ${nounPhraseThingToLoad} created by later version of the app`,
 		}];
 	}
-	const MINIMUM_LOADABLE_VERSION = 0.4;
+	const MINIMUM_LOADABLE_VERSION = 0.1;
 	// upgrading code can go here, incrementing the version number step by step
 	// e.g.
-	// if (serialized.formatVersion === 0.2) {
+	// if (serialized.formatVersion === 0.01) {
 	// 	serialized.newPropName = serialized.oldName;
 	// 	delete serialized.oldName;
-	// 	serialized.formatVersion = 0.3;
+	// 	serialized.formatVersion = 0.02;
 	// }
 	if (serialized.formatVersion === 0.1) {
-		// literally no change afaik, just internals
-		// just skipping over version 0.2, which was a dead end
+		// just skip over version 0.2, which was a dead end
 		serialized.formatVersion = 0.3;
 	}
-	// if (serialized.formatVersion === 0.3) {
-	// 	// TODO
-	// 	// necessary lies:
-	// 	// time (previously not recorded)
-	// 	// document structure (previously not recorded / already a lie)
-	// 	const rootHistoryNode = ...;
-	// 	for (undos, redos...) {
+	if (serialized.formatVersion === 0.3) {
+		serialized.formatVersion = 0.4;
+		// Convert to Non-Linear History
+		// 
+		// linear undos/redos -> tree of nodes
+		// operations -> nodes containing operations
+		// last "undo" -> current history node
+		// 
+		// necessary lies:
+		// - time (previously not recorded)
+		// - document structure (previously not recorded / already a lie)
+		//
+		// History nodes are to be serialized at this point as:
+		// {parentHNID, childHNIDs, timestamp, operation, name, id}
 
-	// 	}
+		const baseTimestamp = +new Date('January 1, 2020 00:00:00');
+		const rootHistoryNode = {
+			name: "New Document",
+			id: generateID(),
+			childHNIDs: [],
+			timestamp: baseTimestamp,
+		};
 
-	// 	serialized.formatVersion = 0.4;
-	// }
+		const historyNodesByID = {};
+		historyNodesByID[rootHistoryNode.id] = rootHistoryNode;
+
+		const opToHN = new Map();
+		const makeFreeFloatingHN = (op)=> {
+			const id = generateID();
+			historyNodesByID[id] = {
+				id,
+				operation: op,
+				name: op.toolID,
+				parentHNID: undefined,
+				childHNIDs: [],
+				timestamp: baseTimestamp,
+			};
+			opToHN.set(op, historyNodesByID[id]);
+		};
+		serialized.undos.forEach(makeFreeFloatingHN);
+		serialized.redos.forEach(makeFreeFloatingHN);
+
+		let currentHNID;
+		const undoHNIDs = [];
+		const redoHNIDs = [];
+		const linkHNs = (parentHN, childHN)=> {
+			if (parentHN) {
+				parentHN.childHNIDs.push(childHN.id);
+				childHN.parentHNID = parentHN.id;
+			}
+		};
+		
+		const orderedOps = [
+			...serialized.undos,
+			...[...serialized.redos].reverse(),
+		];
+		const orderedHNs = [
+			rootHistoryNode,
+			...orderedOps.map((op)=> opToHN.get(op)),
+		];
+		orderedHNs.forEach((historyNode, index, orderedHNs)=> {
+			const previousHistoryNode = orderedHNs[index - 1];
+			if (previousHistoryNode) {
+				linkHNs(previousHistoryNode, historyNode);
+			}
+			// TODO: update the history view's sort to work structurally when timestamps are equal
+			historyNode.timestamp += index;
+		});
+
+		undoHNIDs.push(rootHistoryNode.id);
+		orderedOps.forEach((op)=> {
+			const historyNode = opToHN.get(op);
+			if (op === serialized.undos[serialized.undos.length - 1]) {
+				currentHNID = historyNode.id;
+			} else if (serialized.redos.indexOf(op) > -1) {
+				redoHNIDs.push(historyNode.id);
+			} else {
+				undoHNIDs.push(historyNode.id);
+			}
+		});
+
+		serialized.historyNodesByID = historyNodesByID;
+		serialized.currentHNID = currentHNID;
+		serialized.undoHNIDs = undoHNIDs;
+		serialized.redoHNIDs = redoHNIDs;
+
+		delete serialized.undos;
+		delete serialized.redos;
+	}
 	if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
 		const gitBranchName = `format-version-${serialized.formatVersion}`;
 		return [{
