@@ -17,8 +17,8 @@ export function goToHistoryNode(targetHistoryNode, {currentHistoryNode, redos, u
 	redos = new List();
 
 	let latestNode = targetHistoryNode;
-	while (latestNode.futures.length > 0) {
-		const futures = [...latestNode.futures];
+	while (latestNode.childNodes.length > 0) {
+		const futures = [...latestNode.childNodes];
 		futures.sort((a, b)=> {
 			if(oldHistoryPath.indexOf(a) > -1) {
 				return -1;
@@ -88,8 +88,8 @@ export function getAllHistoryNodesSortedByTimestamp(anyHistoryNodeInGraph) {
 
 	const allHistoryNodes = [];
 	const collectNodes = (node)=> {
-		for (const subNode of node.futures) {
-			collectNodes(subNode);
+		for (const childNode of node.childNodes) {
+			collectNodes(childNode);
 		}
 		allHistoryNodes.push(node);
 	};

@@ -452,7 +452,7 @@ class App extends Component {
 			name: operation.tool.name,
 			operation,
 		});
-		currentHistoryNode.futures.push(newHistoryNode);
+		currentHistoryNode.childNodes.push(newHistoryNode);
 		currentHistoryNode = newHistoryNode;
 		
 		this.setState(

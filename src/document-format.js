@@ -25,7 +25,7 @@ export function serializeDocument({palette, selectedSwatch, selectedTool, undos,
 	allHistoryNodes.forEach((historyNode)=> {
 		historyNodesByID[historyNode.id] = {
 			parentHNID: historyNode.parentNode && historyNode.parentNode.id,
-			childHNIDs: historyNode.futures.map(toID),
+			childHNIDs: historyNode.childNodes.map(toID),
 			timestamp: historyNode.timestamp,
 			operation: historyNode.operation && serializeOperation(historyNode.operation),
 			name: historyNode.name,
@@ -219,7 +219,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 	const fromHNID = (historyNodeID)=> historyNodesByID[historyNodeID];
 	for (const [historyNodeID, historyNodeData] of Object.entries(serialized.historyNodesByID)) {
 		historyNodesByID[historyNodeID].parentNode = historyNodesByID[historyNodeData.parentHNID];
-		historyNodesByID[historyNodeID].futures = historyNodeData.childHNIDs.map(fromHNID);
+		historyNodesByID[historyNodeID].childNodes = historyNodeData.childHNIDs.map(fromHNID);
 	}
 	return [null, {
 		palette: serialized.palette,
