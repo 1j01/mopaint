@@ -133,7 +133,7 @@ class HistoryEntry extends Component {
 			indexInListForAnimationOffset,
 			drawFunctionsArrayToAddTo,
 			getThumbnailImageMaybe,
-			getThumbnailReactElementMaybe,
+			getIconReactElementMaybe,
 		} = this.props;
 		const {operation} = historyNode;
 		// NOTE: role works together with role in HistoryView
@@ -149,16 +149,14 @@ class HistoryEntry extends Component {
 				onClick={onClick} // for keyboard accessibility (?)
 				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
-				{getThumbnailReactElementMaybe?.() ??
-					<Thumbnail
-						width={24}
-						height={24}
-						indexInListForAnimationOffset={indexInListForAnimationOffset}
-						drawFunctionsArrayToAddTo={drawFunctionsArrayToAddTo}
-						getImageMaybe={getThumbnailImageMaybe}
-					/>
-				}
-				{operation && <ToolPreview tool={operation.tool} width={16} height={16} />}
+				<Thumbnail
+					width={24}
+					height={24}
+					indexInListForAnimationOffset={indexInListForAnimationOffset}
+					drawFunctionsArrayToAddTo={drawFunctionsArrayToAddTo}
+					getImageMaybe={getThumbnailImageMaybe}
+				/>
+				{getIconReactElementMaybe?.() ?? (operation && <ToolPreview tool={operation.tool} width={16} height={16} />)}
 				{historyNode.name}
 			</button>
 		);
