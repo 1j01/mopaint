@@ -5,7 +5,7 @@ import HistoryEntry from "./HistoryEntry.js";
 import "./HistoryView.css";
 import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
-import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
+import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-16px-importable.svg";
 
 const blankImage = new Image();
 // transparent single-pixel PNG
