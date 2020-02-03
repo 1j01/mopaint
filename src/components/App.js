@@ -517,7 +517,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { selectedSwatch, selectedTool, palette, undos, dialog } = this.state;
+		const { selectedSwatch, selectedTool, palette, currentHistoryNode, dialog } = this.state;
 
 		const selectSwatch = (swatch) => {
 			this.setState({ selectedSwatch: swatch }, this.saveDebounced.bind(this));
@@ -525,6 +525,20 @@ class App extends Component {
 		const selectTool = (tool) => {
 			this.setState({ selectedTool: tool }, this.saveDebounced.bind(this));
 		};
+
+		const operations = [];
+		const collectOperations = (historyNode)=> {
+			if (historyNode.operation) {
+				operations.push(historyNode.operation);
+			}
+			while (historyNode.parentNode) {
+				historyNode = historyNode.parentNode;
+				if (historyNode.operation) {
+					operations.push(historyNode.operation);
+				}
+			}
+		};
+		collectOperations(currentHistoryNode);
 
 		return (
 			<div className="App">
@@ -605,7 +619,7 @@ class App extends Component {
 						documentContext={this.documentContext}
 						addOperation={this.addOperation.bind(this)}
 						updateOperation={this.updateOperation.bind(this)}
-						operations={undos}
+						operations={operations}
 						thumbnailsByOperation={this.thumbnailsByOperation}
 						ref={(component) => {
 							this.drawingCanvasComponent = component;
