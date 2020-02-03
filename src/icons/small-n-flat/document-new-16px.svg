@@ -94,19 +94,20 @@
        sodipodi:nodetypes="ccssc" />
     <g
        id="g4176-1"
-       transform="matrix(0.5,0,0,0.5,8.224766,530.6811)">
-      <circle
+       transform="matrix(0.5,0,0,0.5,9.224766,531.6811)">
+      <ellipse
          id="path2984-6"
          style="fill:#27ae60;fill-opacity:1;fill-rule:nonzero;stroke:none"
          cx="6.5504479"
          cy="1034.3622"
-         r="9" />
+         rx="6.99998"
+         ry="6.9999828" />
       <circle
          id="path2984-4-4"
          style="fill:#2ecc71;fill-opacity:1;fill-rule:nonzero;stroke:none"
          cx="6.550468"
          cy="1032.3622"
-         r="9" />
+         r="7" />
       <path
          inkscape:connector-curvature="0"
          id="rect2987-1"

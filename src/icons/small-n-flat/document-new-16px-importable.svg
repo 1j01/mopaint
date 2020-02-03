@@ -2,9 +2,9 @@
   <path fill="#95a5a6" d="M5 0c-.982 0-3 2.018-3 3v10c0 1 1 2 2 2h8c.982 0 .762-1.048 1-2V5L9 0z"/>
   <path fill="#bdc3c7" d="M4 0c-.982 0-2 1.018-2 2v10c0 .982 1.018 2 2 2h8c.982 0 1.73-1.056 2-2V5L9 0z"/>
   <path fill="#95a5a6" d="M14 5L9 0v3c0 .982 1.018 2 2 2z"/>
-  <g transform="matrix(.5 0 0 .5 8.225 -505.681)">
-    <circle cx="6.55" cy="1034.362" r="9" fill="#27ae60"/>
-    <circle cx="6.55" cy="1032.362" r="9" fill="#2ecc71"/>
+  <g transform="matrix(.5 0 0 .5 9.225 -504.681)">
+    <circle cx="6.55" cy="1034.362" r="7" fill="#27ae60"/>
+    <circle cx="6.55" cy="1032.362" r="7" fill="#2ecc71"/>
     <path fill="#27ae60" d="M1.55 1035.362h4v4h2v-4h4v-2h-4v-4h-2v4h-4z"/>
     <path fill="#ecf0f1" d="M1.55 1033.362h4v4h2v-4h4v-2h-4v-4h-2v4h-4z"/>
   </g>
