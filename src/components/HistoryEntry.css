@@ -23,6 +23,7 @@
 	color: gray;
 }
 .HistoryEntry canvas,
+.HistoryEntry svg,
 .HistoryEntry .ToolPreview {
 	margin-right: 5px;
 	vertical-align: middle;

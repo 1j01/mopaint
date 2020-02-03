@@ -133,6 +133,7 @@ class HistoryEntry extends Component {
 			indexInListForAnimationOffset,
 			drawFunctionsArrayToAddTo,
 			getThumbnailImageMaybe,
+			getThumbnailReactElementMaybe,
 		} = this.props;
 		const {operation} = historyNode;
 		// NOTE: className, role, and aria-checked are all relied upon in HistoryView
@@ -144,13 +145,15 @@ class HistoryEntry extends Component {
 				onClick={onClick} // for keyboard accessibility
 				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
-				<Thumbnail
-					width={24}
-					height={24}
-					indexInListForAnimationOffset={indexInListForAnimationOffset}
-					drawFunctionsArrayToAddTo={drawFunctionsArrayToAddTo}
-					getImageMaybe={getThumbnailImageMaybe}
-				/>
+				{getThumbnailReactElementMaybe?.() ??
+					<Thumbnail
+						width={24}
+						height={24}
+						indexInListForAnimationOffset={indexInListForAnimationOffset}
+						drawFunctionsArrayToAddTo={drawFunctionsArrayToAddTo}
+						getImageMaybe={getThumbnailImageMaybe}
+					/>
+				}
 				{operation && <ToolPreview tool={operation.tool} width={16} height={16} />}
 				{historyNode.name}
 			</button>

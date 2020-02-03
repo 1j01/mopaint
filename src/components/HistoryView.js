@@ -5,6 +5,7 @@ import HistoryEntry from "./HistoryEntry.js";
 import "./HistoryView.css";
 import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
+import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 
 // TODO: DRY Toolbox + Palette + HistoryView maybe
 // should refactor it so the list is separate from the history entry display!
@@ -91,7 +92,12 @@ class HistoryView extends Component {
 						onClick={() => goToHistoryNode(node)}
 						indexInListForAnimationOffset={0 /* TODO */}
 						drawFunctionsArrayToAddTo={this.drawFunctions}
-						getThumbnailImageMaybe={() => node.operation && thumbnailsByOperation.get(node.operation)}
+						getThumbnailImageMaybe={() =>
+							node.operation && thumbnailsByOperation.get(node.operation)
+						}
+						getThumbnailReactElementMaybe={() =>
+							node.name === "New Document" && <NewDocumentIcon width={16} height={16}/>
+						}
 					/>;
 				})}
 			</div>
