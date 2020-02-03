@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import ToolPreview from "./ToolPreview.js";
 import "./HistoryEntry.css";
+import HistoryNode from "../HistoryNode.js";
 
 // const modulo = (a, b) => (+a % (b = +b) + b) % b;
 
@@ -128,11 +129,12 @@ class HistoryEntry extends Component {
 			current,
 			ancestorOfCurrent,
 			onClick,
-			operation,
+			historyNode,
 			indexInListForAnimationOffset,
 			drawFunctionsArrayToAddTo,
 			getThumbnailImageMaybe,
 		} = this.props;
+		const {operation} = historyNode;
 		// NOTE: className, role, and aria-checked are all relied upon in HistoryView
 		return (
 			<button
@@ -149,15 +151,15 @@ class HistoryEntry extends Component {
 					drawFunctionsArrayToAddTo={drawFunctionsArrayToAddTo}
 					getImageMaybe={getThumbnailImageMaybe}
 				/>
-				<ToolPreview tool={operation.tool} width={16} height={16} />
-				{operation.tool.name}
+				{operation && <ToolPreview tool={operation.tool} width={16} height={16} />}
+				{historyNode.name}
 			</button>
 		);
 	}
 }
 
 HistoryEntry.propTypes = {
-	operation: PropTypes.object.isRequired,
+	historyNode: PropTypes.instanceOf(HistoryNode).isRequired,
 	current: PropTypes.bool.isRequired,
 	ancestorOfCurrent: PropTypes.bool.isRequired,
 	onClick: PropTypes.func.isRequired,

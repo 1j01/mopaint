@@ -67,12 +67,11 @@ class HistoryView extends Component {
 			// 		)
 			// 	);
 		}
-	}
-	onComponentDidMount() {
-		if (this.currentEntryRef.current) {
-			// this.scrollableRef.current.scrollTop(this.previousScrollPosition);
-			this.currentEntryRef.current.scrollIntoView({block: "nearest"});
-		}
+		// TODO:
+		// if (this.currentEntryRef.current) {
+		// 	// this.scrollableRef.current.scrollTop(this.previousScrollPosition);
+		// 	this.currentEntryRef.current.scrollIntoView({block: "nearest"});
+		// }
 	}
 	render() {
 		this.drawFunctions = [];
@@ -80,7 +79,6 @@ class HistoryView extends Component {
 		const { currentHistoryNode, thumbnailsByOperation } = this.props;
 
 		const rootHistoryNode = getRoot(currentHistoryNode);
-		console.log("rootHistoryNode", rootHistoryNode);
 
 		let entries = [];
 
@@ -88,11 +86,10 @@ class HistoryView extends Component {
 			const historyAncestors = getHistoryAncestors(currentHistoryNode);
 			const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
 			const current = node === currentHistoryNode;
-			const operation = node.operation;
 			const entry =
 				<HistoryEntry
 					key={node.id}
-					operation={operation}
+					historyNode={node}
 					current={current}
 					ref={current && this.currentEntryRef}
 					ancestorOfCurrent={ancestorOfCurrent}
@@ -101,7 +98,7 @@ class HistoryView extends Component {
 					drawFunctionsArrayToAddTo={this.drawFunctions}
 					getThumbnailImageMaybe={() => thumbnailsByOperation.get(entry)}
 				/>;
-			entry.historyNode = node; // HACK
+			// entry.historyNode = node; // HACK doesn't work
 			for (const subNode of node.futures) {
 				renderTreeFromNode(subNode);
 			}
@@ -113,16 +110,16 @@ class HistoryView extends Component {
 		}
 
 		renderTreeFromNode(rootHistoryNode);
-		entries.sort(($a, $b)=> {
-			// HACK
-			if ($a.historyNode.timestamp < $b.historyNode.timestamp) {
-				return -1;
-			}
-			if ($b.historyNode.timestamp < $a.historyNode.timestamp) {
-				return +1;
-			}
-			return 0;
-		});
+		// TODO: sort
+		// entries.sort(($a, $b)=> {
+		// 	if ($a.historyNode.timestamp < $b.historyNode.timestamp) {
+		// 		return -1;
+		// 	}
+		// 	if ($b.historyNode.timestamp < $a.historyNode.timestamp) {
+		// 		return +1;
+		// 	}
+		// 	return 0;
+		// });
 
 		return (
 			<div className="HistoryView" role="radiogroup" ref={this.scrollableRef}>
