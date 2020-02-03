@@ -90,11 +90,11 @@ class HistoryView extends Component {
 		};
 		collectNodes(rootHistoryNode);
 
-		allHistoryNodes.sort(($a, $b)=> {
-			if ($a.historyNode.timestamp < $b.historyNode.timestamp) {
+		allHistoryNodes.sort((a, b)=> {
+			if (a.timestamp < b.timestamp) {
 				return -1;
 			}
-			if ($b.historyNode.timestamp < $a.historyNode.timestamp) {
+			if (b.timestamp < a.timestamp) {
 				return +1;
 			}
 			return 0;

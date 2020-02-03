@@ -3,8 +3,17 @@ import { List } from "immutable";
 
 export const CURRENT_SERIALIZATION_VERSION = 0.4;
 
+// TODO: DRY
+const getRoot = (historyNode)=> {
+	while (historyNode.parentNode) {
+		historyNode = historyNode.parentNode;
+	}
+	return historyNode;
+};
+
 export function serializeDocument({palette, selectedSwatch, selectedTool, undos, redos, currentHistoryNode}) {
-	// TODO: serialize tools as code (+ identifiers), and create a sandbox
+	// TODO: serialize tools as code (+ identifiers), and create a sandbox?
+
 	const serializeOperation = (operation) => {
 		return {
 			id: operation.id,
@@ -13,14 +22,51 @@ export function serializeDocument({palette, selectedSwatch, selectedTool, undos,
 			swatch: operation.swatch,
 		};
 	};
+
+	// TODO: DRY
+	const rootHistoryNode = getRoot(currentHistoryNode);
+	const allHistoryNodes = [];
+	const collectNodes = (node)=> {
+		for (const subNode of node.futures) {
+			collectNodes(subNode);
+		}
+		allHistoryNodes.push(node);
+	};
+	collectNodes(rootHistoryNode);
+	allHistoryNodes.sort((a, b)=> {
+		if (a.timestamp < b.timestamp) {
+			return -1;
+		}
+		if (b.timestamp < a.timestamp) {
+			return +1;
+		}
+		return 0;
+	});
+
+	const toID = (historyNode)=> historyNode.id;
+
+	const historyNodesByID = {};
+	allHistoryNodes.map((historyNode)=> {
+		historyNodesByID[historyNode.id] = {
+			parentHNID: historyNode.parentNode && historyNode.parentNode.id,
+			childHNIDs: historyNode.futures.map(toID),
+			timestamp: historyNode.timestamp,
+			operation: historyNode.operation && serializeOperation(historyNode.operation),
+			name: historyNode.name,
+			id: historyNode.id,
+		};
+	});
+
 	return {
 		format: "mopaint",
 		formatVersion: CURRENT_SERIALIZATION_VERSION,
 		palette: palette,
 		selectedSwatch: selectedSwatch,
 		selectedToolID: selectedTool.name,
-		undos: undos.toJS().map(serializeOperation),
-		redos: redos.toJS().map(serializeOperation),
+		historyNodesByID,
+		undoHNIDs: undos.toJS().map(toID),
+		redoHNIDs: redos.toJS().map(toID),
+		currentHNID: toID(currentHistoryNode),
 	};
 }
 
