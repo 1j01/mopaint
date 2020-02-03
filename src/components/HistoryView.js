@@ -78,52 +78,49 @@ class HistoryView extends Component {
 
 		const { currentHistoryNode, goToHistoryNode, thumbnailsByOperation } = this.props;
 
+		const historyAncestors = getHistoryAncestors(currentHistoryNode);
 		const rootHistoryNode = getRoot(currentHistoryNode);
 
-		let entries = [];
-
-		const renderTreeFromNode = (node)=> {
-			const historyAncestors = getHistoryAncestors(currentHistoryNode);
-			const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
-			const current = node === currentHistoryNode;
-			const entry =
-				<HistoryEntry
-					key={node.id}
-					historyNode={node}
-					current={current}
-					ref={current && this.currentEntryRef}
-					ancestorOfCurrent={ancestorOfCurrent}
-					onClick={() => goToHistoryNode(node)}
-					indexInListForAnimationOffset={0 /* TODO */}
-					drawFunctionsArrayToAddTo={this.drawFunctions}
-					getThumbnailImageMaybe={() => thumbnailsByOperation.get(entry)}
-				/>;
-			// entry.historyNode = node; // HACK doesn't work
+		const allHistoryNodes = [];
+		const collectNodes = (node)=> {
 			for (const subNode of node.futures) {
-				renderTreeFromNode(subNode);
+				collectNodes(subNode);
 			}
-			entries.push(entry);
+			allHistoryNodes.push(node);
 		};
+		collectNodes(rootHistoryNode);
+
+		allHistoryNodes.sort(($a, $b)=> {
+			if ($a.historyNode.timestamp < $b.historyNode.timestamp) {
+				return -1;
+			}
+			if ($b.historyNode.timestamp < $a.historyNode.timestamp) {
+				return +1;
+			}
+			return 0;
+		});
 
 		if (this.scrollableRef.current) {
 			this.previousScrollPosition = this.scrollableRef.current.scrollTop;
 		}
 
-		renderTreeFromNode(rootHistoryNode);
-		// TODO: sort
-		// entries.sort(($a, $b)=> {
-		// 	if ($a.historyNode.timestamp < $b.historyNode.timestamp) {
-		// 		return -1;
-		// 	}
-		// 	if ($b.historyNode.timestamp < $a.historyNode.timestamp) {
-		// 		return +1;
-		// 	}
-		// 	return 0;
-		// });
-
 		return (
 			<div className="HistoryView" role="radiogroup" ref={this.scrollableRef}>
-				{entries}
+				{allHistoryNodes.map((node)=> {
+					const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
+					const current = node === currentHistoryNode;
+					return <HistoryEntry
+						key={node.id}
+						historyNode={node}
+						current={current}
+						ref={current && this.currentEntryRef}
+						ancestorOfCurrent={ancestorOfCurrent}
+						onClick={() => goToHistoryNode(node)}
+						indexInListForAnimationOffset={0 /* TODO */}
+						drawFunctionsArrayToAddTo={this.drawFunctions}
+						getThumbnailImageMaybe={() => node.operation && thumbnailsByOperation.get(node.operation)}
+					/>;
+				})}
 			</div>
 		);
 	}

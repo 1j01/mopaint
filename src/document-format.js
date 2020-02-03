@@ -1,9 +1,9 @@
 import React from "react";
 import { List } from "immutable";
 
-export const CURRENT_SERIALIZATION_VERSION = 0.3;
+export const CURRENT_SERIALIZATION_VERSION = 0.4;
 
-export function serializeDocument({palette, selectedSwatch, selectedTool, undos, redos}) {
+export function serializeDocument({palette, selectedSwatch, selectedTool, undos, redos, currentHistoryNode}) {
 	// TODO: serialize tools as code (+ identifiers), and create a sandbox
 	const serializeOperation = (operation) => {
 		return {
@@ -39,7 +39,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 			message: `Can't load ${nounPhraseThingToLoad} created by later version of the app`,
 		}];
 	}
-	const MINIMUM_LOADABLE_VERSION = 0.1;
+	const MINIMUM_LOADABLE_VERSION = 0.4;
 	// upgrading code can go here, incrementing the version number step by step
 	// e.g.
 	// if (serialized.formatVersion === 0.2) {
@@ -52,6 +52,15 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		// just skipping over version 0.2, which was a dead end
 		serialized.formatVersion = 0.3;
 	}
+	// if (serialized.formatVersion === 0.3) {
+
+	// 	const rootHistoryNode = ...;
+	// 	for (undos, redos...) {
+
+	// 	}
+
+	// 	serialized.formatVersion = 0.4;
+	// }
 	if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
 		const gitBranchName = `format-version-${serialized.formatVersion}`;
 		return [{
@@ -95,7 +104,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		};
 	};
 	expectPropertiesToExist(
-		["palette", "selectedSwatch", "selectedToolID", "undos", "redos"],
+		["palette", "selectedSwatch", "selectedToolID", "undos", "redos", "currentHistoryNodeID"],
 		serialized,
 		"on the root document object",
 	);

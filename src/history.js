@@ -1,3 +1,4 @@
+import { List } from "immutable";
 
 export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undos}) {
 	const oldHistoryPath =
@@ -11,8 +12,7 @@ export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undo
 	
 	const ancestorsOfTarget = getHistoryAncestors(targetHistoryNode);
 
-	undos = [...ancestorsOfTarget];
-	undos.reverse();
+	undos = new List([...ancestorsOfTarget].reverse());
 
 	window.console && console.log("targetHistoryNode:", targetHistoryNode);
 	window.console && console.log("ancestorsOfTarget:", ancestorsOfTarget);
@@ -64,8 +64,8 @@ function undoable({name, icon}, callback){
 	undos.push(currentHistoryNode);
 
 	const newHistoryNode = makeHistoryNode({
-		imageData,
-		parent: currentHistoryNode,
+		operation,
+		parentNode: currentHistoryNode,
 		name,
 		icon,
 	});

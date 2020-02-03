@@ -441,8 +441,26 @@ class App extends Component {
 	// and support psuedorandomness by seeding from operation ID
 	// TODO: move this state manipulation stuff out of the component
 	addOperation(operation) {
+
+		let { currentHistoryNode, undos, redos } = this.state;
+
+		redos = new List();
+		undos = undos.push(currentHistoryNode);
+
+		const newHistoryNode = new HistoryNode({
+			parentNode: currentHistoryNode,
+			name: operation.tool.name,
+			operation,
+		});
+		currentHistoryNode.futures.push(newHistoryNode);
+		currentHistoryNode = newHistoryNode;
+		
 		this.setState(
-			{ undos: this.state.undos.push(operation) },
+			{
+				currentHistoryNode: currentHistoryNode,
+				undos: undos,
+				redos: redos,
+			},
 			this.save.bind(this),
 		);
 	}
@@ -451,7 +469,9 @@ class App extends Component {
 		// TODO: immutable operation objects probably (immutable.js has a Record class, I could use that)
 		// or append-only operation state?
 		// TODO: soft undo/redo / fundo/freedo / sliding/gliding/partial undo/redo
-		this.setState({ undos: this.state.undos }, this.saveDebounced.bind(this));
+
+		// (this is just to generically trigger an update)
+		this.setState({ currentHistoryNode: this.state.currentHistoryNode }, this.saveDebounced.bind(this));
 	}
 
 	undo() {
