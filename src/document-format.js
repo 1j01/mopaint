@@ -2,16 +2,9 @@ import React from "react";
 import { List } from "immutable";
 import HistoryNode from "./HistoryNode";
 import {generateID} from "./helpers.js";
+import {getRoot} from "./history.js";
 
 export const CURRENT_SERIALIZATION_VERSION = 0.4;
-
-// TODO: DRY
-const getRoot = (historyNode)=> {
-	while (historyNode.parentNode) {
-		historyNode = historyNode.parentNode;
-	}
-	return historyNode;
-};
 
 export function serializeDocument({palette, selectedSwatch, selectedTool, undos, redos, currentHistoryNode}) {
 	// TODO: serialize tools as code (+ identifiers), and create a sandbox?

@@ -3,15 +3,8 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
 import "./HistoryView.css";
-import {getHistoryAncestors} from "../history.js";
+import {getHistoryAncestors, getRoot} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
-
-const getRoot = (historyNode)=> {
-	while (historyNode.parentNode) {
-		historyNode = historyNode.parentNode;
-	}
-	return historyNode;
-};
 
 // TODO: DRY Toolbox + Palette + HistoryView maybe
 // should refactor it so the list is separate from the history entry display!

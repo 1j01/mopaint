@@ -75,3 +75,10 @@ export function getHistoryAncestors(node) {
 	}
 	return ancestors;
 }
+
+export const getRoot = (historyNode)=> {
+	while (historyNode.parentNode) {
+		historyNode = historyNode.parentNode;
+	}
+	return historyNode;
+};
