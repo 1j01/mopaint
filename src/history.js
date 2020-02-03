@@ -1,16 +1,13 @@
 
-function goToHistoryNode(targetHistoryNode) {
-	const fromHistoryNode = currentHistoryNode;
+export function goToHistoryNode(targetHistoryNode, {fromHistoryNode, redos, undos}) {
 	const oldHistoryPath =
 		redos.length > 0 ?
 			[redos[0], ...getHistoryAncestors(redos[0])] :
 			[fromHistoryNode, ...getHistoryAncestors(fromHistoryNode)];
 
-	currentHistoryNode = targetHistoryNode;
-	
-	finalizeAnyOperation();
+	// finalizeAnyOperation();
 
-	ctx.copy(targetHistoryNode.imageData);
+	// ctx.copy(targetHistoryNode.imageData);
 	
 	const ancestorsOfTarget = getHistoryAncestors(targetHistoryNode);
 
@@ -20,7 +17,7 @@ function goToHistoryNode(targetHistoryNode) {
 	// window.console && console.log("targetHistoryNode:", targetHistoryNode);
 	// window.console && console.log("ancestorsOfTarget:", ancestorsOfTarget);
 	// window.console && console.log("oldHistoryPath:", oldHistoryPath);
-	redos.length = 0;
+	redos = [];
 
 	let latestNode = targetHistoryNode;
 	while (latestNode.futures.length > 0) {
@@ -40,12 +37,16 @@ function goToHistoryNode(targetHistoryNode) {
 	// window.console && console.log("new undos:", undos);
 	// window.console && console.log("new redos:", redos);
 
-	updateHistoryView();
-	save();
+
+	return { currentHistoryNode: targetHistoryNode, undos, redos };
+
+	// updateHistoryView();
+	// save();
 }
 
+/*
 function undoable({name, icon}, callback){
-	saved = false;
+	// saved = false;
 
 	const beforeCallbackHistoryNode = currentHistoryNode;
 	callback && callback();
@@ -86,7 +87,8 @@ function makeOrUpdateUndoable(undoableMeta, undoableAction) {
 		undoable(undoableMeta, undoableAction);
 	}
 }
-function undo(){
+*/
+function undo({currentHistoryNode, undos, redos}){
 	if(undos.length<1){ return false; }
 
 	redos.push(currentHistoryNode);
@@ -97,17 +99,17 @@ function undo(){
 	return true;
 }
 
-function redo(){
+function redo({currentHistoryNode, undos, redos}){
 	if(redos.length<1){
-		if (!historyWindowOpen && !historyPromptOpen) {
-			showMessage({
-				// message: <>Press <kbd>Ctrl+Shift+Y</kbd> at any time to open the History window.</>,
-				// extraButtons: <button onClick={showDocumentHistory}>Show History</button>,
-				message: <React.Fragment>
-					You can get back to any state using the history panel.
-				</React.Fragment>,
-			});
-		}
+		// if (!historyWindowOpen && !historyPromptOpen) {
+		// 	showMessage({
+		// 		// message: <>Press <kbd>Ctrl+Shift+Y</kbd> at any time to open the History window.</>,
+		// 		// extraButtons: <button onClick={showDocumentHistory}>Show History</button>,
+		// 		message: <React.Fragment>
+		// 			You can get back to any state using the history panel.
+		// 		</React.Fragment>,
+		// 	});
+		// }
 		return false;
 	}
 

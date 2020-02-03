@@ -4,7 +4,8 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
 import "./HistoryView.css";
-import {getHistoryAncestors} from "../history.js";
+import {getHistoryAncestors, goToHistoryNode} from "../history.js";
+import HistoryNode from "../HistoryNode.js";
 
 // TODO: DRY Toolbox + Palette + HistoryView maybe
 // should refactor it so the list is separate from the history entry display!
@@ -16,6 +17,8 @@ class HistoryView extends Component {
 		this.scrollableRef = React.createRef();
 		this.currentEntryRef = React.createRef();
 		
+		this.previousScrollPosition = 0;
+
 		// TODO: cleanup how this works!
 		this.drawFunctions = [];
 	}
@@ -66,18 +69,11 @@ class HistoryView extends Component {
 	}
 	render() {
 		this.drawFunctions = [];
-		// TODO: should have an entry for New Document
-		// so you can click to before the first operation, like you can Ctrl+Z to it!
-		// <HistoryEntry
-		// 	key="new-document-initial-entry"
-		// 	entry={null}
-		// 	selected={undos.size() === 0}
-		// 	onClick={() => goToEntry(null)?}
-		// 	indexInListForAnimationOffset={-1}
-		// 	drawFunctionsArrayToAddTo={this.drawFunctions}
-		// />
-		const { undos, redos, goToEntry, thumbnailsByOperation } = this.props;
-		const allHistory = undos.concat(redos.reverse());
+
+		const { currentHistoryNode, thumbnailsByOperation } = this.props;
+
+		const rootHistoryNode = getHistoryAncestors(currentHistoryNode)[0];//maybe TODO
+		console.log("root", rootHistoryNode, rootHistoryNode.parentNode);
 
 		let entries = [];
 
@@ -92,8 +88,8 @@ class HistoryView extends Component {
 					current={current}
 					ref={current && this.currentEntryRef}
 					ancestorOfCurrent={ancestorOfCurrent}
-					onClick={() => goToEntry(entry)}
-					indexInListForAnimationOffset={index}
+					onClick={() => goToHistoryNode(node)}
+					indexInListForAnimationOffset={0 /* TODO */}
 					drawFunctionsArrayToAddTo={this.drawFunctions}
 					getThumbnailImageMaybe={() => thumbnailsByOperation.get(entry)}
 				/>;
@@ -101,10 +97,6 @@ class HistoryView extends Component {
 			for (const subNode of node.futures) {
 				renderTreeFromNode(subNode);
 			}
-			$entry.on("click", ()=> {
-				goToHistoryNode(node);
-			});
-			$entry.historyNode = node;
 			entries.push(entry);
 		}
 
@@ -133,9 +125,7 @@ class HistoryView extends Component {
 }
 
 HistoryView.propTypes = {
-	undos: PropTypes.instanceOf(List).isRequired,
-	redos: PropTypes.instanceOf(List).isRequired,
-	// currentHistoryNode: PropTypes.instanceOf(HistoryNode).isRequired,
+	currentHistoryNode: PropTypes.instanceOf(HistoryNode).isRequired,
 };
 
 export default HistoryView;
