@@ -30,7 +30,7 @@ const tools = {
 		// these UI function signatures are pretty arbitrary and would only get worse
 		// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
 		// and it doesn't help that there's this layer of indirection where I have to map these signatures
-		click: function(opCtx, x, y, swatch, documentCtx) {
+		drawFromPoint: function(opCtx, x, y, swatch, documentCtx) {
 			opCtx.drawImage(documentCtx.canvas, 0, 0);
 			fill(opCtx, x, y, swatch);
 		},
@@ -84,10 +84,10 @@ Object.keys(tools).forEach((key) => {
 			];
 		};
 	}
-	if (tool.click) {
+	if (tool.drawFromPoint) {
 		tool.drawFromGesturePoints = (opContext, points, swatch, documentContext)=> {
 			const startPos = points[0];
-			tool.click(opContext, startPos.x, startPos.y, swatch, documentContext);
+			tool.drawFromPoint(opContext, startPos.x, startPos.y, swatch, documentContext);
 		};
 		tool.getPreviewGesturePoints = (width, height)=> {
 			return { x: width / 2, y: height / 2 };
@@ -118,7 +118,7 @@ pointModifiers.forEach((modifier) => {
 		const originalTool = tools[key];
 		const newKey = modifier.prefix + key;
 
-		if (originalTool.click) {
+		if (originalTool.drawFromPoint) {
 			return; // skip Fill tool for now
 			// TODO: either pass multiple starting points to the Fill tool at once,
 			// or set it up so the document is updated between multiple calls to the Fill tool
