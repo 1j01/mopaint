@@ -167,22 +167,35 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 	}
 	if (serialized.formatVersion === 0.4) {
 		serialized.formatVersion = 0.5;
-		// The Fill tool previously used the first point of a gesture, i.e. instantaneous on mousedown
+		// The Fill tool previously used the first point of a gesture, acting on mousedown
 		// The Fill tool now uses the last point of a gesture, like in Paint.NET
-		// We could replace the points with just the first point, but I like to prefer preserving data.
-		// This technically still loses the data of how the gesture was performed, but this is not a popular app;
-		// I can worry about minutia like that later-on.
-		// (If adding an animation-from-history feature, I could even use a heuristic to detect this case.)
+
+		// Normally I would prefer preserving points, and just add the first point to the end (if different),
+		// but 1. the only real use case I see for that gesture data is for a future animation-from-history feature,
+		// in which case I would have to write a heuristic to detect this upgrade to avoid a weird animation,
+		// and 2. this isn't a popular app (I can worry about minutia like this later-on, when someone might care*),
+		// and so I think it's better to just discard the points after the first point.
+
 		for (const historyNode of Object.values(serialized.historyNodesByID)) {
 			if (historyNode.operation?.name === "Fill") {
 				const {points} = historyNode.operation;
-				const firstPos = points[0];
-				const lastPos = points[points.length - 1];
-				if (firstPos.x !== lastPos.x || firstPos.y !== lastPos.y) {
-					points.push(firstPos);
-				}
+				// const firstPos = points[0];
+				// const lastPos = points[points.length - 1];
+				// if (firstPos.x !== lastPos.x || firstPos.y !== lastPos.y) {
+				// 	points.push(firstPos);
+				// }
+				points.length = 1;
 			}
 		}
+		// *Someone might care about arbitrary tool's gesture data for changing a tool into another tool,
+		// like Line to Free-Form Line just for fun or whatever (but Fill to Free-Form Line or whatever is a weird use-case)
+		// Look, maybe someone wants to just plot everywhere the mouse was (that affected the document), okay? I dunno!
+		// Look, sometimes preserving data is about supporting use cases you didn't even conceive of at the time.
+		// But anyways, I'm probably the only person with old documents saved from this app, so format upgrades are
+		// mainly an academic (and self-serving) endeavour at this point, and a good habit to maintain backwards compatibility.
+
+		// In the future, a Fill operation might be composed of `Flood Fill(Last Point of Gesture(Gesture))` normally
+		// and for an upgrade like this, older documents would just stay as `Flood Fill(First Point of Gesture(Gesture))`
 	}
 	if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
 		const gitBranchName = `format-version-${serialized.formatVersion}`;
