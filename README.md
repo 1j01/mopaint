@@ -2,7 +2,27 @@
 
 A revolutionary editing system.
 
-Prototype. Work in progress. Nothing to see yet.
+#### Project Status
+
+You can play with the work-in-progress app at [mopaint.app](https://mopaint.app)
+
+Features:
+- Autosaves locally within the app, including history (Note: if you "clear cookies" in your browser it will likely delete documents autosaved within the app)
+- Save/load documents, including history
+- Non-destructive (non-linear) history: get back to *any point* in history with the history sidebar, even if you undo and do something else. Instead of discarding redos, it creates a new branch in the *history tree*.
+- Some symmetry tools. They're procedurally combined together with the basic drawing tools.
+
+Limitations:
+- There looks like there's a bunch of tools but there's not actually that much interesting variation.
+- Many features you'd want in a basic image editor are missing
+- No brush sizes (tho you can try with the "Free-Form Circles" tool(s))
+- No oval tool (only circles)
+- No text tool
+- No zoom (tho you can use your browser's zoom)
+- Document size is fixed at 640x480
+- The vision for the project is not yet realized
+- The app currently gets really slow with long document histories. (This is solvable.)
+
 
 #### Principles
 
@@ -17,12 +37,14 @@ Let users explore fearlessly, both the interface, and paths of work.
 
 #### Ideas
 
-- Everything will be *always saved*, including undo history.
-- You'll be able to get back to *any state*, with non-destructive (non-linear) undo history. I've actually implemented this in [JS Paint][], my browser-based clone of MS Paint (but the undo history isn't saved in the session, and it's really inefficient. I hope to eventually base JS Paint on Mopaint.)
+- Everything is *always saved*, including undo history.
+- You can get back to *any state*, with non-destructive (non-linear) undo history. I actually implemented this first in [JS Paint][], my browser-based clone of MS Paint (but in JS Paint the undo history isn't saved in the session, and it's really inefficient. I hope to eventually base JS Paint on Mopaint.)
 - Change anything after-the-fact. You don't have to worry about following the exact right procedure (like selecting the right layer before drawing), because you can *change the procedure*. Edit history as easily as creating it in the first place.
 - Support multiple views on a document, in panes as well as in separate windows. In the latter case it would act and work similar to multi-user support.
 - Preview how changes affect different parts of a document, in panes that show those parts of the document. This would be especially useful for animations or large scenes with copies of objects.
 - Instead of having "Smart Objects" and "Smart Filters" (as well as dumb equivalents) as in Photoshop, literally everything is "smart", because the *editing model* is "smart". Every brush stroke is smarter than a Smart Object, when you want it to be (if you want to personify it like that.)
+- Instead of having "Clipping Masks", in addition to being able to select a region and delete (for a one-off), you can just do the latter and then "edit earlier" and it'll live-update.
+- (There can still be tools/UI that help you set up masks etc., but the document structure will be much more general. Part of the point is that you could do something like that yourself, even something new (it doesn't need to be built-in), and, there isn't a feature that *doesn't* have an equivalent live-updating-from-live-editable-source-material equivalent "Smart" feature.)
 - Texturing 3D models by drawing directly on them would be fun (like [Chameleon][], [Chameleon.js][], [SculptGL][], [Paint 3D][]).
 - If we can do texturing on 3D models, it should be possible to extend that to drawing on tesselated canvases, to create different types of repeating patterns, like [EscherSketch][].
 
