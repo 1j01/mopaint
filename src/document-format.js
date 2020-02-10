@@ -4,7 +4,7 @@ import HistoryNode from "./HistoryNode";
 import {generateID} from "./helpers.js";
 import {getAllHistoryNodesSortedByTimestamp} from "./history.js";
 
-export const CURRENT_SERIALIZATION_VERSION = 0.4;
+export const CURRENT_SERIALIZATION_VERSION = 0.5;
 
 export function serializeDocument({palette, selectedSwatch, selectedTool, undos, redos, currentHistoryNode}) {
 	// TODO: serialize tools as code (+ identifiers), and create a sandbox?
@@ -62,13 +62,16 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		}];
 	}
 	const MINIMUM_LOADABLE_VERSION = 0.1;
-	// upgrading code can go here, incrementing the version number step by step
+
+	// Upgrade the document, incrementing the version number step by step.
+	//
 	// e.g.
 	// if (serialized.formatVersion === 0.01) {
-	// 	serialized.newPropName = serialized.oldName;
+	// 	serialized.newPropertyName = serialized.oldName;
 	// 	delete serialized.oldName;
 	// 	serialized.formatVersion = 0.02;
 	// }
+
 	if (serialized.formatVersion === 0.1) {
 		// just skip over version 0.2, which was a dead end
 		serialized.formatVersion = 0.3;
@@ -161,6 +164,25 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 
 		delete serialized.undos;
 		delete serialized.redos;
+	}
+	if (serialized.formatVersion === 0.4) {
+		serialized.formatVersion = 0.5;
+		// The Fill tool previously used the first point of a gesture, i.e. instantaneous on mousedown
+		// The Fill tool now uses the last point of a gesture, like in Paint.NET
+		// We could replace the points with just the first point, but I like to prefer preserving data.
+		// This technically still loses the data of how the gesture was performed, but this is not a popular app;
+		// I can worry about minutia like that later-on.
+		// (If adding an animation-from-history feature, I could even use a heuristic to detect this case.)
+		for (const historyNode of Object.values(serialized.historyNodesByID)) {
+			if (historyNode.operation?.name === "Fill") {
+				const {points} = historyNode.operation;
+				const firstPos = points[0];
+				const lastPos = points[points.length - 1];
+				if (firstPos.x !== lastPos.x || firstPos.y !== lastPos.y) {
+					points.push(firstPos);
+				}
+			}
+		}
 	}
 	if (serialized.formatVersion < CURRENT_SERIALIZATION_VERSION) {
 		const gitBranchName = `format-version-${serialized.formatVersion}`;

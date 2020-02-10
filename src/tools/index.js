@@ -86,8 +86,8 @@ Object.keys(tools).forEach((key) => {
 	}
 	if (tool.drawFromPoint) {
 		tool.drawFromGesturePoints = (opContext, points, swatch, documentContext)=> {
-			const startPos = points[0];
-			tool.drawFromPoint(opContext, startPos.x, startPos.y, swatch, documentContext);
+			const lastPos = points[points.length - 1];
+			tool.drawFromPoint(opContext, lastPos.x, lastPos.y, swatch, documentContext);
 		};
 		tool.getPreviewGesturePoints = (width, height)=> {
 			return { x: width / 2, y: height / 2 };
