@@ -35,6 +35,10 @@ export default function fill(ctx, x, y, swatch) {
 	x = Math.floor(x);
 	y = Math.floor(y);
 
+	if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
+		return;
+	}
+
 	const stack = [[x, y]];
 	const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	let pixelIndex = (y * canvas.width + x) * 4;
