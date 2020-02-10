@@ -1,18 +1,17 @@
 // TODO:
 // * Keep bounds and return them
 // (like this implementation does: https://github.com/hughsk/flood-fill)
-// so an image operation can at least be bounded by the affected region
+// so cached fill region data can be bounded by the affected region
 // (which could save memory, or save the time that a general bounding box finding algorithm would take - like trim-canvas.js),
-// if not have the fill separated out (which could save memory further if the image operation is compressed, e.g. as a PNG)
-// * Separate the fill (output) from the reference (input)?
-// so the image operation contains only the fill (and maybe anti-aliasing against shapes).
-// * Split out "flood" function for more arbitrary selective operations
-// e.g. selective selection, AKA the "magic wand" tool.
+// * Separate the flood fill region (output) from the reference (input),
+// so the flood fill can be used to implement more types of operations,
+// like the "Magic Wand" tool, and custom things like "Fill with Offset"
+// (by adding a Move in between Flood Fill and Draw Fill Region, or whatever)
 // * Optimize flood based on chunks / make it handle chunks in order to do infinite documents etc.
 // Need to keep track of visited chunks, but could revisit a chunk from a different side.
 // Imagine the worst case of a flood fill algorithm input, but spread across chunks.
 // * Show progress bar and cancel button as necessary
-// (This would be handled outside any flooding and/or filling implementation(s).)
+// (UI would be handled outside any flooding/filling implementations.)
 // * Support fill with bitmap (pattern as swatch).
 // * Tolerance threshold, and maybe some fancier blending (i.e. non-binary)...
 // * Also, I want to support workflows where you draw fills underneath other shapes/strokes,
@@ -30,7 +29,7 @@
 // QuickFill: https://www.codeproject.com/Articles/6017/QuickFill-An-efficient-flood-fill-algorithm
 // Queue-Linear: https://www.codeproject.com/Articles/16405/Queue-Linear-Flood-Fill-A-Fast-Flood-Fill-Algorith
 
-const fill = (ctx, x, y, swatch) => {
+export default function fill(ctx, x, y, swatch) {
 	const canvas = ctx.canvas;
 
 	x = Math.floor(x);
@@ -127,19 +126,4 @@ const fill = (ctx, x, y, swatch) => {
 		imageData.data[pixelIndex + 2] = fillB;
 		imageData.data[pixelIndex + 3] = fillA;
 	}
-};
-
-export default fill;
-
-export const tool = {
-	name: "Fill",
-	// Icon: FillBucketIcon, // TODO?
-
-	// these UI function signatures are pretty arbitrary and would only get worse
-	// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
-	// and it doesn't help that there's this layer of indirection where I have to map these signatures
-	click: function(opCtx, x, y, swatch, documentCtx) {
-		opCtx.drawImage(documentCtx.canvas, 0, 0);
-		fill(opCtx, x, y, swatch);
-	},
 };
