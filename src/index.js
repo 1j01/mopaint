@@ -20,7 +20,12 @@ const getIDFromCurrentURL = () =>
 	(window.location.search.match(/document=([\w\-./]*)/) || [])[1];
 
 const goToDocument = (documentID) => {
-	window.history.pushState({}, null, urlForID(documentID));
+	if (window.location.search.match(/^\?./)) {
+		window.history.pushState({}, null, urlForID(documentID));
+	} else {
+		// avoid trapping/breaking the back button, when the app is navigated to from another page
+		window.history.replaceState({}, null, urlForID(documentID));
+	}
 	render();
 };
 
