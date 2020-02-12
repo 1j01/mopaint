@@ -7,6 +7,13 @@ import HistoryNode from "../HistoryNode.js";
 
 // const modulo = (a, b) => (+a % (b = +b) + b) % b;
 
+function isScrolledIntoView(el) {
+	// Partially visible elements return true.
+	// Assumption: scroll pane is near window height (and scrolls vertically)
+	const rect = el.getBoundingClientRect();
+	return rect.top < window.innerHeight && rect.bottom >= 0;
+}
+
 class Thumbnail extends Component {
 	render() {
 		const { width, height } = this.props;
@@ -17,6 +24,11 @@ class Thumbnail extends Component {
 	draw() {
 		const { indexInListForAnimationOffset, getImageMaybe } = this.props;
 		const canvas = ReactDOM.findDOMNode(this);
+
+		if(!isScrolledIntoView(canvas)){
+			return;
+		}
+
 		const ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
