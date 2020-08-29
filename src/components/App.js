@@ -2,7 +2,7 @@ import localforage from "localforage";
 import { List } from "immutable";
 import React, { Component, useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
-import { load as loadPalette } from "anypalette";
+import { loadPalette } from "anypalette";
 import isPNG from "is-png";
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
 import { serializeDocument, deserializeDocument } from "../document-format"; 
