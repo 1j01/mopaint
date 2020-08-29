@@ -427,7 +427,7 @@ class App extends Component {
 		window.removeEventListener("drop", this.dropListener);
 	}
 
-	componentWillReceiveProps(nextProps) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		console.assert(
 			nextProps.documentID === this.props.documentID,
 			"App component is not designed to handle switching documents without reconstruction",
