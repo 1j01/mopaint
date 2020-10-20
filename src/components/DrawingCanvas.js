@@ -1,5 +1,3 @@
-// TODO: evaluate other hashing libraries
-// https://brillout.github.io/test-javascript-hash-implementations/
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./DrawingCanvas.css";
