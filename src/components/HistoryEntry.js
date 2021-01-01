@@ -136,6 +136,14 @@ Thumbnail.propTypes = {
 };
 
 class HistoryEntry extends Component {
+	shouldComponentUpdate(nextProps) {
+		return (
+			nextProps.current !== this.props.current ||
+			nextProps.historyNode !== this.props.historyNode ||
+			nextProps.ancestorOfCurrent !== this.props.ancestorOfCurrent ||
+			nextProps.indexInListForAnimationOffset !== this.props.indexInListForAnimationOffset
+		);
+	}
 	render() {
 		const {
 			current,

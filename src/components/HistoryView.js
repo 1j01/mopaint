@@ -56,6 +56,12 @@ class HistoryView extends Component {
 			// 	);
 		}
 	}
+	shouldComponentUpdate(nextProps) {
+		return (
+			nextProps.currentHistoryNode !== this.props.currentHistoryNode ||
+			nextProps.thumbnailsByOperation !== this.props.thumbnailsByOperation
+		);
+	}
 	render() {
 		this.drawFunctions = [];
 
