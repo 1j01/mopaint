@@ -14,7 +14,6 @@ Features:
 
 Limitations:
 - **The vision for the project is not yet realized.**
-- The app currently gets really slow with long document histories. (This is solvable.)
 - There looks like there's a bunch of tools but there's not actually that much interesting variation. Symmetry tools are combined statically, instead of letting you combine it with whatever you want as a user.
 - Many features you'd want in a basic image editor are missing
 	- No brush sizes (tho you can try with the "Free-Form Circles" tool(s))
