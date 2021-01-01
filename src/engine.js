@@ -2,6 +2,8 @@
 // https://brillout.github.io/test-javascript-hash-implementations/
 import sha256 from "hash.js/lib/hash/sha/256";
 
+const cacheHeuristicPeriod = 5;
+
 const opCanvas = document.createElement("canvas");
 const opContext = opCanvas.getContext("2d");
 
@@ -13,20 +15,44 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 	opCanvas.width = documentCanvas.width;
 	opCanvas.height = documentCanvas.height;
 
+	let lastCachedOpIndex = -Infinity; // should this be so extreme? how will this really play into the heuristic?
+	let operationIndex = operations.length - 1;
+	for (; operationIndex >= 0; operationIndex--) {
+		const operation = operations[operationIndex];
+		const operationHash = hashInDocumentByOperation.get(operation);
+		if (cache[`document-at-${operationHash}`]) {
+			documentContext.drawImage(cache[`document-at-${operationHash}`], 0, 0);
+			lastCachedOpIndex = operationIndex;
+			break;
+		}
+	}
+	if (operationIndex > -1) {
+		// console.log("Starting from checkpoint:", operationIndex);
+	} else {
+		// console.log("Starting with empty cache");
+	}
+	operationIndex++;
 	const runningHash = sha256();
-	operations.forEach((operation, operationIndex) => {
+	for (; operationIndex < operations.length; operationIndex++) {
+		const operation = operations[operationIndex];
 		runningHash.update(JSON.stringify(operation));
 		const operationHash = runningHash.digest("hex");
 		opContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
-		if (cache[operationHash]) {
+		if (cache[`individual-${operationHash}`]) {
 			// console.log("cache hit");
-			documentContext.drawImage(cache[operationHash], 0, 0);
+			documentContext.drawImage(cache[`individual-${operationHash}`], 0, 0);
+			lastCachedOpIndex = operationIndex;
 		} else {
 			// opContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
 			// console.log("cache miss");
+			// console.log({operationIndex, operationHash, operation});
 			const { points, tool, swatch } = operation;
 
+			// TODO: integrate timing into heuristic
+			// const timeBefore = performance.now();
 			tool.drawFromGesturePoints(opContext, points, swatch, documentContext);
+			// const timeAfter = performance.now();
+			// const toolTime = timeAfter - timeBefore;
 
 			documentContext.drawImage(opCanvas, 0, 0);
 
@@ -34,10 +60,17 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 
 			// fill the cache
 			if (!operation.updatingContinously) {
-				cache[operationHash] = document.createElement("canvas");
-				cache[operationHash].width = opCanvas.width;
-				cache[operationHash].height = opCanvas.height;
-				cache[operationHash].getContext("2d").drawImage(opCanvas, 0, 0);
+				if (operationIndex >= lastCachedOpIndex + cacheHeuristicPeriod) {
+					cache[`document-at-${operationHash}`] = document.createElement("canvas");
+					cache[`document-at-${operationHash}`].width = opCanvas.width;
+					cache[`document-at-${operationHash}`].height = opCanvas.height;
+					cache[`document-at-${operationHash}`].getContext("2d").drawImage(documentCanvas, 0, 0);	
+					lastCachedOpIndex = operationIndex;
+				}
+				// cache[`individual-${operationHash}`] = document.createElement("canvas");
+				// cache[`individual-${operationHash}`].width = opCanvas.width;
+				// cache[`individual-${operationHash}`].height = opCanvas.height;
+				// cache[`individual-${operationHash}`].getContext("2d").drawImage(opCanvas, 0, 0);
 			}
 
 			// TODO: optimize: use existing canvas if it exists (clear and update it)
@@ -55,10 +88,10 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 			// 	// TODO: unless self-contained
 			// 	// console.log(thumbnailsByOperation.has(operation), thumbnailsByOperation);
 			// 	thumbnailsByOperation.delete(operation);
-			// 	delete cache[hashInDocumentByOperation.get(operation)];
+			// 	delete cache[`individual-${hashInDocumentByOperation}`.get(operation)];
 			// });
 		}
-	});
+	}
 }
 
 /*
