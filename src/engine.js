@@ -73,10 +73,14 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 				// cache[`individual-${operationHash}`].getContext("2d").drawImage(opCanvas, 0, 0);
 			}
 
-			// TODO: optimize: use existing canvas if it exists (clear and update it)
-			const thumbnail = document.createElement("canvas");
-			thumbnail.width = 64;
-			thumbnail.height = 64;
+			let thumbnail = thumbnailsByOperation.get(operation);
+			if (thumbnail) {
+				thumbnail.getContext("2d").clearRect(0, 0, 64, 64);
+			} else {
+				thumbnail = document.createElement("canvas");
+				thumbnail.width = 64;
+				thumbnail.height = 64;
+			}
 			// TODO: keep thumbnail proportional
 			// can reuse code in ToolPreview.js
 			thumbnail.getContext("2d").drawImage(opCanvas, 0, 0, 64, 64);
