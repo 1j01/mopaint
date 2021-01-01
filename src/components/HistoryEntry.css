@@ -24,7 +24,17 @@
 }
 .HistoryEntry canvas,
 .HistoryEntry svg,
+.HistoryEntry .question-mark,
 .HistoryEntry .ToolPreview {
 	margin-right: 5px;
 	vertical-align: middle;
+}
+
+.HistoryEntry .question-mark {
+	display: inline-block;
+	background: transparent var(--question-mark-animation) 0 0 no-repeat;
+	animation: question-mark 3s steps(var(--question-mark-animation-frames)) infinite;
+}
+@keyframes question-mark {
+	100% { background-position: calc(-1 * var(--question-mark-icon-size) * var(--question-mark-animation-frames)) 0; }
 }
