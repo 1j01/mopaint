@@ -1,5 +1,6 @@
 import line from "./line.js";
 import freeformLineTool from "./freeform-line.js";
+import brushTool from "./bristles.js";
 import circle from "./circle.js";
 import rectangle from "./rectangle.js";
 import fill from "./fill.js";
@@ -12,6 +13,7 @@ import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket
 
 const tools = {
 	"Freeform Line": freeformLineTool,
+	"Brush": brushTool,
 	"Line": {
 		drawShape: line,
 	},
