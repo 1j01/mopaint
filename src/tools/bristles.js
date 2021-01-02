@@ -23,7 +23,7 @@ export default {
 				const dist = Math.hypot(points[i].x - points[i-1].x, points[i].y - points[i-1].y);
 				const spread = Math.min(Math.max(dist/5, 5), 15);
 				const targetX = points[i].x + Math.sin(b / numberOfBristles * Math.PI * 2) * spread;
-				const targetY = points[i].y + Math.sin(b / numberOfBristles * Math.PI * 2) * spread;
+				const targetY = points[i].y + Math.cos(b / numberOfBristles * Math.PI * 2) * spread;
 				bristle.vx += (targetX - bristle.x) * 0.3;
 				bristle.vy += (targetY - bristle.y) * 0.3;
 				bristle.x += bristle.vx;
