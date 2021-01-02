@@ -15,13 +15,27 @@ function isScrolledIntoView(el) {
 }
 
 class Thumbnail extends Component {
+	shouldComponentUpdate(newProps) {
+		return newProps.image !== this.props.image;
+	}
 	render() {
-		const { width, height } = this.props;
+		const { image, width, height } = this.props;
 		this.maybeLoadingTime = 0;
+		if (!image) {
+			return <div
+				className="question-mark"
+				style={{width, height}}
+			/>;
+		}
 		return <canvas width={width} height={height} />;
 	}
 	draw() {
 		const { image } = this.props;
+
+		if (!image) {
+			return;
+		}
+
 		const canvas = ReactDOM.findDOMNode(this);
 
 		if(!isScrolledIntoView(canvas)){
@@ -39,16 +53,12 @@ class Thumbnail extends Component {
 	componentDidUpdate() {
 		this.draw();
 	}
-	// (TODO)
-	// shouldComponentUpdate(newProps) {
-	// 	return newProps.image !== this.props.image;
-	// }
 }
 
 Thumbnail.propTypes = {
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
-	image: PropTypes.object.isRequired,
+	image: PropTypes.object,
 };
 
 class HistoryEntry extends Component {
@@ -69,15 +79,6 @@ class HistoryEntry extends Component {
 			getIconReactElementMaybe,
 		} = this.props;
 		const {operation} = historyNode;
-		const thumbnailImage = getThumbnailImageMaybe();
-		const thumbnail = thumbnailImage ? <Thumbnail
-			width={24}
-			height={24}
-			image={thumbnailImage}
-		/> : <div
-			className="question-mark"
-			style={{width: 24, height: 24}}
-		/>;
 		// NOTE: role works together with role in HistoryView
 		return (
 			<button
@@ -91,7 +92,11 @@ class HistoryEntry extends Component {
 				onClick={onClick} // for keyboard accessibility (?)
 				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
-				{thumbnail}
+				<Thumbnail
+					width={24}
+					height={24}
+					image={getThumbnailImageMaybe()}
+				/>
 				{getIconReactElementMaybe?.() ?? (operation && <ToolPreview tool={operation.tool} width={16} height={16} />)}
 				{historyNode.name}
 			</button>
