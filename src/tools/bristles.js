@@ -10,8 +10,8 @@ export default {
 		const numberOfBristles = 15;
 		for (let b = 0; b < numberOfBristles; b++) {
 			bristles.push({
-				x: points[0].x + Math.sin(b / numberOfBristles * Math.PI * 2) * 15,
-				y: points[0].y + Math.cos(b / numberOfBristles * Math.PI * 2) * 15,
+				x: points[0].x + Math.sin(b / numberOfBristles * Math.PI * 2) * 5,
+				y: points[0].y + Math.cos(b / numberOfBristles * Math.PI * 2) * 5,
 				vx: 0,
 				vy: 0,
 			});
