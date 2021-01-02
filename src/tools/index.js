@@ -1,4 +1,5 @@
 import line from "./line.js";
+import freeformLineTool from "./freeform-line.js";
 import circle from "./circle.js";
 import rectangle from "./rectangle.js";
 import fill from "./fill.js";
@@ -10,9 +11,7 @@ import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket
 
 
 const tools = {
-	"Freeform Line": {
-		drawSegmentOfPath: line,
-	},
+	"Freeform Line": freeformLineTool,
 	"Line": {
 		drawShape: line,
 	},
@@ -91,6 +90,18 @@ Object.keys(tools).forEach((key) => {
 		};
 		tool.getPreviewGesturePoints = (width, height)=> {
 			return { x: width / 2, y: height / 2 };
+		};
+	}
+	if (!tool.getPreviewGesturePoints) {
+		tool.getPreviewGesturePoints = (width, height)=> {
+			const points = [];
+			for (let i = 0; i < 20; i += 2) {
+				points.push({
+					x: width / 2 + 48 * Math.sin(Math.sin((i * i) / 302)),
+					y: height / 2 + 48 * Math.cos(Math.sin(i / 5)),
+				});
+			}
+			return points;
 		};
 	}
 });
