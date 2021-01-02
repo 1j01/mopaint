@@ -21,7 +21,7 @@ class Thumbnail extends Component {
 		return <canvas width={width} height={height} />;
 	}
 	draw() {
-		const { indexInListForAnimationOffset, image } = this.props;
+		const { image } = this.props;
 		const canvas = ReactDOM.findDOMNode(this);
 
 		if(!isScrolledIntoView(canvas)){
@@ -48,7 +48,6 @@ class Thumbnail extends Component {
 Thumbnail.propTypes = {
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
-	indexInListForAnimationOffset: PropTypes.number.isRequired,
 	image: PropTypes.object.isRequired,
 };
 
@@ -57,8 +56,7 @@ class HistoryEntry extends Component {
 		return (
 			nextProps.current !== this.props.current ||
 			nextProps.historyNode !== this.props.historyNode ||
-			nextProps.ancestorOfCurrent !== this.props.ancestorOfCurrent ||
-			nextProps.indexInListForAnimationOffset !== this.props.indexInListForAnimationOffset
+			nextProps.ancestorOfCurrent !== this.props.ancestorOfCurrent
 		);
 	}
 	render() {
@@ -67,7 +65,6 @@ class HistoryEntry extends Component {
 			ancestorOfCurrent,
 			onClick,
 			historyNode,
-			indexInListForAnimationOffset,
 			getThumbnailImageMaybe,
 			getIconReactElementMaybe,
 		} = this.props;
@@ -76,7 +73,6 @@ class HistoryEntry extends Component {
 		const thumbnail = thumbnailImage ? <Thumbnail
 			width={24}
 			height={24}
-			indexInListForAnimationOffset={indexInListForAnimationOffset}
 			image={thumbnailImage}
 		/> : <div
 			className="question-mark"

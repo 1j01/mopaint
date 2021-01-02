@@ -31,10 +31,13 @@
 }
 
 .HistoryEntry .question-mark {
-	display: inline-block;
-	background: transparent var(--question-mark-animation) 0 0 no-repeat;
-	animation: question-mark 3s steps(var(--question-mark-animation-frames)) infinite;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background: rgba(128, 128, 128, 0.5);
+	color: white;
 }
-@keyframes question-mark {
-	100% { background-position: calc(-1 * var(--question-mark-icon-size) * var(--question-mark-animation-frames)) 0; }
+.HistoryEntry .question-mark::after {
+	content: "?";
 }
