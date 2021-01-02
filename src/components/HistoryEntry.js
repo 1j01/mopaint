@@ -82,7 +82,7 @@ class HistoryEntry extends Component {
 			ancestorOfCurrent,
 			onClick,
 			historyNode,
-			thumbnailsByOperation,
+			// thumbnailsByOperation,
 			getIconReactElementMaybe,
 		} = this.props;
 		const {operation} = historyNode;
@@ -99,12 +99,12 @@ class HistoryEntry extends Component {
 				onClick={onClick} // for keyboard accessibility (?)
 				onMouseDown={onClick} // for speed (w/ a mouse)
 			>
-				<Thumbnail
+				{/* <Thumbnail
 					width={24}
 					height={24}
 					thumbnailsByOperation={thumbnailsByOperation}
 					operation={operation}
-				/>
+				/> */}
 				{getIconReactElementMaybe?.() ?? (operation && <ToolPreview tool={operation.tool} width={16} height={16} />)}
 				{historyNode.name}
 			</button>
