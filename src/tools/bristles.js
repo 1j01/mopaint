@@ -7,11 +7,11 @@ export default {
 	drawFromGesturePoints: (opContext, points, swatch)=> {
 		opContext.beginPath();
 		const bristles = [];
-		const numberOfBristles = 20;
+		const numberOfBristles = 15;
 		for (let b = 0; b < numberOfBristles; b++) {
 			bristles.push({
-				x: points[0].x + Math.sin(b / numberOfBristles * Math.PI * 2) * 5,
-				y: points[0].y + Math.cos(b / numberOfBristles * Math.PI * 2) * 5,
+				x: points[0].x + Math.sin(b / numberOfBristles * Math.PI * 2) * 15,
+				y: points[0].y + Math.cos(b / numberOfBristles * Math.PI * 2) * 15,
 				vx: 0,
 				vy: 0,
 			});
@@ -26,15 +26,15 @@ export default {
 				const targetY = points[i].y + Math.sin(b / numberOfBristles * Math.PI * 2) * spread;
 				bristle.vx += (targetX - bristle.x) * 0.3;
 				bristle.vy += (targetY - bristle.y) * 0.3;
-				bristle.vx *= 0.4;
-				bristle.vy *= 0.4;
 				bristle.x += bristle.vx;
 				bristle.y += bristle.vy;
+				bristle.vx *= 0.4;
+				bristle.vy *= 0.4;
 				opContext.lineTo(bristle.x, bristle.y);
 			}
 		}
 		opContext.strokeStyle = swatch;
-		opContext.lineWidth = 5;
+		opContext.lineWidth = 2;
 		opContext.lineCap = "round";
 		opContext.lineJoin = "round";
 		opContext.stroke();
