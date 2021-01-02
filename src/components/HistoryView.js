@@ -7,7 +7,6 @@ import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../histo
 import HistoryNode from "../HistoryNode.js";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-16px-importable.svg";
 
-// TODO: keyboard navigation
 class HistoryView extends Component {
 	constructor(props) {
 		super(props);
@@ -54,8 +53,31 @@ class HistoryView extends Component {
 		const historyAncestors = getHistoryAncestors(currentHistoryNode);
 		const allHistoryNodes = getAllHistoryNodesSortedByTimestamp(currentHistoryNode);
 
+		const navigate = (offset)=> {
+			const startIndex = allHistoryNodes.indexOf(currentHistoryNode);
+			const newIndex = startIndex + offset;
+			const newHistoryNode = allHistoryNodes[newIndex];
+			if (newHistoryNode) {
+				goToHistoryNode(newHistoryNode);
+			}
+		};
 		return (
-			<div className="HistoryView" role="radiogroup" ref={this.selfRef}>
+			<div
+				className="HistoryView"
+				role="radiogroup"
+				ref={this.selfRef}
+				onKeyDown={(event)=> {
+					if (event.key === "ArrowUp") {
+						event.preventDefault();
+						navigate(-1);
+					} else if (event.key === "ArrowDown") {
+						event.preventDefault();
+						navigate(+1);
+					}
+					// TODO: PageUp, PageDown, Home, End?
+					// how many of these thing should navigate the view vs the selection?
+				}}
+			>
 				{allHistoryNodes.map((node)=> {
 					const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
 					const current = node === currentHistoryNode;
