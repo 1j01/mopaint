@@ -16,12 +16,14 @@ function isScrolledIntoView(el) {
 
 class Thumbnail extends Component {
 	shouldComponentUpdate(newProps) {
-		return newProps.image !== this.props.image;
+		return (
+			newProps.thumbnailsByOperation !== this.props.thumbnailsByOperation ||
+			newProps.operation !== this.props.operation
+		);
 	}
 	render() {
-		const { image, width, height } = this.props;
-		this.maybeLoadingTime = 0;
-		if (!image) {
+		const { thumbnailsByOperation, operation, width, height } = this.props;
+		if (operation && !thumbnailsByOperation.get(operation)) {
 			return <div
 				className="question-mark"
 				style={{width, height}}
@@ -30,12 +32,16 @@ class Thumbnail extends Component {
 		return <canvas width={width} height={height} />;
 	}
 	draw() {
-		const { image } = this.props;
-
-		if (!image) {
+		const { thumbnailsByOperation, operation } = this.props;
+		if (!operation) {
 			return;
 		}
 
+		const image = thumbnailsByOperation.get(operation);
+		if (!image) {
+			return;
+		}
+		
 		const canvas = ReactDOM.findDOMNode(this);
 
 		if(!isScrolledIntoView(canvas)){
@@ -58,7 +64,8 @@ class Thumbnail extends Component {
 Thumbnail.propTypes = {
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
-	image: PropTypes.object,
+	thumbnailsByOperation: PropTypes.object.isRequired,
+	operation: PropTypes.object,
 };
 
 class HistoryEntry extends Component {
@@ -75,7 +82,7 @@ class HistoryEntry extends Component {
 			ancestorOfCurrent,
 			onClick,
 			historyNode,
-			getThumbnailImageMaybe,
+			thumbnailsByOperation,
 			getIconReactElementMaybe,
 		} = this.props;
 		const {operation} = historyNode;
@@ -95,7 +102,8 @@ class HistoryEntry extends Component {
 				<Thumbnail
 					width={24}
 					height={24}
-					image={getThumbnailImageMaybe()}
+					thumbnailsByOperation={thumbnailsByOperation}
+					operation={operation}
 				/>
 				{getIconReactElementMaybe?.() ?? (operation && <ToolPreview tool={operation.tool} width={16} height={16} />)}
 				{historyNode.name}
@@ -106,6 +114,7 @@ class HistoryEntry extends Component {
 
 HistoryEntry.propTypes = {
 	historyNode: PropTypes.instanceOf(HistoryNode).isRequired,
+	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
 	current: PropTypes.bool.isRequired,
 	ancestorOfCurrent: PropTypes.bool.isRequired,
 	onClick: PropTypes.func.isRequired,

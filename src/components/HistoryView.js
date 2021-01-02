@@ -7,10 +7,6 @@ import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../histo
 import HistoryNode from "../HistoryNode.js";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-16px-importable.svg";
 
-const blankImage = new Image();
-// transparent single-pixel PNG
-blankImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-
 // TODO: keyboard navigation
 class HistoryView extends Component {
 	constructor(props) {
@@ -70,11 +66,7 @@ class HistoryView extends Component {
 						ref={current && this.currentEntryRef}
 						ancestorOfCurrent={ancestorOfCurrent}
 						onClick={() => goToHistoryNode(node)}
-						getThumbnailImageMaybe={() =>
-							node.operation ?
-								thumbnailsByOperation.get(node.operation) :
-								blankImage
-						}
+						thumbnailsByOperation={thumbnailsByOperation}
 						getIconReactElementMaybe={() =>
 							node.name === "New Document" ? <NewDocumentIcon width={16} height={16}/> : null
 						}

@@ -34,9 +34,8 @@ class App extends Component {
 		super(props);
 		// TODO: move state outside of the component
 		this.state = {
-			palette: defaultPalette, // TODO: eventually probably remove the "palette" state as a concept;
-			// I don't think this feature is special enough to warrant special handling (except for parsing palette files)
-			// It can be part of the document, and more dynamic (gradients and patterns),
+			palette: defaultPalette, // Eventually, the palette could be more like just part of the document,
+			// and more dynamic (gradients and patterns),
 			// and could be shared with other documents the same way(s) as tools should be able to be
 			// (and images could be used as palettes by sampling from them)
 			selectedSwatch: defaultPalette[0],
@@ -48,7 +47,8 @@ class App extends Component {
 			loadFailed: false,
 		};
 
-		this.thumbnailsByOperation = new Map(); // TODO: could use cache?
+		// Eventually, thumbnails should be part of the computation graph
+		this.thumbnailsByOperation = new Map();
 
 		this.timeoutIDs = new Set();
 		const debounce = (func, delay) => {
