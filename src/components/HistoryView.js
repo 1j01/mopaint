@@ -71,7 +71,12 @@ class HistoryView extends Component {
 				role="radiogroup"
 				ref={this.selfRef}
 				onKeyDown={(event) => {
-					if (event.key === "ArrowUp") {
+					if (event.key === "Delete") {
+						// TODO: undo button pattern instead
+						if (window.confirm("Permanently delete history before this point?")) {
+							// 
+						}
+					} else if (event.key === "ArrowUp") {
 						event.preventDefault();
 						navigate(-1);
 					} else if (event.key === "ArrowDown") {

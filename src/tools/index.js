@@ -8,6 +8,7 @@ import rotationallyReflect from "./rotational-symmetry.js";
 // // import { ReactComponent as SymmetryIcon } from "../icons/noun-symmetry.svg";
 // // import { ReactComponent as CelticKnotIcon } from "../icons/noun-celtic-knot.svg";
 import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket-flipped.svg";
+import { ReactComponent as ImageIcon } from "../icons/small-n-flat/file-picture-importable.svg";
 
 
 const tools = {
@@ -33,6 +34,10 @@ const tools = {
 			opCtx.drawImage(documentCtx.canvas, 0, 0);
 			fill(opCtx, x, y, swatch);
 		},
+	},
+	"Image": {
+		Icon: ImageIcon,
+		drawShape: ()=>{},
 	},
 };
 
