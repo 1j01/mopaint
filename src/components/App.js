@@ -13,7 +13,7 @@ import Colorbox from "./Colorbox.js";
 import HistoryView from "./HistoryView.js";
 import Dialog from "./Dialog.js";
 import Warning from "./Warning.js";
-import defaultPalette from "../db32-palette.js";
+import defaultPalette, { defaultColor } from "../default-palette.js";
 import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
@@ -38,7 +38,7 @@ class App extends Component {
 			// and more dynamic (gradients and patterns),
 			// and could be shared with other documents the same way(s) as tools should be able to be
 			// (and images could be used as palettes by sampling from them)
-			selectedSwatch: defaultPalette[0],
+			selectedSwatch: defaultColor,
 			selectedTool: getToolByName("Freeform Line"),
 			undos: new List(),
 			redos: new List(),
