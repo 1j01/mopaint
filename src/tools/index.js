@@ -107,7 +107,7 @@ Object.keys(tools).forEach((key) => {
 });
 
 // TODO: allow the USER to compose tools (dynamically)
-// TODO: show preview of multiple points the user will interact with if they interact
+// TODO: show preview of multiple points the user will interact with if they interact..
 const pointModifiers = [
 	{
 		prefix: "Mirror Symmetric ",
@@ -155,6 +155,11 @@ pointModifiers.forEach((modifier) => {
 				for (const points of pointses) {
 					originalTool.drawFromPoints(opContext, points, swatch, documentContext);
 				}
+			};
+			newTool.getSymmetryPoints = (opContext, sourcePoint)=> {
+				const centerX = opContext.canvas.width / 2;
+				const centerY = opContext.canvas.height / 2;
+				return modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
 			};
 			newTool.getDemoPointsForIcon = (width, height)=>
 				originalTool.getDemoPointsForIcon(width/2, height/2);

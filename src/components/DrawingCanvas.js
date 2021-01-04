@@ -46,6 +46,38 @@ class DrawingCanvas extends Component {
 		};
 	}
 	// TODO: touch support
+	onMouseMove(event) {
+		const pos = this.toCanvasCoords(event);
+
+		const { selectedSwatch, selectedTool } = this.props;
+		if (selectedTool.getSymmetryPoints) {
+			// WET
+			if (this.animationFrameID) {
+				cancelAnimationFrame(this.animationFrameID);
+			}
+			this.animationFrameID = requestAnimationFrame(()=> {
+				draw({
+					documentCanvas: this.canvasRef.current,
+					operations: this.props.operations,
+					thumbnailsByOperation: this.props.thumbnailsByOperation,
+					cache: this.cache,
+					hashInDocumentByOperation: this.hashInDocumentByOperation,
+				});
+				
+				const canvas = this.canvasRef.current;
+				const ctx = canvas.getContext("2d");
+				const symmetryPoints = selectedTool.getSymmetryPoints(ctx, pos);
+				console.log(symmetryPoints);
+				for (const point of symmetryPoints) {
+					ctx.beginPath();
+					ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
+					ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+					ctx.fill();
+				}
+			});
+
+		}
+	}
 	onMouseMoveWhileDown(event) {
 		event.preventDefault();
 
@@ -101,6 +133,9 @@ class DrawingCanvas extends Component {
 	componentDidMount() {
 		const canvas = this.canvasRef.current;
 		let mouseIsDown = false;
+		canvas.addEventListener("mousemove", this.mouseMoveListener = (event)=> {
+			this.onMouseMove(event);
+		});
 		canvas.addEventListener(
 			"mousedown",
 			(this.mouseDownListener = (event) => {
@@ -114,14 +149,14 @@ class DrawingCanvas extends Component {
 				this.onMouseDown(event);
 				window.addEventListener(
 					"mousemove",
-					(this.mouseMoveListener = (event) => {
+					(this.mouseMoveWhileDownListener = (event) => {
 						this.onMouseMoveWhileDown(event);
 					})
 				);
 				window.addEventListener(
 					"mouseup",
 					(this.mouseUpListener = (event) => {
-						window.removeEventListener("mousemove", this.mouseMoveListener);
+						window.removeEventListener("mousemove", this.mouseMoveWhileDownListener);
 						window.removeEventListener("mouseup", this.mouseUpListener);
 						mouseIsDown = false;
 						this.onMouseUp(event);
@@ -134,6 +169,7 @@ class DrawingCanvas extends Component {
 		const canvas = this.canvasRef.current;
 		canvas.removeEventListener("mousedown", this.mouseDownListener);
 		window.removeEventListener("mousemove", this.mouseMoveListener);
+		window.removeEventListener("mousemove", this.mouseMoveWhileDownListener);
 		window.removeEventListener("mouseup", this.mouseUpListener);
 		cancelAnimationFrame(this.animationFrameID);
 	}
