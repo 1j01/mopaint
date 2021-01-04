@@ -37,8 +37,11 @@ class DrawingCanvas extends Component {
 				for (const point of symmetryPoints) {
 					ctx.beginPath();
 					ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
-					ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+					ctx.fillStyle = "#fff";
 					ctx.fill();
+					ctx.strokeStyle = "#000";
+					ctx.lineWidth = 1;
+					ctx.stroke();
 				}
 			}
 		});
