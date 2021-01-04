@@ -30,7 +30,7 @@ class DrawingCanvas extends Component {
 				hashInDocumentByOperation: this.hashInDocumentByOperation,
 			});
 
-			if (this.mousePos) {
+			if (this.mousePos && this.props.selectedTool.getSymmetryPoints) {
 				const canvas = this.canvasRef.current;
 				const ctx = canvas.getContext("2d");
 				const symmetryPoints = this.props.selectedTool.getSymmetryPoints(ctx, this.mousePos);
