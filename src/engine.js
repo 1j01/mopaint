@@ -15,7 +15,7 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 	opCanvas.width = documentCanvas.width;
 	opCanvas.height = documentCanvas.height;
 
-	let lastCachedOpIndex = -Infinity; // should this be so extreme? how will this really play into the heuristic?
+	let lastCachedOpIndex = -Infinity; // should this be so extreme? how will this really play into the heuristic? maybe should be -1
 	let operationIndex = operations.length - 1;
 	for (; operationIndex >= 0; operationIndex--) {
 		const operation = operations[operationIndex];
@@ -50,7 +50,7 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 
 			// TODO: integrate timing into heuristic
 			// const timeBefore = performance.now();
-			tool.drawFromGesturePoints(opContext, points, swatch, documentContext);
+			tool.drawFromPoints(opContext, points, swatch, documentContext);
 			// const timeAfter = performance.now();
 			// const toolTime = timeAfter - timeBefore;
 

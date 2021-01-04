@@ -40,7 +40,7 @@ Object.keys(tools).forEach((key) => {
 	const tool = tools[key];
 
 	if (tool.drawSegmentOfPath) {
-		tool.drawFromGesturePoints = (opContext, points, swatch)=> {
+		tool.drawFromPoints = (opContext, points, swatch)=> {
 			for (let i1 = 0, i2 = 1; i2 < points.length; i1 += 1, i2 += 1) {
 				tool.drawSegmentOfPath(
 					opContext,
@@ -52,7 +52,7 @@ Object.keys(tools).forEach((key) => {
 				);
 			}
 		};
-		tool.getPreviewGesturePoints = (width, height)=> {
+		tool.getDemoPointsForIcon = (width, height)=> {
 			const points = [];
 			for (let i = 0; i < 20; i += 2) {
 				points.push({
@@ -64,7 +64,7 @@ Object.keys(tools).forEach((key) => {
 		};
 	}
 	if (tool.drawShape) {
-		tool.drawFromGesturePoints = (opContext, points, swatch)=> {
+		tool.drawFromPoints = (opContext, points, swatch)=> {
 			const startPos = points[0];
 			const lastPos = points[points.length - 1];
 			tool.drawShape(
@@ -76,7 +76,7 @@ Object.keys(tools).forEach((key) => {
 				swatch
 			);
 		};
-		tool.getPreviewGesturePoints = (width, height)=> {
+		tool.getDemoPointsForIcon = (width, height)=> {
 			return [
 				{ x: width * 0.5, y: height * 0.5 },
 				{ x: width * 0.8, y: height * 0.8 },
@@ -84,16 +84,16 @@ Object.keys(tools).forEach((key) => {
 		};
 	}
 	if (tool.drawFromPoint) {
-		tool.drawFromGesturePoints = (opContext, points, swatch, documentContext)=> {
+		tool.drawFromPoints = (opContext, points, swatch, documentContext)=> {
 			const lastPos = points[points.length - 1];
 			tool.drawFromPoint(opContext, lastPos.x, lastPos.y, swatch, documentContext);
 		};
-		tool.getPreviewGesturePoints = (width, height)=> {
+		tool.getDemoPointsForIcon = (width, height)=> {
 			return { x: width / 2, y: height / 2 };
 		};
 	}
-	if (!tool.getPreviewGesturePoints) {
-		tool.getPreviewGesturePoints = (width, height)=> {
+	if (!tool.getDemoPointsForIcon) {
+		tool.getDemoPointsForIcon = (width, height)=> {
 			const points = [];
 			for (let i = 0; i < 20; i += 2) {
 				points.push({
@@ -139,25 +139,25 @@ pointModifiers.forEach((modifier) => {
 			// Other tools like the line tool could benefit from taking the geometry of multiple lines to draw all at once as an optimization,
 			// so maybe there could be a way for tools to opt in to handling batching for optimization?
 		}
-		if (originalTool.drawFromGesturePoints) {
+		if (originalTool.drawFromPoints) {
 			const newTool = (tools[newKey] = {});
-			newTool.drawFromGesturePoints = (opContext, gesturePoints, swatch, documentContext) => {
+			newTool.drawFromPoints = (opContext, points, swatch, documentContext) => {
 				const pointses = []; // very silly name
 				const centerX = opContext.canvas.width / 2;
 				const centerY = opContext.canvas.height / 2;
-				for (const gesturePoint of gesturePoints) {
-					const symmetricPoints = modifier.pointToPoints(gesturePoint.x, gesturePoint.y, centerX, centerY);
+				for (const sourcePoint of points) {
+					const symmetricPoints = modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
 					for (let i = 0; i < symmetricPoints.length; i++) {
 						pointses[i] = pointses[i] || [];
 						pointses[i].push(symmetricPoints[i]);
 					}
 				}
 				for (const points of pointses) {
-					originalTool.drawFromGesturePoints(opContext, points, swatch, documentContext);
+					originalTool.drawFromPoints(opContext, points, swatch, documentContext);
 				}
 			};
-			newTool.getPreviewGesturePoints = (width, height)=>
-				originalTool.getPreviewGesturePoints(width/2, height/2);
+			newTool.getDemoPointsForIcon = (width, height)=>
+				originalTool.getDemoPointsForIcon(width/2, height/2);
 		}
 	});
 });

@@ -38,9 +38,9 @@ class ToolPreview extends Component {
 
 		const swatch = "black";
 
-		const points = tool.getPreviewGesturePoints(opCanvas.width, opCanvas.height);
+		const points = tool.getDemoPointsForIcon(opCanvas.width, opCanvas.height);
 
-		tool.drawFromGesturePoints(opContext, points, swatch);
+		tool.drawFromPoints(opContext, points, swatch);
 
 		const trimmedCanvas = trimCanvas(opCanvas);
 
