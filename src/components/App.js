@@ -18,8 +18,10 @@ import "./App.css";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-importable.svg";
 import { ReactComponent as OpenDocumentIcon } from "../icons/small-n-flat/document-open-importable.svg";
 import { ReactComponent as SaveDocumentIcon } from "../icons/small-n-flat/document-save-importable.svg";
+import { ReactComponent as PickDocumentIcon } from "../icons/small-n-flat/file-picture-multiple-importable.svg";
 import HistoryNode from "../HistoryNode.js";
 import { undo, redo, goToHistoryNode } from "../history.js";
+import DocumentPickerDialog from "./DocumentPickerDialog.js";
 
 const getToolByName = (toolID)=> {
 	const tool = toolsByName[toolID];
@@ -551,27 +553,6 @@ class App extends Component {
 						</a>.
 					</Warning>
 					<div id="documents-options">
-						<label>
-							Switch documents:&nbsp;
-							<select
-								value={this.props.documentID}
-								onChange={(event) =>
-									this.props.goToDocument(event.target.value)
-								}
-							>
-								{
-									// documentID may not be in documentIDs if the document is not yet saved
-									[this.props.documentID, ...this.props.documentIDs.filter((id)=> id !== this.props.documentID)].map((documentID) => {
-										return (
-											<option value={documentID} key={documentID}>
-												Untitled ({documentID})
-											</option>
-										);
-									})
-								}
-							</select>
-						</label>
-						<hr/>
 						<button
 							id="new-document"
 							className="toolbar-button"
@@ -602,6 +583,17 @@ class App extends Component {
 							title="Open Document"
 						>
 							<OpenDocumentIcon width="48px" height="48px"/>
+						</button>
+						<button
+							id="show-document-picker"
+							className="toolbar-button"
+							onClick={()=> {
+								this.showChooseDocumentDialog();
+							}}
+							aria-label="Show Documents"
+							title="Show Documents"
+						>
+							<PickDocumentIcon width="48px" height="48px"/>
 						</button>
 					</div>
 					<Toolbox
@@ -670,6 +662,11 @@ class App extends Component {
 
 	closeDialog() {
 		this.setState({ dialog: null });
+	}
+
+	showChooseDocumentDialog() {
+		const closeDialog = this.closeDialog.bind(this);
+		this.showDialog(<DocumentPickerDialog close={closeDialog} currentDocumentID={this.props.documentID}/>);
 	}
 
 	showSaveDialog() {
@@ -811,7 +808,6 @@ class App extends Component {
 
 App.propTypes = {
 	documentID: PropTypes.string.isRequired,
-	documentIDs: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 	goToDocument: PropTypes.func.isRequired,
 	createNewDocument: PropTypes.func.isRequired,
 	loadNewDocument: PropTypes.func.isRequired,

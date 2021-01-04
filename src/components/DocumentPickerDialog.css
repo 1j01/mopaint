@@ -1,0 +1,7 @@
+.document-picker-dialog-documents {
+	width: 350px;
+	max-width: calc(100vw - 150px);
+	max-height: 500px;
+	overflow: auto;
+	display: grid;
+}
