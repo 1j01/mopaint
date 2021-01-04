@@ -162,7 +162,7 @@ class DrawingCanvas extends Component {
 	componentWillUnmount() {
 		const canvas = this.canvasRef.current;
 		canvas.removeEventListener("mousedown", this.mouseDownListener);
-		window.removeEventListener("mousemove", this.mouseMoveListener);
+		canvas.removeEventListener("mousemove", this.mouseMoveListener);
 		window.removeEventListener("mousemove", this.mouseMoveWhileDownListener);
 		window.removeEventListener("mouseup", this.mouseUpListener);
 		cancelAnimationFrame(this.animationFrameID);
