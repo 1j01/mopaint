@@ -9,6 +9,7 @@ class DrawingCanvas extends Component {
 		super(props);
 
 		this.operation = null;
+		this.mousePos = null;
 
 		this.canvasRef = React.createRef();
 
@@ -16,7 +17,7 @@ class DrawingCanvas extends Component {
 		// hashes of operations up to and including the given operation in the document
 		this.hashInDocumentByOperation = new Map();
 	}
-	render() {
+	draw() {
 		if (this.animationFrameID) {
 			cancelAnimationFrame(this.animationFrameID);
 		}
@@ -28,7 +29,22 @@ class DrawingCanvas extends Component {
 				cache: this.cache,
 				hashInDocumentByOperation: this.hashInDocumentByOperation,
 			});
+
+			if (this.mousePos) {
+				const canvas = this.canvasRef.current;
+				const ctx = canvas.getContext("2d");
+				const symmetryPoints = this.props.selectedTool.getSymmetryPoints(ctx, this.mousePos);
+				for (const point of symmetryPoints) {
+					ctx.beginPath();
+					ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
+					ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+					ctx.fill();
+				}
+			}
 		});
+	}
+	render() {
+		this.draw();
 		const width = 640;
 		const height = 480;
 		return (
@@ -47,35 +63,10 @@ class DrawingCanvas extends Component {
 	}
 	// TODO: touch support
 	onMouseMove(event) {
-		const pos = this.toCanvasCoords(event);
+		this.mousePos = this.toCanvasCoords(event);
 
-		const { selectedSwatch, selectedTool } = this.props;
-		if (selectedTool.getSymmetryPoints) {
-			// WET
-			if (this.animationFrameID) {
-				cancelAnimationFrame(this.animationFrameID);
-			}
-			this.animationFrameID = requestAnimationFrame(()=> {
-				draw({
-					documentCanvas: this.canvasRef.current,
-					operations: this.props.operations,
-					thumbnailsByOperation: this.props.thumbnailsByOperation,
-					cache: this.cache,
-					hashInDocumentByOperation: this.hashInDocumentByOperation,
-				});
-				
-				const canvas = this.canvasRef.current;
-				const ctx = canvas.getContext("2d");
-				const symmetryPoints = selectedTool.getSymmetryPoints(ctx, pos);
-				console.log(symmetryPoints);
-				for (const point of symmetryPoints) {
-					ctx.beginPath();
-					ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
-					ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-					ctx.fill();
-				}
-			});
-
+		if (this.props.selectedTool.getSymmetryPoints) {
+			this.draw();
 		}
 	}
 	onMouseMoveWhileDown(event) {
