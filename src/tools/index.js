@@ -156,11 +156,23 @@ pointModifiers.forEach((modifier) => {
 					originalTool.drawFromPoints(opContext, points, swatch, documentContext);
 				}
 			};
-			newTool.getSymmetryPoints = (opContext, sourcePoint)=> {
-				const centerX = opContext.canvas.width / 2;
-				const centerY = opContext.canvas.height / 2;
-				return modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
-			};
+			if (!originalTool.getSymmetryPoints) {
+				newTool.getSymmetryPoints = (opContext, sourcePoint)=> {
+					const centerX = opContext.canvas.width / 2;
+					const centerY = opContext.canvas.height / 2;
+					return modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
+				};
+			} else {
+				const underlyingGetSymmetryPoints = originalTool.getSymmetryPoints;
+				newTool.getSymmetryPoints = (opContext, sourcePoint)=> {
+					const underlyingPoints = underlyingGetSymmetryPoints(opContext, sourcePoint);
+					const centerX = opContext.canvas.width / 2;
+					const centerY = opContext.canvas.height / 2;
+					return underlyingPoints.map((sourcePoint)=> {
+						return modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
+					}).flat();
+				};
+			}
 			newTool.getDemoPointsForIcon = (width, height)=>
 				originalTool.getDemoPointsForIcon(width/2, height/2);
 		}
