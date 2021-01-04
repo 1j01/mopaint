@@ -107,7 +107,6 @@ Object.keys(tools).forEach((key) => {
 });
 
 // TODO: allow the USER to compose tools (dynamically)
-// TODO: show preview of multiple points the user will interact with if they interact..
 const pointModifiers = [
 	{
 		prefix: "Mirror Symmetric ",
