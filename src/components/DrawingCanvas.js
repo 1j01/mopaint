@@ -32,7 +32,7 @@ class DrawingCanvas extends Component {
 			});
 
 			// show preview dots for symmetry if the mouse is over the canvas OR the pointer is down, actively interacting with the canvas
-			if ((this.mouseOverCanvas || this.operation) && this.props.selectedTool.getSymmetryPoints) {
+			if ((this.mouseOverCanvas || this.operation) && this.props.selectedTool.getSymmetryPoints && this.mousePos) {
 				const canvas = this.canvasRef.current;
 				const ctx = canvas.getContext("2d");
 				const symmetryPoints = this.props.selectedTool.getSymmetryPoints(ctx, this.mousePos);
