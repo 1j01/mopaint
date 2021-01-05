@@ -1,0 +1,245 @@
+/*
+for SCSS source, see:
+https://jsfiddle.net/1j01/s3gk4jun
+https://codepen.io/1j01/pen/eYdreKy
+
+Based on toggle buttons by @mallendeo https://codepen.io/mallendeo/pen/eLIiG
+
+Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-description
+*/
+
+:root {
+	--dark-mode-button-padding: 0.1em;
+	--sun-yellow: #fd0;
+	--night-light: #ffd;
+	--sky-day: linear-gradient(to bottom, #17abfa 0%,#adeeff 100%); /* to edit this gradient: https://colorzilla.com/gradient-editor/#17abfa+0,adeeff+100 */
+	--sky-night: linear-gradient(to bottom, #2929a7 0%, #7c57d8 99%); /* to edit this gradient: https://colorzilla.com/gradient-editor/#2929a7+0,7c57d8+99 */
+	--moon-shadow: var(--sky-night);
+}
+
+.dark-mode-checkbox {
+	display: none;
+}
+.dark-mode-checkbox,
+.dark-mode-checkbox:after,
+.dark-mode-checkbox:before,
+.dark-mode-checkbox *,
+.dark-mode-checkbox *:after,
+.dark-mode-checkbox *:before,
+.dark-mode-checkbox + .dark-mode-button {
+	box-sizing: border-box;
+}
+.dark-mode-checkbox::-moz-selection,
+.dark-mode-checkbox:after::-moz-selection,
+.dark-mode-checkbox:before::-moz-selection,
+.dark-mode-checkbox *::-moz-selection,
+.dark-mode-checkbox *:after::-moz-selection,
+.dark-mode-checkbox *:before::-moz-selection,
+.dark-mode-checkbox + .dark-mode-button::-moz-selection {
+	background: none;
+}
+.dark-mode-checkbox::selection,
+.dark-mode-checkbox:after::selection,
+.dark-mode-checkbox:before::selection,
+.dark-mode-checkbox *::selection,
+.dark-mode-checkbox *:after::selection,
+.dark-mode-checkbox *:before::selection,
+.dark-mode-checkbox + .dark-mode-button::selection {
+	background: none;
+}
+.dark-mode-checkbox + .dark-mode-button {
+	outline: 0;
+	display: block;
+	width: 4em;
+	height: 2em;
+	position: relative;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	border-radius: 2em;
+	padding: var(--dark-mode-button-padding);
+	transition: all 0.4s ease;
+	font-size: 20px;
+}
+.dark-mode-checkbox + .dark-mode-button .sun-moon,
+.dark-mode-checkbox + .dark-mode-button .sun-moon .shadow {
+	position: relative;
+	display: block;
+	content: "";
+	width: calc(2em - var(--dark-mode-button-padding) * 2);
+	height: calc(2em - var(--dark-mode-button-padding) * 2);
+}
+.dark-mode-checkbox + .dark-mode-button .sun-moon {
+	left: 0;
+	overflow: hidden;
+	border-radius: 50%;
+	background: var(--sun-yellow);
+	transition: all 0.2s ease, background 0.5s ease;
+}
+.dark-mode-checkbox + .dark-mode-button .sun-moon .shadow {
+	position: absolute;
+	border-radius: 50%;
+	transition: background 0.4s ease, bottom 0.2s ease, left 0.2s ease;
+	left: 100%;
+	bottom: -0.5em;
+	width: calc(3em - var(--dark-mode-button-padding) * 2);
+	height: calc(3em - var(--dark-mode-button-padding) * 2);
+}
+.dark-mode-checkbox + .dark-mode-button,
+.dark-mode-checkbox + .dark-mode-button .sun-moon .shadow {
+	background: var(--sky-day);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .sun-moon {
+	left: 50%;
+}
+.dark-mode-checkbox:checked + .dark-mode-button .sun-moon {
+	background: var(--night-light);
+	box-shadow: inset 0 0 1px 0px #231f6b;
+}
+.dark-mode-checkbox:checked + .dark-mode-button {
+	background: var(--sky-night);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .sun-moon .shadow {
+	background: var(--moon-shadow);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .sun-moon .shadow {
+	left: -90%;
+	bottom: -0.5em;
+	transition: background 0.4s ease, bottom 1.8s ease, left 1s ease;
+}
+.dark-mode-checkbox + .dark-mode-button .rays {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 2em;
+	height: 2em;
+	transition: all 0.2s;
+	pointer-events: none;
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray {
+	width: 0.5em;
+	height: 0.3em;
+	border-radius: 0.3em;
+	background: var(--sun-yellow);
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transition: all 0.2s ease, background 0.4s ease;
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(1) {
+	transform: translate(-50%, -50%) rotate(0.125turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(2) {
+	transform: translate(-50%, -50%) rotate(0.25turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(3) {
+	transform: translate(-50%, -50%) rotate(0.375turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(4) {
+	transform: translate(-50%, -50%) rotate(0.5turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(5) {
+	transform: translate(-50%, -50%) rotate(0.625turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(6) {
+	transform: translate(-50%, -50%) rotate(0.75turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(7) {
+	transform: translate(-50%, -50%) rotate(0.875turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(8) {
+	transform: translate(-50%, -50%) rotate(1turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(9) {
+	transform: translate(-50%, -50%) rotate(1.125turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(10) {
+	transform: translate(-50%, -50%) rotate(1.25turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(11) {
+	transform: translate(-50%, -50%) rotate(1.375turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(12) {
+	transform: translate(-50%, -50%) rotate(1.5turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(13) {
+	transform: translate(-50%, -50%) rotate(1.625turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(14) {
+	transform: translate(-50%, -50%) rotate(1.75turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(15) {
+	transform: translate(-50%, -50%) rotate(1.875turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox + .dark-mode-button .rays .ray:nth-child(16) {
+	transform: translate(-50%, -50%) rotate(2turn) translate(1.3em, 0);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray {
+	width: 0.2em;
+	height: 0.2em;
+	border-radius: 0.2em;
+	background: var(--night-light);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(1) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(0.236em, -0.0872em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(2) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.056em, 0.2912em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(3) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(0.124em, 0.3352em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(4) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(0.776em, 0.0448em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(5) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.1em, -0.58em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(6) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.504em, 0.2208em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(7) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.436em, 0.6872em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(8) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(0.104em, 0.8192em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(9) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.884em, 0.6168em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(10) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(0.6em, 0.08em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(11) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(0.556em, -0.7912em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(12) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(0.984em, -0.2368em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(13) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.116em, -0.0168em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(14) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.744em, -0.1312em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(15) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.9em, -0.58em);
+}
+.dark-mode-checkbox:checked + .dark-mode-button .rays .ray:nth-child(16) {
+	transform: translate(-50%, -50%) rotate(0turn) translate(-0.584em, 0.3968em);
+}
+.dark-mode-checkbox + .dark-mode-button + .veil {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	transition: background 0.8s ease;
+	pointer-events: none;
+}
+.dark-mode-checkbox:checked + .dark-mode-button + .veil {
+	background: #333;
+}

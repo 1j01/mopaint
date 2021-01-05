@@ -61,27 +61,8 @@ body,
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	/*justify-content: flex-start;*/ /* doesn't work!? */
 	padding: 0 15px;
 }
 #documents-options > * {
 	flex: 0 0 auto;
-	/*float: left;*/ /* doesn't work! */
-}
-/* doesn't work! */
-/*#documents-options::last-child {
-	margin-right: auto;
-}*/
-#documents-options::after {
-	content: "";
-	flex: 1;
-}
-#documents-options hr {
-	/*display: inline-block;*/
-	border: none;
-	border-left: 1px solid rgba(128, 128, 128, 0.8);
-	height: 3em;
-	width: 0;
-	margin-left: 8px;
-	margin-right: 8px;
 }

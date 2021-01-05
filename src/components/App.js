@@ -22,6 +22,7 @@ import { ReactComponent as PickDocumentIcon } from "../icons/small-n-flat/file-p
 import HistoryNode from "../HistoryNode.js";
 import { undo, redo, goToHistoryNode } from "../history.js";
 import DocumentPickerDialog from "./DocumentPickerDialog.js";
+import DarkModeToggle from "./DarkModeToggle.js";
 
 const getToolByName = (toolID)=> {
 	const tool = toolsByName[toolID];
@@ -627,6 +628,8 @@ class App extends Component {
 						>
 							<PickDocumentIcon width="48px" height="48px"/>
 						</button>
+						<div style={{flex: 1}}/>
+						<DarkModeToggle/>
 					</div>
 					<Toolbox
 						tools={tools}
