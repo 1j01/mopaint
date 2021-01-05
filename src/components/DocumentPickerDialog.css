@@ -27,7 +27,7 @@
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	justify-content: end;
+	justify-content: flex-end;
 }
 .document-picker-dialog-documents li img {
 	display: block;
