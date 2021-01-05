@@ -4,6 +4,35 @@ import PropTypes from "prop-types";
 import Dialog from "./Dialog.js";
 import "./DocumentPickerDialog.css";
 
+class DocumentOption extends React.Component {
+	state = {
+		name: "Untitled",
+		thumbnailBlobURL: null,
+	};
+	componentDidMount() {
+		const {documentID} = this.props;
+		localforage.getItem(`document:${documentID}:name`).then((name)=> {
+			if (name) {
+				this.setState({name});
+			}
+		});
+		localforage.getItem(`document:${documentID}:thumbnail`).then((thumbnailBlob)=> {
+			if (thumbnailBlob) {
+				this.setState({thumbnailBlobURL: URL.createObjectURL(thumbnailBlob)});
+			}
+		});
+	}
+	componentWillUnmount() {
+		URL.revokeObjectURL(this.state.thumbnailBlobURL);
+	}
+	render() {
+		const {documentID} = this.props;
+		return <a href={`?document=${documentID}`}>
+			<img src={this.state.thumbnailBlobURL} alt=""/>
+			{this.state.name || "Untitled"}&nbsp;<span style={{color: "gray", fontFamily: "monospace"}}>({documentID})</span>
+		</a>;
+	}
+}
 class DocumentPickerDialog extends React.Component {
 	constructor(props) {
 		super(props);
@@ -26,8 +55,6 @@ class DocumentPickerDialog extends React.Component {
 	}
 	render() {
 		// TODO: sort list
-		// TODO: document names
-		// TODO: document thumbnails
 		// currentDocumentID may not be in documentIDs if the document is not yet saved, but should be listed for consistency
 		let content = "Loading documents list...";
 		
@@ -36,9 +63,7 @@ class DocumentPickerDialog extends React.Component {
 			const documentListItems = documentIDs.map((documentID) => {
 				return (
 					<li data-document-id={documentID} key={documentID}>
-						<a href={`?document=${documentID}`}>
-							Untitled <span style={{color: "gray", fontFamily: "monospace"}}>({documentID})</span>
-						</a>
+						<DocumentOption documentID={documentID}/>
 					</li>
 				);
 			})

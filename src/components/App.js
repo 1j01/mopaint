@@ -211,6 +211,22 @@ class App extends Component {
 							leavingThisDocument ? " (leaving it)" : ""
 						}`,
 					);
+					// TODO: get this in a more "legit" way, like with refs
+					const canvas = document.querySelector(".DrawingCanvas canvas");
+					const aspectRatio = canvas.width / canvas.height;
+					const thumbnailCanvas = document.createElement("canvas");
+					thumbnailCanvas.width = Math.min(100, canvas.width, canvas.height * aspectRatio);
+					thumbnailCanvas.height = thumbnailCanvas.width / aspectRatio;
+					thumbnailCanvas.getContext("2d").drawImage(canvas, 0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
+					thumbnailCanvas.toBlob((thumbnailBlob)=> {
+						localforage.setItem(
+							`document:${this.props.documentID}:thumbnail`,
+							thumbnailBlob,
+							(error) => {
+								// TODO?
+							}
+						);
+					});
 				}
 			},
 		);
@@ -670,6 +686,7 @@ class App extends Component {
 	}
 
 	showSaveDialog() {
+		const {documentID} = this.props;
 		const createPNGram = this.createPNGram.bind(this);
 		const createRawPNG = this.createRawPNG.bind(this);
 		const closeDialog = this.closeDialog.bind(this);
@@ -681,9 +698,9 @@ class App extends Component {
 		a.tabIndex = -1;
 		document.body.appendChild(a);
 
-		function SaveDialog() {
+		function SaveDialog(props) {
 			const [saveType, setSaveType] = useState("hybrid");
-			const [name, setName] = useState("Drawing");
+			const [name, setName] = useState(props.defaultName);
 			const [blobUrl, setBlobUrlWithoutRevokingOld] = useState(null);
 			const revokeOldAndSetBlobUrl = (newBlobUrl)=> {
 				setBlobUrlWithoutRevokingOld((oldBlobUrl)=> {
@@ -706,6 +723,14 @@ class App extends Component {
 				console.log("Download", blobUrl);
 				a.click();
 				closeDialog();
+
+				localforage.setItem(
+					`document:${documentID}:name`,
+					name,
+					(error) => {
+						// TODO?
+					}
+				);
 			};
 
 			useEffect(() => {
@@ -802,7 +827,11 @@ class App extends Component {
 			);
 		}
 
-		this.showDialog(<SaveDialog/>);
+		localforage.getItem(`document:${documentID}:name`).then((name)=> {
+			this.showDialog(<SaveDialog defaultName={name || "Drawing"}/>);
+		}, (error)=> {
+			this.showDialog(<SaveDialog defaultName="Drawing"/>);
+		});
 	}
 }
 
