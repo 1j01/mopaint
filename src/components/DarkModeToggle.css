@@ -43,6 +43,9 @@ Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-d
 	transition: all 0.4s ease;
 	font-size: 20px;
 }
+.dark-mode-button:focus {
+    box-shadow: 0 0 0px 2px #0084d2;
+}
 .dark-mode-button .sun-moon,
 .dark-mode-button .sun-moon .shadow {
 	position: relative;
