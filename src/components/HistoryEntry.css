@@ -4,6 +4,7 @@
 	/*width: 200px;*/
 	/*cursor: pointer;*/
 	background: white;
+	color: black;
 	border: 0;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 	padding: 5px;
@@ -12,6 +13,14 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+[data-color-scheme="dark"] .HistoryEntry {
+	background: black;
+	color: white;
+}
+[data-color-scheme="dark"] .HistoryEntry[aria-checked] {
+	background: rgba(99, 156, 255, 0.527);
+	color: white;
 }
 .HistoryEntry:active {
 	background: rgb(240, 240, 240);
@@ -28,6 +37,9 @@
 .HistoryEntry .ToolPreview {
 	margin-right: 5px;
 	vertical-align: middle;
+}
+[data-color-scheme="dark"] .HistoryEntry .ToolPreview {
+	background: lightgray; /* for now */
 }
 
 .HistoryEntry .question-mark {

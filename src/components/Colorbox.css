@@ -26,4 +26,8 @@
 	border-radius: 2px;
 	box-shadow: 0 0 0 1px black;
 	border: 1px solid white;
+	transition: border-color 1s ease;
+}
+[data-color-scheme="dark"] .swatch {
+	border-color: rgba(255, 255, 255, 0.5);
 }

@@ -11,6 +11,11 @@ body,
 	overflow: hidden;
 	display: flex;
 	flex-direction: row;
+	transition: background 0.8s ease;
+}
+[data-color-scheme="dark"] .App {
+	background: #333;
+	color: white;
 }
 
 .App > main {
