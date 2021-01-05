@@ -3,19 +3,20 @@
 	width: 100%;
 	/*width: 200px;*/
 	/*cursor: pointer;*/
-	background: white;
-	color: black;
 	border: 0;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	border-bottom: 1px solid rgba(191, 191, 191, 0.63);
 	padding: 5px;
 	font: inherit;
 	text-align: left;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	background: inherit;
+	color: inherit;
+	margin-bottom: 2px; /* to allow space for a focus ring */
 }
-[data-color-scheme="dark"] .HistoryEntry {
-	background: black;
+[data-color-scheme="dark"] .HistoryEntry:active {
+	background: rgba(99, 156, 255, 0.13);
 	color: white;
 }
 [data-color-scheme="dark"] .HistoryEntry[aria-checked] {
