@@ -3,6 +3,7 @@
 	flex-direction: column;
 	overflow: auto;
 	height: 100%;
+	user-select: none;
 	box-shadow: -1px 0 5px rgba(0, 0, 0, 0.5);
 	background: white;
 	color: black;
