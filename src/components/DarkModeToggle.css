@@ -38,6 +38,7 @@ Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-d
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	-webkit-tap-highlight-color: transparent;
 	border-radius: 2em;
 	padding: var(--dark-mode-button-padding);
 	transition: all 0.4s ease;
