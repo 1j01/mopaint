@@ -9,8 +9,8 @@ class DrawingCanvas extends Component {
 		super(props);
 
 		this.operation = null;
-		this.mousePos = null;
-		this.mouseOverCanvas = false;
+		this.pointerPos = null;
+		this.pointerOverCanvas = false;
 
 		this.canvasRef = React.createRef();
 
@@ -31,11 +31,11 @@ class DrawingCanvas extends Component {
 				hashInDocumentByOperation: this.hashInDocumentByOperation,
 			});
 
-			// show preview dots for symmetry if the mouse is over the canvas OR the pointer is down, actively interacting with the canvas
-			if ((this.mouseOverCanvas || this.operation) && this.props.selectedTool.getSymmetryPoints && this.mousePos) {
+			// show preview dots for symmetry if the pointer is over the canvas OR the pointer is down, actively interacting with the canvas
+			if ((this.pointerOverCanvas || this.operation) && this.props.selectedTool.getSymmetryPoints && this.pointerPos) {
 				const canvas = this.canvasRef.current;
 				const ctx = canvas.getContext("2d");
-				const symmetryPoints = this.props.selectedTool.getSymmetryPoints(ctx, this.mousePos);
+				const symmetryPoints = this.props.selectedTool.getSymmetryPoints(ctx, this.pointerPos);
 				for (const point of symmetryPoints) {
 					ctx.beginPath();
 					ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
@@ -67,37 +67,37 @@ class DrawingCanvas extends Component {
 		};
 	}
 	// TODO: touch support
-	onMouseMove(event) {
-		this.mousePos = this.toCanvasCoords(event);
+	onPointerMove(event) {
+		this.pointerPos = this.toCanvasCoords(event);
 
 		if (this.props.selectedTool.getSymmetryPoints) {
 			this.draw();
 		}
 	}
-	onMouseLeave(event) {
-		this.mouseOverCanvas = false;
+	onPointerLeave(event) {
+		this.pointerOverCanvas = false;
 
 		if (this.props.selectedTool.getSymmetryPoints) {
 			this.draw();
 		}
 	}
-	onMouseEnter(event) {
-		this.mouseOverCanvas = true;
-		// will also get a mousemove event which will cause redraw
+	onPointerEnter(event) {
+		this.pointerOverCanvas = true;
+		// will also get a pointermove event which will cause redraw
 	}
-	onMouseMoveWhileDown(event) {
+	onPointerMoveWhileDown(event) {
 		event.preventDefault();
 
-		const pos = this.toCanvasCoords(event);
+		this.pointerPos = this.toCanvasCoords(event);
 		if (!this.operation) {
 			return;
 		}
-		this.operation.points.push(pos);
+		this.operation.points.push(this.pointerPos);
 
 		const { updateOperation } = this.props;
 		updateOperation(this.operation);
 	}
-	onMouseDown(event) {
+	onPointerDown(event) {
 		if (event.which !== 1) {
 			return;
 		}
@@ -107,10 +107,10 @@ class DrawingCanvas extends Component {
 			console.warn("no tool selected");
 			return;
 		}
-		const pos = this.toCanvasCoords(event);
+		this.pointerPos = this.toCanvasCoords(event);
 		this.operation = {
 			id: generateID(10),
-			points: [pos],
+			points: [this.pointerPos],
 			tool: selectedTool,
 			swatch: selectedSwatch,
 			updatingContinously: true, // TODO: this should probably be extrinsic!
@@ -123,10 +123,10 @@ class DrawingCanvas extends Component {
 			document.body.classList.add("cursor-override-DrawingCanvas");
 		}
 	}
-	onMouseUp(event) {
-		// TODO: add pos if different? (is that possible? and does this matter?)
-		// const pos = this.toCanvasCoords(event);
-		// this.operation.points.push(pos);
+	onPointerUp(event) {
+		// TODO: add position if different? (is that possible? and does this matter?)
+		// this.pointerPos = this.toCanvasCoords(event);
+		// this.operation.points.push(this.pointerPos);
 
 		const { updateOperation } = this.props;
 		if (!this.operation) {
@@ -140,40 +140,40 @@ class DrawingCanvas extends Component {
 	}
 	componentDidMount() {
 		const canvas = this.canvasRef.current;
-		let mouseIsDown = false;
-		canvas.addEventListener("mousemove", this.mouseMoveListener = (event)=> {
-			this.onMouseMove(event);
+		let pointerIsDown = false;
+		canvas.addEventListener("pointermove", this.pointerMoveListener = (event)=> {
+			this.onPointerMove(event);
 		});
-		canvas.addEventListener("mouseleave", this.mouseLeaveListener = (event)=> {
-			this.onMouseLeave(event);
+		canvas.addEventListener("pointerleave", this.pointerLeaveListener = (event)=> {
+			this.onPointerLeave(event);
 		});
-		canvas.addEventListener("mouseenter", this.mouseEnterListener = (event)=> {
-			this.onMouseEnter(event);
+		canvas.addEventListener("pointerenter", this.pointerEnterListener = (event)=> {
+			this.onPointerEnter(event);
 		});
 		canvas.addEventListener(
-			"mousedown",
-			(this.mouseDownListener = (event) => {
-				if (mouseIsDown) {
+			"pointerdown",
+			(this.pointerDownListener = (event) => {
+				if (pointerIsDown) {
 					return;
 				}
 				if (event.button !== 0) {
 					return;
 				}
-				mouseIsDown = true;
-				this.onMouseDown(event);
+				pointerIsDown = true;
+				this.onPointerDown(event);
 				window.addEventListener(
-					"mousemove",
-					(this.mouseMoveWhileDownListener = (event) => {
-						this.onMouseMoveWhileDown(event);
+					"pointermove",
+					(this.pointerMoveWhileDownListener = (event) => {
+						this.onPointerMoveWhileDown(event);
 					})
 				);
 				window.addEventListener(
-					"mouseup",
-					(this.mouseUpListener = (event) => {
-						window.removeEventListener("mousemove", this.mouseMoveWhileDownListener);
-						window.removeEventListener("mouseup", this.mouseUpListener);
-						mouseIsDown = false;
-						this.onMouseUp(event);
+					"pointerup",
+					(this.pointerUpListener = (event) => {
+						window.removeEventListener("pointermove", this.pointerMoveWhileDownListener);
+						window.removeEventListener("pointerup", this.pointerUpListener);
+						pointerIsDown = false;
+						this.onPointerUp(event);
 					})
 				);
 			})
@@ -181,12 +181,12 @@ class DrawingCanvas extends Component {
 	}
 	componentWillUnmount() {
 		const canvas = this.canvasRef.current;
-		canvas.removeEventListener("mousedown", this.mouseDownListener);
-		canvas.removeEventListener("mousemove", this.mouseMoveListener);
-		canvas.removeEventListener("mouseleave", this.mouseLeaveListener);
-		canvas.removeEventListener("mouseenter", this.mouseEnterListener);
-		window.removeEventListener("mousemove", this.mouseMoveWhileDownListener);
-		window.removeEventListener("mouseup", this.mouseUpListener);
+		canvas.removeEventListener("pointerdown", this.pointerDownListener);
+		canvas.removeEventListener("pointermove", this.pointerMoveListener);
+		canvas.removeEventListener("pointerleave", this.pointerLeaveListener);
+		canvas.removeEventListener("pointerenter", this.pointerEnterListener);
+		window.removeEventListener("pointermove", this.pointerMoveWhileDownListener);
+		window.removeEventListener("pointerup", this.pointerUpListener);
 		cancelAnimationFrame(this.animationFrameID);
 	}
 }
