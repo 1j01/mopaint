@@ -43,10 +43,17 @@ class DocumentPickerDialog extends React.Component {
 	componentDidMount() {
 		const updateDocumentsList = () =>
 			localforage.keys().then((keys) => {
-				const documentIDs = keys
+				let documentIDs = keys
 					.map((key) => key.match(/document:([a-zA-Z0-9\-_]+):state/))
 					.filter((match) => match)
 					.map((match) => match[1]);
+				// currentDocumentID may not be in documentIDs if the document is not yet saved, but should be listed for consistency
+				documentIDs = [this.props.currentDocumentID, ...documentIDs.filter((id)=> id !== this.props.currentDocumentID)];
+
+				// TODO: sort in more reasonable way(s) like modified time, accessed time
+				// for now, this just makes the order stay the same when switching documents 
+				documentIDs.sort();
+
 				this.setState({documentIDs});
 			});
 		updateDocumentsList();
@@ -56,13 +63,10 @@ class DocumentPickerDialog extends React.Component {
 		clearInterval(this.iid);
 	}
 	render() {
-		// TODO: sort list
-		// currentDocumentID may not be in documentIDs if the document is not yet saved, but should be listed for consistency
 		let content = "Loading documents list...";
 		
 		if (this.state.documentIDs) {
-			const documentIDs = [this.props.currentDocumentID, ...this.state.documentIDs.filter((id)=> id !== this.props.currentDocumentID)];
-			const documentListItems = documentIDs.map((documentID) => {
+			const documentListItems = this.state.documentIDs.map((documentID) => {
 				return (
 					<li data-document-id={documentID} key={documentID}>
 						<DocumentOption documentID={documentID}/>
