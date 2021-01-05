@@ -16,9 +16,6 @@
 	background: white;
 	border-radius: 5px;
 	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
-	/* TODO: probably make message *content* max 40em, as details expandos are now;
-	look at some error messages to see if any are made uglier by the automatic line breaks */
-	max-width: 50em;
 }
 .Dialog-buttons {
 	/* TODO: friendly buttons */

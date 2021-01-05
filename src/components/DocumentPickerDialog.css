@@ -1,7 +1,36 @@
 .document-picker-dialog-documents {
-	width: 350px;
+	width: 1000px;
 	max-width: calc(100vw - 150px);
 	max-height: 500px;
 	overflow: auto;
 	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.document-picker-dialog-documents li {
+	display: block;
+}
+
+.document-picker-dialog-documents li a {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 15px;
+}
+.document-picker-dialog-documents li a:hover,
+.document-picker-dialog-documents li a:focus {
+	background:rgba(43, 75, 253, 0.1);
+}
+.document-thumbnail {
+	width: 100px;
+	height: 100px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: end;
+}
+.document-picker-dialog-documents li img {
+	display: block;
+	border: 1px solid rgba(128, 128, 128, 0.5);
+	border-radius: 5px;
 }

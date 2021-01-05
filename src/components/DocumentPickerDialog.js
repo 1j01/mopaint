@@ -28,8 +28,10 @@ class DocumentOption extends React.Component {
 	render() {
 		const {documentID} = this.props;
 		return <a href={`?document=${documentID}`}>
-			<img src={this.state.thumbnailBlobURL} alt=""/>
-			{this.state.name || "Untitled"}&nbsp;<span style={{color: "gray", fontFamily: "monospace"}}>({documentID})</span>
+			<div className="document-thumbnail">
+				<img src={this.state.thumbnailBlobURL} alt=""/>
+			</div>
+			{this.state.name || "Untitled"}
 		</a>;
 	}
 }
@@ -70,6 +72,7 @@ class DocumentPickerDialog extends React.Component {
 			content = documentListItems;
 		}
 		return <Dialog
+			maxWidth=""
 			message={
 				<div className="document-picker-dialog-message">
 					<ul className="document-picker-dialog-documents">
