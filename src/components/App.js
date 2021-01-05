@@ -300,7 +300,7 @@ class App extends Component {
 		canvas.toBlob(callback, "image/png");
 	}
 
-	loadDocumentFromJSON(json) {
+	loadDocumentFromJSON(json, fileName) {
 		let serializedDocument;
 		try {
 			serializedDocument = JSON.parse(json);
@@ -321,7 +321,7 @@ class App extends Component {
 			});
 			return;
 		}
-		this.props.loadNewDocument(serializedDocument);
+		this.props.loadNewDocument(serializedDocument, fileName);
 	}
 
 	handleDroppedOrOpenedFiles(files) {
@@ -337,7 +337,7 @@ class App extends Component {
 					const formatVersion = metadata["Mopaint Format Version"];
 					if (formatVersion) {
 						const json = metadata["Program Source"];
-						this.loadDocumentFromJSON(json);
+						this.loadDocumentFromJSON(json, file.name);
 					} else {
 						// TODO: handle plain image files
 						this.showError({
