@@ -82,6 +82,16 @@ class App extends Component {
 			stateUpdates.loaded = true;
 			this.setState(stateUpdates, () => {
 				console.log(`Loaded ${this.props.documentID}`);
+
+				// Use case 1: older documents saved before thumbnails were stored
+				// Use case 2: saving the thumbnail could have failed due to quota limits previously, and space is now freed up
+				localforage.getItem(`document:${this.props.documentID}:thumbnail`).then((thumbnailBlob)=> {
+					if (!thumbnailBlob) {
+						requestAnimationFrame(()=> {
+							this.saveThumbnail();
+						});
+					}
+				})
 			});
 		}
 	}
@@ -211,25 +221,31 @@ class App extends Component {
 							leavingThisDocument ? " (leaving it)" : ""
 						}`,
 					);
-					// TODO: get this in a more "legit" way, like with refs
-					const canvas = document.querySelector(".DrawingCanvas canvas");
-					const aspectRatio = canvas.width / canvas.height;
-					const thumbnailCanvas = document.createElement("canvas");
-					thumbnailCanvas.width = Math.min(100, canvas.width, canvas.height * aspectRatio);
-					thumbnailCanvas.height = thumbnailCanvas.width / aspectRatio;
-					thumbnailCanvas.getContext("2d").drawImage(canvas, 0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
-					thumbnailCanvas.toBlob((thumbnailBlob)=> {
-						localforage.setItem(
-							`document:${this.props.documentID}:thumbnail`,
-							thumbnailBlob,
-							(error) => {
-								// TODO?
-							}
-						);
-					});
+					this.saveThumbnail();
 				}
 			},
 		);
+	}
+
+	saveThumbnail() {
+
+		// TODO: get this in a more "legit" way, like with refs
+		const canvas = document.querySelector(".DrawingCanvas canvas");
+
+		const aspectRatio = canvas.width / canvas.height;
+		const thumbnailCanvas = document.createElement("canvas");
+		thumbnailCanvas.width = Math.min(100, canvas.width, canvas.height * aspectRatio);
+		thumbnailCanvas.height = thumbnailCanvas.width / aspectRatio;
+		thumbnailCanvas.getContext("2d").drawImage(canvas, 0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
+		thumbnailCanvas.toBlob((thumbnailBlob) => {
+			localforage.setItem(
+				`document:${this.props.documentID}:thumbnail`,
+				thumbnailBlob,
+				(error) => {
+					// TODO?
+				}
+			);
+		});
 	}
 
 	createPNGram(serializedDocument, callback, mismatchedCallback) {
