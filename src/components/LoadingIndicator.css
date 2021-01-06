@@ -1,16 +1,21 @@
 /* taken from https://vineethtrv.github.io/loader/ */
+/* I like this one because it looks like a couple koi fish, playful */
 .LoadingIndicator {
+	--color-one: #e93a27; /* Benigoi */
+	--color-two: #d7984b; /* Kigoi */
+
+	align-self: center;
+	margin: auto;
+	
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
 	display: inline-block;
-	border-top: 4px solid rgb(116, 116, 116);
+	border-top: 4px solid var(--color-one);
 	border-right: 4px solid transparent;
 	box-sizing: border-box;
 	animation: rotation 1s linear infinite;
 
-	align-self: center;
-    margin: auto;
 }
 .LoadingIndicator::after {
 	content: '';  
@@ -21,9 +26,13 @@
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
-	border-left: 4px solid #ffa600;
+
+	border-left: 4px solid var(--color-two);
 	border-bottom: 4px solid transparent;
 	animation: rotation 0.5s linear infinite reverse;
+	/* transform: rotate(180deg);
+	border-top: 4px solid var(--color-two);
+	border-right: 4px solid transparent; */
 }
 @keyframes rotation {
 	0% {
