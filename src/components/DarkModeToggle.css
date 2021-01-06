@@ -1,5 +1,5 @@
 /*
-for SCSS source, see:
+for SCSS source (outdated now), see:
 https://jsfiddle.net/1j01/s3gk4jun
 https://codepen.io/1j01/pen/eYdreKy
 
@@ -12,9 +12,9 @@ Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-d
 	--dark-mode-button-padding: 0.1em;
 	--sun-yellow: #fd0;
 	--night-light: #ffd;
-	--sky-day: linear-gradient(to bottom, #17abfa 0%,#adeeff 100%); /* to edit this gradient: https://colorzilla.com/gradient-editor/#17abfa+0,adeeff+100 */
-	--sky-night: linear-gradient(to bottom, #2929a7 0%, #7c57d8 99%); /* to edit this gradient: https://colorzilla.com/gradient-editor/#2929a7+0,7c57d8+99 */
-	--moon-shadow: var(--sky-night);
+	/* to edit this gradient: https://colorzilla.com/gradient-editor/#2929a7+0,7c57d8+40,17abfa+60,adeeff+100 */
+	--sky: linear-gradient(to bottom, #2929a7 0%, #7c57d8 40%, #17abfa 60%, #adeeff 100%);
+	--moon-shadow: var(--sky);
 }
 
 .dark-mode-button {
@@ -41,6 +41,8 @@ Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-d
 	-webkit-tap-highlight-color: transparent;
 	border-radius: 2em;
 	padding: var(--dark-mode-button-padding);
+	background: var(--sky);
+	background-size: 100% 230%;
 	transition: background 0.4s ease;
 	font-size: 20px;
 }
@@ -73,7 +75,7 @@ Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-d
 }
 .dark-mode-button,
 .dark-mode-button .sun-moon .shadow {
-	background: var(--sky-day);
+	background-position: 0 100%;
 }
 [data-color-scheme="dark"] .dark-mode-button .sun-moon {
 	left: 50%;
@@ -83,10 +85,12 @@ Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-d
 	box-shadow: inset 0 0 1px 0px #231f6b;
 }
 [data-color-scheme="dark"] .dark-mode-button {
-	background: var(--sky-night);
+	background-position: 0 0;
 }
 [data-color-scheme="dark"] .dark-mode-button .sun-moon .shadow {
 	background: var(--moon-shadow);
+	background-size: 100% 200%;
+	background-position: 0 0;
 }
 [data-color-scheme="dark"] .dark-mode-button .sun-moon .shadow {
 	left: -90%;
