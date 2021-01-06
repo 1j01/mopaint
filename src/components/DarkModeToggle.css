@@ -41,7 +41,7 @@ Gradient inspired by https://dribbble.com/shots/3348220-Night-Mode-Toggle#shot-d
 	-webkit-tap-highlight-color: transparent;
 	border-radius: 2em;
 	padding: var(--dark-mode-button-padding);
-	transition: all 0.4s ease;
+	transition: background 0.4s ease;
 	font-size: 20px;
 }
 .dark-mode-button:focus {
