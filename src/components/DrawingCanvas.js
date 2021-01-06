@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import "./DrawingCanvas.css";
 import {draw} from "../engine.js";
 import {generateID} from "../helpers.js";
+import LoadingIndicator from "./LoadingIndicator";
 
 class DrawingCanvas extends Component {
 	constructor(props) {
@@ -53,8 +54,11 @@ class DrawingCanvas extends Component {
 		const width = 640;
 		const height = 480;
 		return (
-			<div className="DrawingCanvas" style={{ width, height }}>
+			<div className="DrawingCanvas" style={{ width, height, position: "relative" }}>
 				<canvas width={width} height={height} ref={this.canvasRef} />
+				{!this.props.loaded && <div style={{position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)"}}>
+					<LoadingIndicator/>
+				</div>}
 			</div>
 		);
 	}
@@ -198,6 +202,7 @@ DrawingCanvas.propTypes = {
 		PropTypes.instanceOf(CanvasGradient),
 		PropTypes.instanceOf(CanvasPattern),
 	]).isRequired,
+	loaded: PropTypes.bool.isRequired,
 };
 
 export default DrawingCanvas;

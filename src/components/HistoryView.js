@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
+import LoadingIndicator from "./LoadingIndicator.js";
 import "./HistoryView.css";
 import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
@@ -44,11 +45,12 @@ class HistoryView extends Component {
 	shouldComponentUpdate(nextProps) {
 		return (
 			nextProps.currentHistoryNode !== this.props.currentHistoryNode ||
-			nextProps.thumbnailsByOperation !== this.props.thumbnailsByOperation
+			nextProps.thumbnailsByOperation !== this.props.thumbnailsByOperation ||
+			nextProps.loaded !== this.props.loaded
 		);
 	}
 	render() {
-		const { currentHistoryNode, goToHistoryNode, thumbnailsByOperation } = this.props;
+		const { currentHistoryNode, goToHistoryNode, thumbnailsByOperation, loaded } = this.props;
 
 		const historyAncestors = getHistoryAncestors(currentHistoryNode);
 		const allHistoryNodes = getAllHistoryNodesSortedByTimestamp(currentHistoryNode);
@@ -78,7 +80,7 @@ class HistoryView extends Component {
 					// how many of these thing should navigate the view vs the selection?
 				}}
 			>
-				{allHistoryNodes.map((node)=> {
+				{loaded ? allHistoryNodes.map((node)=> {
 					const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
 					const current = node === currentHistoryNode;
 					return <HistoryEntry
@@ -93,7 +95,7 @@ class HistoryView extends Component {
 							node.name === "New Document" ? <NewDocumentIcon width={16} height={16}/> : null
 						}
 					/>;
-				})}
+				}) : <LoadingIndicator/>}
 			</div>
 		);
 	}
@@ -103,6 +105,7 @@ HistoryView.propTypes = {
 	currentHistoryNode: PropTypes.instanceOf(HistoryNode).isRequired,
 	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
 	goToHistoryNode: PropTypes.func.isRequired,
+	loaded: PropTypes.bool.isRequired,
 };
 
 export default HistoryView;

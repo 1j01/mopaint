@@ -642,6 +642,7 @@ class App extends Component {
 						selectSwatch={selectSwatch}
 					/>
 					<DrawingCanvas
+						loaded={this.state.loaded || this.state.loadFailed /* might want these separate eventually */}
 						selectedSwatch={selectedSwatch}
 						selectedTool={selectedTool}
 						documentContext={this.documentContext}
@@ -657,6 +658,7 @@ class App extends Component {
 				{/* TODO: resizable sidebar */}
 				<div className="sidebar">
 					<HistoryView
+						loaded={this.state.loaded || this.state.loadFailed /* might want these separate eventually */}
 						currentHistoryNode={this.state.currentHistoryNode}
 						undos={this.state.undos}
 						redos={this.state.redos}
