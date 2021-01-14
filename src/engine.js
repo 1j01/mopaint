@@ -64,7 +64,7 @@ export const draw = ({ documentCanvas, operations, /*thumbnailsByOperation,*/ ca
 					cache[`document-at-${operationHash}`] = document.createElement("canvas");
 					cache[`document-at-${operationHash}`].width = opCanvas.width;
 					cache[`document-at-${operationHash}`].height = opCanvas.height;
-					cache[`document-at-${operationHash}`].getContext("2d").drawImage(documentCanvas, 0, 0);	
+					cache[`document-at-${operationHash}`].getContext("2d").drawImage(documentCanvas, 0, 0);
 					lastCachedOpIndex = operationIndex;
 				}
 				// cache[`individual-${operationHash}`] = document.createElement("canvas");
@@ -110,7 +110,7 @@ export function render(mopaintDocument, canvas, inputs) {
 		const operationHash = runningHash.digest("hex");
 
 		operation.exec(ctx);
-		
+
 		this.hashInDocumentByOperation.set(operation, operationHash);
 	});
 
@@ -138,7 +138,7 @@ export function overlayOnPage(mopaintDocument, elements) {
 	canvas.style.left = "0";
 	canvas.style.top = "0";
 	document.body.appendChild(canvas);
-	
+
 	const animate = ()=> {
 		const inputs = makeFrameInputs();
 

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
 import LoadingIndicator from "./LoadingIndicator.js";
 import "./HistoryView.css";
-import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../history.js";
+import { getHistoryAncestors, getAllHistoryNodesSortedByTimestamp } from "../history.js";
 import HistoryNode from "../HistoryNode.js";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-16px-importable.svg";
 import { List } from "immutable";
@@ -57,7 +57,7 @@ class HistoryView extends Component {
 		const historyAncestors = getHistoryAncestors(currentHistoryNode);
 		const allHistoryNodes = getAllHistoryNodesSortedByTimestamp(currentHistoryNode);
 
-		const navigate = (offset)=> {
+		const navigate = (offset) => {
 			const startIndex = allHistoryNodes.indexOf(currentHistoryNode);
 			const newIndex = startIndex + offset;
 			const newHistoryNode = allHistoryNodes[newIndex];
@@ -70,7 +70,7 @@ class HistoryView extends Component {
 				className="HistoryView"
 				role="radiogroup"
 				ref={this.selfRef}
-				onKeyDown={(event)=> {
+				onKeyDown={(event) => {
 					if (event.key === "ArrowUp") {
 						event.preventDefault();
 						navigate(-1);
@@ -82,7 +82,7 @@ class HistoryView extends Component {
 					// how many of these thing should navigate the view vs the selection?
 				}}
 			>
-				{loaded ? allHistoryNodes.map((node)=> {
+				{loaded ? allHistoryNodes.map((node) => {
 					const ancestorOfCurrent = historyAncestors.indexOf(node) > -1;
 					const current = node === currentHistoryNode;
 					return <HistoryEntry
@@ -94,10 +94,10 @@ class HistoryView extends Component {
 						onClick={() => goToHistoryNode(node)}
 						thumbnailsByOperation={thumbnailsByOperation}
 						getIconReactElementMaybe={() =>
-							node.name === "New Document" ? <NewDocumentIcon width={16} height={16}/> : null
+							node.name === "New Document" ? <NewDocumentIcon width={16} height={16} /> : null
 						}
 					/>;
-				}) : <LoadingIndicator/>}
+				}) : <LoadingIndicator />}
 			</div>
 		);
 	}

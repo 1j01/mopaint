@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from "react";
 import "./DarkModeToggle.css";
 
-function detectColorScheme(){
+function detectColorScheme() {
 	// local storage is used to override OS theme settings
 	// Note: local storage access can always fail due to privacy settings
 	try {
@@ -27,14 +27,14 @@ function detectColorScheme(){
 export default function DarkModeToggle() {
 
 	// useLayoutEffect rather than useEffect avoids transition from light to dark on page load with dark preference set
-	useLayoutEffect(()=> {
+	useLayoutEffect(() => {
 		document.documentElement.setAttribute("data-color-scheme", detectColorScheme());
 	});
 
 	return <button
 		className="dark-mode-button"
 		aria-label="Toggle Dark Mode"
-		onClick={()=> {
+		onClick={() => {
 			localStorage["mopaint-color-scheme"] = detectColorScheme() === "light" ? "dark" : "light";
 			document.documentElement.setAttribute("data-color-scheme", detectColorScheme());
 		}}

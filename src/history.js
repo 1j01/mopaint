@@ -1,6 +1,6 @@
 import { List } from "immutable";
 
-export function goToHistoryNode(targetHistoryNode, {currentHistoryNode, redos, undos}) {
+export function goToHistoryNode(targetHistoryNode, { currentHistoryNode, redos, undos }) {
 	const fromHistoryNode = currentHistoryNode;
 	const oldHistoryPath =
 		redos.size > 0 ?
@@ -19,11 +19,11 @@ export function goToHistoryNode(targetHistoryNode, {currentHistoryNode, redos, u
 	let latestNode = targetHistoryNode;
 	while (latestNode.childNodes.length > 0) {
 		const futures = [...latestNode.childNodes];
-		futures.sort((a, b)=> {
-			if(oldHistoryPath.indexOf(a) > -1) {
+		futures.sort((a, b) => {
+			if (oldHistoryPath.indexOf(a) > -1) {
 				return -1;
 			}
-			if(oldHistoryPath.indexOf(b) > -1) {
+			if (oldHistoryPath.indexOf(b) > -1) {
 				return +1;
 			}
 			return 0;
@@ -37,19 +37,19 @@ export function goToHistoryNode(targetHistoryNode, {currentHistoryNode, redos, u
 	return { currentHistoryNode: targetHistoryNode, undos, redos };
 }
 
-export function undo({currentHistoryNode, undos, redos}){
+export function undo({ currentHistoryNode, undos, redos }) {
 	if (undos.size < 1) {
-		return {currentHistoryNode, undos, redos};
+		return { currentHistoryNode, undos, redos };
 	}
 
 	redos = redos.push(currentHistoryNode);
 	let targetHistoryNode = undos.last();
 	undos = undos.pop();
 
-	return goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
+	return goToHistoryNode(targetHistoryNode, { currentHistoryNode, undos, redos });
 }
 
-export function redo({currentHistoryNode, undos, redos}){
+export function redo({ currentHistoryNode, undos, redos }) {
 	if (redos.size < 1) {
 		// if (!historyWindowOpen && !historyPromptOpen) {
 		// 	showMessage({
@@ -58,14 +58,14 @@ export function redo({currentHistoryNode, undos, redos}){
 		// 		</React.Fragment>,
 		// 	});
 		// }
-		return {currentHistoryNode, undos, redos};
+		return { currentHistoryNode, undos, redos };
 	}
 
 	undos = undos.push(currentHistoryNode);
 	let targetHistoryNode = redos.last();
 	redos = redos.pop();
 
-	return goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
+	return goToHistoryNode(targetHistoryNode, { currentHistoryNode, undos, redos });
 }
 
 export function getHistoryAncestors(node) {
@@ -87,7 +87,7 @@ export function getAllHistoryNodesSortedByTimestamp(anyHistoryNodeInGraph) {
 	const rootHistoryNode = getRoot(anyHistoryNodeInGraph);
 
 	const allHistoryNodes = [];
-	const collectNodes = (node)=> {
+	const collectNodes = (node) => {
 		for (const childNode of node.childNodes) {
 			collectNodes(childNode);
 		}
@@ -95,7 +95,7 @@ export function getAllHistoryNodesSortedByTimestamp(anyHistoryNodeInGraph) {
 	};
 	collectNodes(rootHistoryNode);
 
-	allHistoryNodes.sort((a, b)=> {
+	allHistoryNodes.sort((a, b) => {
 		if (a.timestamp < b.timestamp) {
 			return -1;
 		}

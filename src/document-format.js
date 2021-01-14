@@ -1,12 +1,12 @@
 import React from "react";
 import { List } from "immutable";
 import HistoryNode from "./HistoryNode";
-import {generateID} from "./helpers.js";
-import {getAllHistoryNodesSortedByTimestamp} from "./history.js";
+import { generateID } from "./helpers.js";
+import { getAllHistoryNodesSortedByTimestamp } from "./history.js";
 
 export const CURRENT_SERIALIZATION_VERSION = 0.5;
 
-export function serializeDocument({palette, selectedSwatch, selectedTool, undos, redos, currentHistoryNode}) {
+export function serializeDocument({ palette, selectedSwatch, selectedTool, undos, redos, currentHistoryNode }) {
 	// TODO: serialize tools as code (+ identifiers), and create a sandbox?
 
 	const serializeOperation = (operation) => {
@@ -19,10 +19,10 @@ export function serializeDocument({palette, selectedSwatch, selectedTool, undos,
 	};
 	const allHistoryNodes = getAllHistoryNodesSortedByTimestamp(currentHistoryNode);
 
-	const toID = (historyNode)=> historyNode.id;
+	const toID = (historyNode) => historyNode.id;
 
 	const historyNodesByID = {};
-	allHistoryNodes.forEach((historyNode)=> {
+	allHistoryNodes.forEach((historyNode) => {
 		historyNodesByID[historyNode.id] = {
 			parentHNID: historyNode.parentNode && historyNode.parentNode.id,
 			childHNIDs: historyNode.childNodes.map(toID),
@@ -103,7 +103,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		historyNodesByID[rootHistoryNode.id] = rootHistoryNode;
 
 		const opToHN = new Map();
-		const makeFreeFloatingHN = (op)=> {
+		const makeFreeFloatingHN = (op) => {
 			const id = generateID();
 			historyNodesByID[id] = {
 				id,
@@ -121,22 +121,22 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		let currentHNID;
 		const undoHNIDs = [];
 		const redoHNIDs = [];
-		const linkHNs = (parentHN, childHN)=> {
+		const linkHNs = (parentHN, childHN) => {
 			if (parentHN) {
 				parentHN.childHNIDs.push(childHN.id);
 				childHN.parentHNID = parentHN.id;
 			}
 		};
-		
+
 		const orderedOps = [
 			...serialized.undos,
 			...[...serialized.redos].reverse(),
 		];
 		const orderedHNs = [
 			rootHistoryNode,
-			...orderedOps.map((op)=> opToHN.get(op)),
+			...orderedOps.map((op) => opToHN.get(op)),
 		];
-		orderedHNs.forEach((historyNode, index, orderedHNs)=> {
+		orderedHNs.forEach((historyNode, index, orderedHNs) => {
 			const previousHistoryNode = orderedHNs[index - 1];
 			if (previousHistoryNode) {
 				linkHNs(previousHistoryNode, historyNode);
@@ -146,7 +146,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		});
 
 		undoHNIDs.push(rootHistoryNode.id);
-		orderedOps.forEach((op)=> {
+		orderedOps.forEach((op) => {
 			const historyNode = opToHN.get(op);
 			if (op === serialized.undos[serialized.undos.length - 1]) {
 				currentHNID = historyNode.id;
@@ -178,7 +178,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 
 		for (const historyNode of Object.values(serialized.historyNodesByID)) {
 			if (historyNode.operation?.name === "Fill") {
-				const {points} = historyNode.operation;
+				const { points } = historyNode.operation;
 				// const firstPos = points[0];
 				// const lastPos = points[points.length - 1];
 				// if (firstPos.x !== lastPos.x || firstPos.y !== lastPos.y) {
@@ -212,7 +212,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 				</p>
 				<p>
 					To load this {nounPhraseThingToLoad}, use the version of Mopaint at the Git branch&nbsp;
-					<a href={`https://github.com/1j01/mopaint/tree/${gitBranchName}`} style={{fontFamily: "monospace"}}>{gitBranchName}</a>
+					<a href={`https://github.com/1j01/mopaint/tree/${gitBranchName}`} style={{ fontFamily: "monospace" }}>{gitBranchName}</a>
 				</p>
 			</React.Fragment>
 		}];
@@ -251,7 +251,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 			historyNodesByID[historyNodeID].operation = deserializeOperation(historyNodeData.operation);
 		}
 	}
-	const fromHNID = (historyNodeID)=> historyNodesByID[historyNodeID];
+	const fromHNID = (historyNodeID) => historyNodesByID[historyNodeID];
 	for (const [historyNodeID, historyNodeData] of Object.entries(serialized.historyNodesByID)) {
 		historyNodesByID[historyNodeID].parentNode = historyNodesByID[historyNodeData.parentHNID];
 		historyNodesByID[historyNodeID].childNodes = historyNodeData.childHNIDs.map(fromHNID);

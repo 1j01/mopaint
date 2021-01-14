@@ -29,7 +29,7 @@ class Thumbnail extends Component {
 		if (operation && !thumbnailsByOperation.get(operation)) {
 			return <div
 				className="question-mark"
-				style={{width, height}}
+				style={{ width, height }}
 			/>;
 		}
 		return <canvas width={width} height={height} ref={this.canvasRef} />;
@@ -53,7 +53,7 @@ class Thumbnail extends Component {
 
 		const ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-	
+
 		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 	}
 	componentDidMount() {
@@ -92,7 +92,7 @@ class HistoryEntry extends Component {
 			// thumbnailsByOperation,
 			getIconReactElementMaybe,
 		} = this.props;
-		const {operation} = historyNode;
+		const { operation } = historyNode;
 		// NOTE: role works together with role in HistoryView
 		return (
 			<button

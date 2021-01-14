@@ -1,8 +1,8 @@
-import {generateID} from "./helpers.js";
+import { generateID } from "./helpers.js";
 
 export default class HistoryNode {
 	// NOTE: data may be freely changed after construction, this is basically just a struct
-	constructor({parentNode, timestamp, operation, name, id}) {
+	constructor({ parentNode, timestamp, operation, name, id }) {
 		this.parentNode = parentNode;
 		this.childNodes = [];
 		this.timestamp = timestamp ?? Date.now();

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./DrawingCanvas.css";
-import {draw} from "../engine.js";
-import {generateID} from "../helpers.js";
+import { draw } from "../engine.js";
+import { generateID } from "../helpers.js";
 import LoadingIndicator from "./LoadingIndicator";
 
 class DrawingCanvas extends Component {
@@ -23,7 +23,7 @@ class DrawingCanvas extends Component {
 		if (this.animationFrameID) {
 			cancelAnimationFrame(this.animationFrameID);
 		}
-		this.animationFrameID = requestAnimationFrame(()=> {
+		this.animationFrameID = requestAnimationFrame(() => {
 			draw({
 				documentCanvas: this.canvasRef.current,
 				operations: this.props.operations,
@@ -56,8 +56,8 @@ class DrawingCanvas extends Component {
 		return (
 			<div className="DrawingCanvas" style={{ width, height, position: "relative" }}>
 				<canvas width={width} height={height} ref={this.canvasRef} />
-				{!this.props.loaded && <div style={{position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)"}}>
-					<LoadingIndicator/>
+				{!this.props.loaded && <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
+					<LoadingIndicator />
 				</div>}
 			</div>
 		);
@@ -145,13 +145,13 @@ class DrawingCanvas extends Component {
 	componentDidMount() {
 		const canvas = this.canvasRef.current;
 		let pointerIsDown = false;
-		canvas.addEventListener("pointermove", this.pointerMoveListener = (event)=> {
+		canvas.addEventListener("pointermove", this.pointerMoveListener = (event) => {
 			this.onPointerMove(event);
 		});
-		canvas.addEventListener("pointerleave", this.pointerLeaveListener = (event)=> {
+		canvas.addEventListener("pointerleave", this.pointerLeaveListener = (event) => {
 			this.onPointerLeave(event);
 		});
-		canvas.addEventListener("pointerenter", this.pointerEnterListener = (event)=> {
+		canvas.addEventListener("pointerenter", this.pointerEnterListener = (event) => {
 			this.onPointerEnter(event);
 		});
 		canvas.addEventListener(

@@ -25,7 +25,7 @@ export default function Dialog({
 	buttons,
 	// TODO: probably make message *content* max 40em, bring in line with `.Dialog details`
 	// (and look at some error messages to see if any are made uglier by the automatic line breaks)
-	maxWidth="50em",
+	maxWidth = "50em",
 }) {
 	// TODO: use <dialog> etc.
 	// TODO: error icon (and other icons as appropriate)
@@ -48,7 +48,7 @@ export default function Dialog({
 
 	return (
 		<div className="Dialog">
-			<div className="Dialog-box" style={{maxWidth}}>
+			<div className="Dialog-box" style={{ maxWidth }}>
 				{message || error.message}
 				{error && (
 					<details>

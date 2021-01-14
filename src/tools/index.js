@@ -29,7 +29,7 @@ const tools = {
 		// these UI function signatures are pretty arbitrary and would only get worse
 		// as time goes on and I maintain backwards compatibility (even out of laziness!) and add things to the end
 		// and it doesn't help that there's this layer of indirection where I have to map these signatures
-		drawFromPoint: function(opCtx, x, y, swatch, documentCtx) {
+		drawFromPoint: function (opCtx, x, y, swatch, documentCtx) {
 			opCtx.drawImage(documentCtx.canvas, 0, 0);
 			fill(opCtx, x, y, swatch);
 		},
@@ -40,7 +40,7 @@ Object.keys(tools).forEach((key) => {
 	const tool = tools[key];
 
 	if (tool.drawSegmentOfPath) {
-		tool.drawFromPoints = (opContext, points, swatch)=> {
+		tool.drawFromPoints = (opContext, points, swatch) => {
 			for (let i1 = 0, i2 = 1; i2 < points.length; i1 += 1, i2 += 1) {
 				tool.drawSegmentOfPath(
 					opContext,
@@ -52,7 +52,7 @@ Object.keys(tools).forEach((key) => {
 				);
 			}
 		};
-		tool.getDemoPointsForIcon = (width, height)=> {
+		tool.getDemoPointsForIcon = (width, height) => {
 			const points = [];
 			for (let i = 0; i < 20; i += 2) {
 				points.push({
@@ -64,7 +64,7 @@ Object.keys(tools).forEach((key) => {
 		};
 	}
 	if (tool.drawShape) {
-		tool.drawFromPoints = (opContext, points, swatch)=> {
+		tool.drawFromPoints = (opContext, points, swatch) => {
 			const startPos = points[0];
 			const lastPos = points[points.length - 1];
 			tool.drawShape(
@@ -76,7 +76,7 @@ Object.keys(tools).forEach((key) => {
 				swatch
 			);
 		};
-		tool.getDemoPointsForIcon = (width, height)=> {
+		tool.getDemoPointsForIcon = (width, height) => {
 			return [
 				{ x: width * 0.5, y: height * 0.5 },
 				{ x: width * 0.8, y: height * 0.8 },
@@ -84,16 +84,16 @@ Object.keys(tools).forEach((key) => {
 		};
 	}
 	if (tool.drawFromPoint) {
-		tool.drawFromPoints = (opContext, points, swatch, documentContext)=> {
+		tool.drawFromPoints = (opContext, points, swatch, documentContext) => {
 			const lastPos = points[points.length - 1];
 			tool.drawFromPoint(opContext, lastPos.x, lastPos.y, swatch, documentContext);
 		};
-		tool.getDemoPointsForIcon = (width, height)=> {
+		tool.getDemoPointsForIcon = (width, height) => {
 			return { x: width / 2, y: height / 2 };
 		};
 	}
 	if (!tool.getDemoPointsForIcon) {
-		tool.getDemoPointsForIcon = (width, height)=> {
+		tool.getDemoPointsForIcon = (width, height) => {
 			const points = [];
 			for (let i = 0; i < 20; i += 2) {
 				points.push({
@@ -156,24 +156,24 @@ pointModifiers.forEach((modifier) => {
 				}
 			};
 			if (!originalTool.getSymmetryPoints) {
-				newTool.getSymmetryPoints = (opContext, sourcePoint)=> {
+				newTool.getSymmetryPoints = (opContext, sourcePoint) => {
 					const centerX = opContext.canvas.width / 2;
 					const centerY = opContext.canvas.height / 2;
 					return modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
 				};
 			} else {
 				const underlyingGetSymmetryPoints = originalTool.getSymmetryPoints;
-				newTool.getSymmetryPoints = (opContext, sourcePoint)=> {
+				newTool.getSymmetryPoints = (opContext, sourcePoint) => {
 					const underlyingPoints = underlyingGetSymmetryPoints(opContext, sourcePoint);
 					const centerX = opContext.canvas.width / 2;
 					const centerY = opContext.canvas.height / 2;
-					return underlyingPoints.map((sourcePoint)=> {
+					return underlyingPoints.map((sourcePoint) => {
 						return modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
 					}).flat();
 				};
 			}
-			newTool.getDemoPointsForIcon = (width, height)=>
-				originalTool.getDemoPointsForIcon(width/2, height/2);
+			newTool.getDemoPointsForIcon = (width, height) =>
+				originalTool.getDemoPointsForIcon(width / 2, height / 2);
 		}
 	});
 });

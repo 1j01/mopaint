@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { loadPalette } from "anypalette";
 import isPNG from "is-png";
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
-import { serializeDocument, deserializeDocument } from "../document-format"; 
+import { serializeDocument, deserializeDocument } from "../document-format";
 import tools, { toolsByName } from "../tools";
 import DrawingCanvas from "./DrawingCanvas.js";
 import Toolbox from "./Toolbox.js";
@@ -24,7 +24,7 @@ import { undo, redo, goToHistoryNode } from "../history.js";
 import DocumentPickerDialog from "./DocumentPickerDialog.js";
 import DarkModeToggle from "./DarkModeToggle.js";
 
-const getToolByName = (toolID)=> {
+const getToolByName = (toolID) => {
 	const tool = toolsByName[toolID];
 	if (!tool) {
 		throw new Error(`Tool not found with name '${toolID}'`);
@@ -45,7 +45,7 @@ class App extends Component {
 			selectedTool: getToolByName("Freeform Line"),
 			undos: new List(),
 			redos: new List(),
-			currentHistoryNode: new HistoryNode({name: "New Document"}),
+			currentHistoryNode: new HistoryNode({ name: "New Document" }),
 			loaded: false,
 			loadFailed: false,
 		};
@@ -86,9 +86,9 @@ class App extends Component {
 
 				// Use case 1: older documents saved before thumbnails were stored
 				// Use case 2: saving the thumbnail could have failed due to quota limits previously, and space is now freed up
-				localforage.getItem(`document:${this.props.documentID}:thumbnail`).then((thumbnailBlob)=> {
+				localforage.getItem(`document:${this.props.documentID}:thumbnail`).then((thumbnailBlob) => {
 					if (!thumbnailBlob) {
-						requestAnimationFrame(()=> {
+						requestAnimationFrame(() => {
 							this.saveThumbnail();
 						});
 					}
@@ -103,7 +103,7 @@ class App extends Component {
 			return;
 		}
 		console.log(`Load ${this.props.documentID}`);
-		const {serializedDocumentToLoad} = this.props;
+		const { serializedDocumentToLoad } = this.props;
 		localforage.getItem(
 			`document:${this.props.documentID}:state`,
 			(error, serialized) => {
@@ -148,9 +148,8 @@ class App extends Component {
 				// (and update this message to reflect that (clearly, and reassuringly))
 				this.setState({ undos: new List(), redos: new List(), loaded: false });
 				this.showError({
-					message: `The document ${
-						this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
-					}. Start a new document?`,
+					message: `The document ${this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
+						}. Start a new document?`,
 					extraButtons: (
 						<button onClick={this.props.createNewDocument}>New Document</button>
 					),
@@ -186,9 +185,9 @@ class App extends Component {
 						this.showError({
 							message: <div>
 								Failed to save {documentThatYouWereMaybeLeaving} into storage!
-								<br/><br/>
+								<br /><br />
 								Check that your computer has enough disk space.
-								<br/><br/>
+								<br /><br />
 								If you have enough free space, we’ve run out of space as allowed by the browser per site.
 								You could free up quota by clearing the storage for this site in your browser’s settings,
 								however, this will delete all documents.
@@ -203,7 +202,7 @@ class App extends Component {
 						this.showError({
 							message: <div>
 								Failed to save {documentThatYouWereMaybeLeaving} into storage!
-								<br/><br/>
+								<br /><br />
 								Ran out of space allowed by the browser.
 								You could free up quota by clearing the storage for this site in your browser’s settings,
 								however, this will delete all documents.
@@ -218,8 +217,7 @@ class App extends Component {
 					}
 				} else {
 					console.log(
-						`Saved ${this.props.documentID}${
-							leavingThisDocument ? " (leaving it)" : ""
+						`Saved ${this.props.documentID}${leavingThisDocument ? " (leaving it)" : ""
 						}`,
 					);
 					this.saveThumbnail();
@@ -489,7 +487,7 @@ class App extends Component {
 		});
 		currentHistoryNode.childNodes.push(newHistoryNode);
 		currentHistoryNode = newHistoryNode;
-		
+
 		this.setState(
 			{
 				currentHistoryNode: currentHistoryNode,
@@ -512,7 +510,7 @@ class App extends Component {
 	undo() {
 		const { currentHistoryNode, undos, redos } = this.state;
 
-		const newState = undo({currentHistoryNode, undos, redos});
+		const newState = undo({ currentHistoryNode, undos, redos });
 		this.setState(
 			{
 				currentHistoryNode: newState.currentHistoryNode,
@@ -526,7 +524,7 @@ class App extends Component {
 	redo() {
 		const { currentHistoryNode, undos, redos } = this.state;
 
-		const newState = redo({currentHistoryNode, undos, redos});
+		const newState = redo({ currentHistoryNode, undos, redos });
 		this.setState(
 			{
 				currentHistoryNode: newState.currentHistoryNode,
@@ -540,7 +538,7 @@ class App extends Component {
 	goToHistoryNode(targetHistoryNode) {
 		const { currentHistoryNode, undos, redos } = this.state;
 
-		const newState = goToHistoryNode(targetHistoryNode, {currentHistoryNode, undos, redos});
+		const newState = goToHistoryNode(targetHistoryNode, { currentHistoryNode, undos, redos });
 		this.setState(
 			{
 				currentHistoryNode: newState.currentHistoryNode,
@@ -562,7 +560,7 @@ class App extends Component {
 		};
 
 		const operations = [];
-		const collectOperations = (historyNode)=> {
+		const collectOperations = (historyNode) => {
 			if (historyNode.operation) {
 				operations.push(historyNode.operation);
 			}
@@ -593,7 +591,7 @@ class App extends Component {
 							aria-label="New Document"
 							title="New Document"
 						>
-							<NewDocumentIcon width="48px" height="48px"/>
+							<NewDocumentIcon width="48px" height="48px" />
 						</button>
 						<button
 							id="save-document"
@@ -604,7 +602,7 @@ class App extends Component {
 							aria-label="Save Document"
 							title="Save Document"
 						>
-							<SaveDocumentIcon width="48px" height="48px"/>
+							<SaveDocumentIcon width="48px" height="48px" />
 						</button>
 						<button
 							id="open-document"
@@ -615,21 +613,21 @@ class App extends Component {
 							aria-label="Open Document"
 							title="Open Document"
 						>
-							<OpenDocumentIcon width="48px" height="48px"/>
+							<OpenDocumentIcon width="48px" height="48px" />
 						</button>
 						<button
 							id="show-document-picker"
 							className="toolbar-button"
-							onClick={()=> {
+							onClick={() => {
 								this.showChooseDocumentDialog();
 							}}
 							aria-label="Show Documents"
 							title="Show Documents"
 						>
-							<PickDocumentIcon width="48px" height="48px"/>
+							<PickDocumentIcon width="48px" height="48px" />
 						</button>
-						<div style={{flex: 1}}/>
-						<DarkModeToggle/>
+						<div style={{ flex: 1 }} />
+						<DarkModeToggle />
 					</div>
 					<Toolbox
 						tools={tools}
@@ -703,11 +701,11 @@ class App extends Component {
 
 	showChooseDocumentDialog() {
 		const closeDialog = this.closeDialog.bind(this);
-		this.showDialog(<DocumentPickerDialog close={closeDialog} currentDocumentID={this.props.documentID}/>);
+		this.showDialog(<DocumentPickerDialog close={closeDialog} currentDocumentID={this.props.documentID} />);
 	}
 
 	showSaveDialog() {
-		const {documentID} = this.props;
+		const { documentID } = this.props;
 		const createPNGram = this.createPNGram.bind(this);
 		const createRawPNG = this.createRawPNG.bind(this);
 		const closeDialog = this.closeDialog.bind(this);
@@ -723,8 +721,8 @@ class App extends Component {
 			const [saveType, setSaveType] = useState("hybrid");
 			const [name, setName] = useState(props.defaultName);
 			const [blobUrl, setBlobUrlWithoutRevokingOld] = useState(null);
-			const revokeOldAndSetBlobUrl = (newBlobUrl)=> {
-				setBlobUrlWithoutRevokingOld((oldBlobUrl)=> {
+			const revokeOldAndSetBlobUrl = (newBlobUrl) => {
+				setBlobUrlWithoutRevokingOld((oldBlobUrl) => {
 					URL.revokeObjectURL(oldBlobUrl);
 					return newBlobUrl;
 				});
@@ -848,10 +846,10 @@ class App extends Component {
 			);
 		}
 
-		localforage.getItem(`document:${documentID}:name`).then((name)=> {
-			this.showDialog(<SaveDialog defaultName={name || "Drawing"}/>);
-		}, (/*error*/)=> {
-			this.showDialog(<SaveDialog defaultName="Drawing"/>);
+		localforage.getItem(`document:${documentID}:name`).then((name) => {
+			this.showDialog(<SaveDialog defaultName={name || "Drawing"} />);
+		}, (/*error*/) => {
+			this.showDialog(<SaveDialog defaultName="Drawing" />);
 		});
 	}
 }
