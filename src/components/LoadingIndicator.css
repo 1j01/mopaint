@@ -6,7 +6,7 @@
 
 	align-self: center;
 	margin: auto;
-	
+
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
@@ -15,10 +15,9 @@
 	border-right: 4px solid transparent;
 	box-sizing: border-box;
 	animation: rotation 1s linear infinite;
-
 }
 .LoadingIndicator::after {
-	content: '';  
+	content: "";
 	box-sizing: border-box;
 	position: absolute;
 	left: 0;
@@ -41,4 +40,4 @@
 	100% {
 		transform: rotate(360deg);
 	}
-} 
+}

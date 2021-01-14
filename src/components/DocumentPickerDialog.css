@@ -23,7 +23,7 @@
 }
 .document-picker-dialog-documents li a:hover,
 .document-picker-dialog-documents li a:focus {
-	background:rgba(43, 75, 253, 0.1);
+	background: rgba(43, 75, 253, 0.1);
 }
 .document-thumbnail {
 	width: 100px;
