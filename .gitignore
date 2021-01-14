@@ -22,8 +22,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+.eslintcache
+
 # Visual Studio Code
 .vscode
+# Local History extension (should really be added to global gitignore)
+.history
 
 # WebStorm
 .idea
