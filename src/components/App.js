@@ -148,8 +148,7 @@ class App extends Component {
 				// (and update this message to reflect that (clearly, and reassuringly))
 				this.setState({ undos: new List(), redos: new List(), loaded: false });
 				this.showError({
-					message: `The document ${this.state.loadFailed ? "failed to load" : "hasn't loaded yet"
-						}. Start a new document?`,
+					message: `The document ${this.state.loadFailed ? "failed to load" : "hasn't loaded yet"}. Start a new document?`,
 					extraButtons: (
 						<button onClick={this.props.createNewDocument}>New Document</button>
 					),
@@ -217,8 +216,7 @@ class App extends Component {
 					}
 				} else {
 					console.log(
-						`Saved ${this.props.documentID}${leavingThisDocument ? " (leaving it)" : ""
-						}`,
+						`Saved ${this.props.documentID}${leavingThisDocument ? " (leaving it)" : ""}`,
 					);
 					this.saveThumbnail();
 				}
