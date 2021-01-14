@@ -80,5 +80,5 @@ Dialog.propTypes = {
 	close: PropTypes.func,
 	extraButtons: PropTypes.node,
 	buttons: PropTypes.node,
-	maxWidth: PropTypes.number,
+	maxWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
