@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import ToolPreview from "./ToolPreview.js";
 import "./HistoryEntry.css";
@@ -15,6 +14,10 @@ function isScrolledIntoView(el) {
 }
 
 class Thumbnail extends Component {
+	constructor(props) {
+		super(props);
+		this.canvasRef = React.createRef();
+	}
 	shouldComponentUpdate(newProps) {
 		return (
 			newProps.thumbnailsByOperation !== this.props.thumbnailsByOperation ||
@@ -29,7 +32,7 @@ class Thumbnail extends Component {
 				style={{width, height}}
 			/>;
 		}
-		return <canvas width={width} height={height} />;
+		return <canvas width={width} height={height} ref={this.canvasRef} />;
 	}
 	draw() {
 		const { thumbnailsByOperation, operation } = this.props;
@@ -41,10 +44,10 @@ class Thumbnail extends Component {
 		if (!image) {
 			return;
 		}
-		
-		const canvas = ReactDOM.findDOMNode(this);
 
-		if(!isScrolledIntoView(canvas)){
+		const canvas = this.canvasRef.current;
+
+		if (!isScrolledIntoView(canvas)) {
 			return;
 		}
 
@@ -64,11 +67,15 @@ class Thumbnail extends Component {
 Thumbnail.propTypes = {
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
-	thumbnailsByOperation: PropTypes.object.isRequired,
+	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
 	operation: PropTypes.object,
 };
 
 class HistoryEntry extends Component {
+	constructor(props) {
+		super(props);
+		this.entryRef = React.createRef();
+	}
 	shouldComponentUpdate(nextProps) {
 		return (
 			nextProps.current !== this.props.current ||
@@ -98,6 +105,7 @@ class HistoryEntry extends Component {
 				aria-checked={current ? "aria-checked" : null}
 				onClick={onClick} // for keyboard accessibility (?)
 				onMouseDown={onClick} // for speed (w/ a mouse)
+				ref={this.entryRef}
 			>
 				{/* <Thumbnail
 					width={24}
@@ -115,6 +123,7 @@ class HistoryEntry extends Component {
 HistoryEntry.propTypes = {
 	historyNode: PropTypes.instanceOf(HistoryNode).isRequired,
 	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
+	getIconReactElementMaybe: PropTypes.func.isRequired,
 	current: PropTypes.bool.isRequired,
 	ancestorOfCurrent: PropTypes.bool.isRequired,
 	onClick: PropTypes.func.isRequired,

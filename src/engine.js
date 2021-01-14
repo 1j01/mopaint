@@ -7,7 +7,7 @@ const cacheHeuristicPeriod = 5;
 const opCanvas = document.createElement("canvas");
 const opContext = opCanvas.getContext("2d");
 
-export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, hashInDocumentByOperation})=> {
+export const draw = ({ documentCanvas, operations, /*thumbnailsByOperation,*/ cache, hashInDocumentByOperation }) => {
 	const documentContext = documentCanvas.getContext("2d");
 
 	documentContext.clearRect(0, 0, opCanvas.width, opCanvas.height);
@@ -96,7 +96,7 @@ export const draw = ({documentCanvas, operations, thumbnailsByOperation, cache, 
 			// });
 		}
 	}
-}
+};
 
 /*
 export function render(mopaintDocument, canvas, inputs) {

@@ -1,4 +1,4 @@
-const getMirrorSymmetryPoints = (x, y, flipCenterX, flipCenterY) => {
+const getMirrorSymmetryPoints = (x, y, flipCenterX/*, flipCenterY*/) => {
 	// const angle = 0;
 	// TODO: let user choose symmetry line
 

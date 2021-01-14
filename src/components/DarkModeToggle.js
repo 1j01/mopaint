@@ -11,13 +11,14 @@ function detectColorScheme(){
 		if (localStorage["mopaint-color-scheme"] === "light") {
 			return "light";
 		}
-	} catch(error) {}
+		// eslint-disable-next-line no-empty
+	} catch (error) { }
 
 	// TODO: listen for change to setting? also what if you want to reset it to just using the system setting? is that a concern?
 	// window.matchMedia("(prefers-color-scheme: dark)").onchange = (event)=> console.log(event, event.target.matches);
-    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        // OS theme setting detected as dark
-        return "dark";
+	if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+		// OS theme setting detected as dark
+		return "dark";
 	}
 	// default to light theme
 	return "light";
@@ -36,8 +37,8 @@ export default function DarkModeToggle() {
 		onClick={()=> {
 			localStorage["mopaint-color-scheme"] = detectColorScheme() === "light" ? "dark" : "light";
 			document.documentElement.setAttribute("data-color-scheme", detectColorScheme());
-		}
-	}>
+		}}
+	>
 		<div className="rays">
 			<div className="ray"></div>
 			<div className="ray"></div>
@@ -52,5 +53,5 @@ export default function DarkModeToggle() {
 			<div className="shadow"></div>
 		</div>
 	</button>;
-};
+}
 

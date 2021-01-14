@@ -5,10 +5,13 @@ import Dialog from "./Dialog.js";
 import "./DocumentPickerDialog.css";
 
 class DocumentOption extends React.Component {
-	state = {
-		name: "Untitled",
-		thumbnailBlobURL: null,
-	};
+	constructor(props) {
+		super(props);
+		this.state = {
+			name: "Untitled",
+			thumbnailBlobURL: null,
+		};
+	}
 	componentDidMount() {
 		const {documentID} = this.props;
 		localforage.getItem(`document:${documentID}:name`).then((name)=> {
@@ -35,6 +38,10 @@ class DocumentOption extends React.Component {
 		</a>;
 	}
 }
+
+DocumentOption.propTypes = {
+	documentID: PropTypes.string.isRequired,
+};
 class DocumentPickerDialog extends React.Component {
 	constructor(props) {
 		super(props);
@@ -72,7 +79,7 @@ class DocumentPickerDialog extends React.Component {
 						<DocumentOption documentID={documentID}/>
 					</li>
 				);
-			})
+			});
 			content = documentListItems;
 		}
 		return <Dialog

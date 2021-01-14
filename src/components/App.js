@@ -92,14 +92,14 @@ class App extends Component {
 							this.saveThumbnail();
 						});
 					}
-				})
+				});
 			});
 		}
 	}
 
 	load() {
 		if (!this.props.documentID) {
-			console.log(`No document ID to load`);
+			console.log("No document ID to load");
 			return;
 		}
 		console.log(`Load ${this.props.documentID}`);
@@ -189,8 +189,8 @@ class App extends Component {
 								<br/><br/>
 								Check that your computer has enough disk space.
 								<br/><br/>
-								If you have enough free space, we've run out of space as allowed by the browser per site.
-								You could free up quota by clearing the storage for this site in your browser's settings,
+								If you have enough free space, we’ve run out of space as allowed by the browser per site.
+								You could free up quota by clearing the storage for this site in your browser’s settings,
 								however, this will delete all documents.
 							</div>,
 							error,
@@ -205,7 +205,7 @@ class App extends Component {
 								Failed to save {documentThatYouWereMaybeLeaving} into storage!
 								<br/><br/>
 								Ran out of space allowed by the browser.
-								You could free up quota by clearing the storage for this site in your browser's settings,
+								You could free up quota by clearing the storage for this site in your browser’s settings,
 								however, this will delete all documents.
 							</div>,
 							error,
@@ -242,8 +242,8 @@ class App extends Component {
 			localforage.setItem(
 				`document:${this.props.documentID}:thumbnail`,
 				thumbnailBlob,
-				(error) => {
-					// TODO?
+				(/*error*/) => {
+					// TODO: handle error?
 				}
 			);
 		});
@@ -358,7 +358,7 @@ class App extends Component {
 					loadPalette(file, (error, palette) => {
 						if (error) {
 							this.showError({
-								message: `Failed to load file as a color palette.`, // TODO: more generic message? uh? er? hm? uh...
+								message: "Failed to load file as a color palette.", // TODO: more generic message? uh? er? hm? uh...
 								error,
 							});
 						} else {
@@ -394,7 +394,7 @@ class App extends Component {
 
 		window.addEventListener(
 			"beforeunload",
-			(this.beforeUnloadListener = (event) => {
+			(this.beforeUnloadListener = () => {
 				// This isn't the only time we save -- that would be a terrible pattern! you can't rely on any 'event' in a power outage or crash --
 				// but it's good to have since there are places where we delay (i.e. debounce) saving for performance reasons
 				// so if you made a change and then quickly closed or reloaded the page (by accident, and/or with auto reload in development),
@@ -500,7 +500,7 @@ class App extends Component {
 		);
 	}
 
-	updateOperation(operation) {
+	updateOperation(/*operation*/) {
 		// TODO: immutable operation objects probably (immutable.js has a Record class, I could use that)
 		// or append-only operation state?
 		// TODO: soft undo/redo / fundo/freedo / sliding/gliding/partial undo/redo
@@ -748,8 +748,8 @@ class App extends Component {
 				localforage.setItem(
 					`document:${documentID}:name`,
 					name,
-					(error) => {
-						// TODO?
+					(/*error*/) => {
+						// TODO: handle error?
 					}
 				);
 			};
@@ -850,7 +850,7 @@ class App extends Component {
 
 		localforage.getItem(`document:${documentID}:name`).then((name)=> {
 			this.showDialog(<SaveDialog defaultName={name || "Drawing"}/>);
-		}, (error)=> {
+		}, (/*error*/)=> {
 			this.showDialog(<SaveDialog defaultName="Drawing"/>);
 		});
 	}

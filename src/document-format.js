@@ -91,7 +91,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		// History nodes are to be serialized at this point as:
 		// {parentHNID, childHNIDs, timestamp, operation, name, id}
 
-		const baseTimestamp = +new Date('January 1, 2020 00:00:00');
+		const baseTimestamp = +new Date("January 1, 2020 00:00:00");
 		const rootHistoryNode = {
 			name: "New Document",
 			id: generateID(),
@@ -202,7 +202,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 		return [{
 			message: <React.Fragment>
 				<p>
-					Can't load {nounPhraseThingToLoad} created by old version of the app; there's no upgrade path from format version {
+					Can’t load {nounPhraseThingToLoad} created by old version of the app; there’s no upgrade path from format version {
 						serialized.formatVersion
 					} to {CURRENT_SERIALIZATION_VERSION}{
 						MINIMUM_LOADABLE_VERSION !== CURRENT_SERIALIZATION_VERSION

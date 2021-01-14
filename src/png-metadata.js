@@ -15,10 +15,8 @@ const readPngChunksFromBlob = (blob, callback) => {
 
 export function injectMetadataIntoBlob(blob, metadata, callback) {
 	readPngChunksFromBlob(blob, (chunks) => {
-		for (let k in metadata) {
-			if (metadata.hasOwnProperty(k)) {
-				chunks.splice(-1, 0, pngChunkText.encode(k, metadata[k]));
-			}
+		for (const key of Object.keys(metadata)) {
+			chunks.splice(-1, 0, pngChunkText.encode(key, metadata[key]));
 		}
 		const reencodedBuffer = pngChunksEncode(chunks);
 		const reencodedBlob = new Blob([reencodedBuffer], { type: "image/png" });

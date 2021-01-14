@@ -78,14 +78,14 @@ class DrawingCanvas extends Component {
 			this.draw();
 		}
 	}
-	onPointerLeave(event) {
+	onPointerLeave() {
 		this.pointerOverCanvas = false;
 
 		if (this.props.selectedTool.getSymmetryPoints) {
 			this.draw();
 		}
 	}
-	onPointerEnter(event) {
+	onPointerEnter() {
 		this.pointerOverCanvas = true;
 		// will also get a pointermove event which will cause redraw
 	}
@@ -127,7 +127,7 @@ class DrawingCanvas extends Component {
 			document.body.classList.add("cursor-override-DrawingCanvas");
 		}
 	}
-	onPointerUp(event) {
+	onPointerUp() {
 		// TODO: add position if different? (is that possible? and does this matter?)
 		// this.pointerPos = this.toCanvasCoords(event);
 		// this.operation.points.push(this.pointerPos);
@@ -203,6 +203,10 @@ DrawingCanvas.propTypes = {
 		PropTypes.instanceOf(CanvasPattern),
 	]).isRequired,
 	loaded: PropTypes.bool.isRequired,
+	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
+	operations: PropTypes.array.isRequired,
+	updateOperation: PropTypes.func.isRequired,
+	addOperation: PropTypes.func.isRequired,
 };
 
 export default DrawingCanvas;

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import HistoryEntry from "./HistoryEntry.js";
 import LoadingIndicator from "./LoadingIndicator.js";
@@ -7,6 +6,7 @@ import "./HistoryView.css";
 import {getHistoryAncestors, getAllHistoryNodesSortedByTimestamp} from "../history.js";
 import HistoryNode from "../HistoryNode.js";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-16px-importable.svg";
+import { List } from "immutable";
 
 class HistoryView extends Component {
 	constructor(props) {
@@ -25,8 +25,10 @@ class HistoryView extends Component {
 		}
 	}
 	scrollSelectedEntryIntoView() {
-		const entryEl = this.currentEntryRef.current && ReactDOM.findDOMNode(this.currentEntryRef.current);
+		const entryComponent = this.currentEntryRef.current;
+		const entryEl = entryComponent && entryComponent.entryRef.current;
 		if (entryEl) {
+			// @FIXME: can flicker or end up where the selected entry is offscreen
 			entryEl.scrollIntoView({
 				behavior: "instant",
 				block: "nearest",
@@ -103,6 +105,11 @@ class HistoryView extends Component {
 
 HistoryView.propTypes = {
 	currentHistoryNode: PropTypes.instanceOf(HistoryNode).isRequired,
+	// TODO: https://www.npmjs.com/package/react-immutable-proptypes
+	// undos: ImmutablePropTypes.listOf(PropTypes.instanceOf(HistoryNode)).isRequired,
+	// redos: ImmutablePropTypes.listOf(PropTypes.instanceOf(HistoryNode)).isRequired,
+	undos: PropTypes.instanceOf(List).isRequired,
+	redos: PropTypes.instanceOf(List).isRequired,
 	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
 	goToHistoryNode: PropTypes.func.isRequired,
 	loaded: PropTypes.bool.isRequired,

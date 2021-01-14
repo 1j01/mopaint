@@ -78,6 +78,7 @@ export default function fill(ctx, x, y, swatch) {
 		}
 		reachLeft = false;
 		reachRight = false;
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			y++;
 			pixelIndex = (y * canvas.width + x) * 4;
@@ -130,4 +131,4 @@ export default function fill(ctx, x, y, swatch) {
 		imageData.data[pixelIndex + 2] = fillB;
 		imageData.data[pixelIndex + 3] = fillA;
 	}
-};
+}

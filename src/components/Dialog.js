@@ -11,11 +11,14 @@ const ReportBugLink = (props) => (
 		{props.children}
 	</a>
 );
+ReportBugLink.propTypes = {
+	children: PropTypes.node.isRequired,
+};
 
 export default function Dialog({
 	message,
 	error,
-	isError,
+	// isError, // might be used to show an icon later
 	requestBugReport,
 	close,
 	extraButtons,
@@ -77,4 +80,5 @@ Dialog.propTypes = {
 	close: PropTypes.func,
 	extraButtons: PropTypes.node,
 	buttons: PropTypes.node,
+	maxWidth: PropTypes.number,
 };

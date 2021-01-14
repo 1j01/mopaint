@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import trimCanvas from "../trim-canvas.js";
 // import './ToolPreview.css';
 
 class ToolPreview extends Component {
+	constructor(props) {
+		super(props);
+		this.canvasRef = React.createRef();
+	}
 	render() {
 		const { width, height, tool } = this.props;
 		if (tool.Icon) {
@@ -17,13 +20,13 @@ class ToolPreview extends Component {
 					className="ToolPreview"
 					width={width}
 					height={height}
-					ref="canvas"
+					ref={this.canvasRef}
 				/>
 			);
 		}
 	}
 	componentDidMount() {
-		const canvas = ReactDOM.findDOMNode(this.refs.canvas);
+		const canvas = this.canvasRef.current;
 		if (!canvas) {
 			return;
 		}
