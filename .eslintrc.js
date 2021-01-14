@@ -18,6 +18,14 @@ module.exports = {
 	"plugins": [
 		"react"
 	],
+	"settings": {
+		"react": {
+			"version": "detect",
+		}
+	},
+	"globals": {
+		"process": "readonly"
+	},
 	"rules": {
 		"indent": [
 			"error",
