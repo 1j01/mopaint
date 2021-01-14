@@ -1,5 +1,5 @@
 import localforage from "localforage";
-import shortid from "shortid";
+import { nanoid } from "nanoid";
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
@@ -30,7 +30,7 @@ const goToDocument = (documentID) => {
 };
 
 const createNewDocument = () => {
-	const newDocumentID = shortid.generate();
+	const newDocumentID = nanoid(9);
 	goToDocument(newDocumentID);
 };
 
@@ -39,7 +39,7 @@ let toLoad = {
 	documentID: null,
 };
 const loadNewDocument = (serializedDocument, fileName) => {
-	const documentID = shortid.generate();
+	const documentID = nanoid(9);
 	toLoad = { serializedDocument, documentID };
 	console.log(`Start new document (${documentID}) from`, serializedDocument);
 	localforage.setItem(`document:${documentID}:name`, fileName.replace(/(\.mop(aint))?(\.png)?$/i, ""), (/*error*/) => {

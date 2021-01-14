@@ -38,14 +38,14 @@
 		"immutable": "3.8.2",
 		"is-png": "2.0.0",
 		"localforage": "1.9.0",
+		"nanoid": "^3.1.20",
 		"png-chunk-text": "1.0.0",
 		"png-chunks-encode": "1.0.0",
 		"png-chunks-extract": "1.0.0",
 		"prop-types": "15.7.2",
 		"react": "^17.0.1",
 		"react-dom": "^17.0.1",
-		"react-scripts": "4.0.1",
-		"shortid": "2.2.16"
+		"react-scripts": "4.0.1"
 	},
 	"scripts": {
 		"lint": "eslint src/",
