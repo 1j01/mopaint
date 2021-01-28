@@ -345,7 +345,7 @@ class App extends Component {
 				} else if (uint8Array[0] === "{".charCodeAt(0)) {
 					const fileReader = new FileReader();
 					fileReader.onload = () => {
-						this.loadDocumentFromJSON(fileReader.result);
+						this.loadDocumentFromJSON(fileReader.result, file.name);
 					};
 					fileReader.readAsText(file);
 					// TODO: handle palette json files
