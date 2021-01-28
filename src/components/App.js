@@ -297,7 +297,7 @@ class App extends Component {
 		canvas.toBlob(callback, "image/png");
 	}
 
-	loadDocumentFromJSON(json, fileName) {
+	loadDocumentFromJSON(json, fileName, fileIsSomethingElseCallback) {
 		let serializedDocument;
 		try {
 			serializedDocument = JSON.parse(json);
@@ -318,10 +318,38 @@ class App extends Component {
 			});
 			return;
 		}
+		if (serializedDocument.format !== "mopaint") {
+			if (fileIsSomethingElseCallback) {
+				fileIsSomethingElseCallback(serializedDocument);
+			} else {
+				this.showError({
+					message: "This is not a Mopaint document."
+				});
+			}
+			return;
+		}
 		this.props.loadNewDocument(serializedDocument, fileName);
 	}
 
 	handleDroppedOrOpenedFiles(files) {
+		const tryPalette = (file)=> {
+			loadPalette(file, (error, palette) => {
+				if (error) {
+					this.showError({
+						message: "Failed to load file as a color palette.", // TODO: more generic message? uh? er? hm? uh...
+						error,
+					});
+				} else {
+					this.setState(
+						{
+							palette: palette.map((color) => color.toString()),
+						},
+						this.saveDebounced.bind(this),
+					);
+				}
+			});
+		};
+
 		// TODO: progress indication
 		const file = files[0];
 		if (file) {
@@ -345,27 +373,14 @@ class App extends Component {
 				} else if (uint8Array[0] === "{".charCodeAt(0)) {
 					const fileReader = new FileReader();
 					fileReader.onload = () => {
-						this.loadDocumentFromJSON(fileReader.result, file.name);
+						this.loadDocumentFromJSON(fileReader.result, file.name, ()=> {
+							tryPalette(file);
+						});
 					};
 					fileReader.readAsText(file);
-					// TODO: handle palette json files
 				} else {
 					// TODO: handle plain image files, Photoshop/GIMP/Paint.NET documents, etc.
-					loadPalette(file, (error, palette) => {
-						if (error) {
-							this.showError({
-								message: "Failed to load file as a color palette.", // TODO: more generic message? uh? er? hm? uh...
-								error,
-							});
-						} else {
-							this.setState(
-								{
-									palette: palette.map((color) => color.toString()),
-								},
-								this.saveDebounced.bind(this),
-							);
-						}
-					});
+					tryPalette(file);
 				}
 			};
 			fileReader.readAsArrayBuffer(file);
