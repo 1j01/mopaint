@@ -339,7 +339,7 @@ class DrawingCanvas extends Component {
 		this.pointerPos = this.toCanvasCoords(event);
 
 		if (selectedTool.name === "Edit Paths") {
-			if (Date.now() - this.doubleClickTimer < this.doubleClickTime && (!this.editingPathOp || this.hoveredPathOp !== this.editingPathOp)) {
+			if (Date.now() - this.doubleClickTimer < this.doubleClickTime && !(this.editingPathOp && (this.hoveredPathOp === this.editingPathOp || this.hoveredPoints.length))) {
 				if (this.editingPathOp) {
 					this.editingPathOp = null;
 				} else {
