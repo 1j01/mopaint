@@ -327,7 +327,6 @@ class DrawingCanvas extends Component {
 				}
 				this.selectedPoints = [];
 				this.doubleClickTimer = 0;
-				this.draw();
 			} else {
 				this.doubleClickTimer = (this.editingPathOp && this.hoveredPathOp === this.editingPathOp) ? 0 : Date.now();
 				if (this.hoveredPoints.length) {
@@ -342,6 +341,7 @@ class DrawingCanvas extends Component {
 					// }
 				}
 			}
+			this.draw();
 		} else {
 			this.operation = {
 				id: generateID(10),
@@ -382,6 +382,7 @@ class DrawingCanvas extends Component {
 		if (this.selectionBox) {
 			this.selectPoints(this.hoveredPoints, event.ctrlKey);
 			this.selectionBox = null;
+			this.draw();
 		}
 		if (!this.operation) {
 			return;
