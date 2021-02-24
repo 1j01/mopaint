@@ -65,7 +65,9 @@ class DrawingCanvas extends Component {
 		this.hoveredPoints = [];
 		this.selectedPoints = [];
 		this.doubleClickTimer = 0;
-		this.doubleClickTime = 500;
+		this.doubleClickPos = null;
+		this.doubleClickMaxTime = 500;
+		this.doubleClickMaxDistance = 10;
 		this.selectionBox = null;
 
 		this.canvasRef = React.createRef();
@@ -341,7 +343,14 @@ class DrawingCanvas extends Component {
 		this.pointerPos = this.toCanvasCoords(event);
 
 		if (selectedTool.name === "Edit Paths") {
-			if (Date.now() - this.doubleClickTimer < this.doubleClickTime && !(this.editingPathOp && (this.hoveredPathOp === this.editingPathOp || this.hoveredPoints.length))) {
+			if (
+				Date.now() - this.doubleClickTimer < this.doubleClickMaxTime &&
+				distance(this.pointerPos, this.doubleClickPos) < this.doubleClickMaxDistance &&
+				!(
+					this.editingPathOp &&
+					(this.hoveredPathOp === this.editingPathOp || this.hoveredPoints.length)
+				)
+			) {
 				if (this.editingPathOp) {
 					this.editingPathOp = null;
 				} else {
@@ -351,6 +360,7 @@ class DrawingCanvas extends Component {
 				this.doubleClickTimer = 0;
 			} else {
 				this.doubleClickTimer = (this.editingPathOp && this.hoveredPathOp === this.editingPathOp) ? 0 : Date.now();
+				this.doubleClickPos = this.pointerPos;
 				if (this.hoveredPoints.length) {
 					// Leaving open Shift for potentially doing a range selection analogous to text editors / file browsers.
 					// (Inkscape uses Shift for this.)
