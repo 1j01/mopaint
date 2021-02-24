@@ -441,6 +441,8 @@ class App extends Component {
 						this.showSaveDialog();
 					} else if (event.key === "o") {
 						this.openDocument();
+					} else if (event.key === "a") {
+						this.drawingCanvasComponent.selectAll();
 					} else {
 						return; // don't prevent default
 					}

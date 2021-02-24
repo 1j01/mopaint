@@ -306,6 +306,21 @@ class DrawingCanvas extends Component {
 		}
 		return points;
 	}
+	selectAll() {
+		if (this.editingPathOp) {
+			this.selectedPoints = [...this.editingPathOp.points];
+		} else {
+			this.selectedPoints = [];
+			for (const op of this.props.operations) {
+				if (op.points) {
+					for (const point of op.points) {
+						this.selectedPoints.push(point);
+					}
+				}
+			}
+		}
+		this.draw();
+	}
 	onPointerDown(event) {
 		if (event.which !== 1) {
 			return;
