@@ -265,6 +265,7 @@ class DrawingCanvas extends Component {
 					this.editingPathOp = this.hoveredPathOp;
 				}
 				this.doubleClickTimer = 0;
+				this.draw();
 			} else {
 				this.doubleClickTimer = Date.now();
 			}
