@@ -62,7 +62,7 @@ class DrawingCanvas extends Component {
 		this.pointerOverCanvas = false;
 		this.hoveredPathOp = null;
 		this.editingPathOp = null;
-		this.hoveredPoint = null;
+		this.hoveredPoints = [];
 		this.selectedPoints = [];
 		this.doubleClickTimer = 0;
 		this.doubleClickTime = 500;
@@ -104,53 +104,83 @@ class DrawingCanvas extends Component {
 			}
 
 			if (this.props.selectedTool.name === "Edit Paths") {
+				const canvas = this.canvasRef.current;
+				const ctx = canvas.getContext("2d");
 				// if (this.pointerOverCanvas) assert(this.pointerPos);
 				this.hoveredPathOp = this.pointerOverCanvas ? this.closestPathOp(this.pointerPos) : null;
-				// this.hoveredPoint = this.pointerPos ? (this.hoveredPathOp ? this.closestPoint(this.pointerPos, [this.hoveredPathOp]) : this.closestPoint(this.pointerPos, this.props.operations))?.closestPoint : null;
+				// const hoveredPoint = this.pointerPos ? (this.hoveredPathOp ? this.closestPoint(this.pointerPos, [this.hoveredPathOp]) : this.closestPoint(this.pointerPos, this.props.operations))?.closestPoint : null;
 				// if (this.hoveredPathOp) assert(this.pointerPos);
-				this.hoveredPoint = this.editingPathOp ? this.closestPoint(this.pointerPos, [this.editingPathOp])?.closestPoint : null;
-				const pathOp = this.editingPathOp || this.hoveredPathOp;
-				if (pathOp) {
-					const canvas = this.canvasRef.current;
-					const ctx = canvas.getContext("2d");
-					ctx.beginPath();
-					ctx.save();
-					if (this.editingPathOp) {
-						ctx.fillStyle = "#ccc";
-						ctx.strokeStyle = "#fff";
-						ctx.lineWidth = 2;
-						ctx.translate(-1.5, -1.5);
-						for (const point of pathOp.points) {
-							if (point !== this.hoveredPoint) {
-								ctx.rect(point.x, point.y, 3, 3);
-							}
+				const hoveredPoint = this.editingPathOp ? this.closestPoint(this.pointerPos, [this.editingPathOp])?.closestPoint : null;
+				this.hoveredPoints = hoveredPoint ? [hoveredPoint] : [];
+				if (this.selectionBox) {
+					this.hoveredPoints = this.pointsWithinSelectionBox(this.editingPathOp ? [this.editingPathOp] : this.props.operations);
+				}
+				ctx.beginPath();
+				ctx.save();
+				ctx.fillStyle = "#ccc";
+				ctx.strokeStyle = "#fff";
+				ctx.lineWidth = 2;
+				ctx.translate(-1.5, -1.5);
+				if (this.editingPathOp) {
+					for (const point of this.editingPathOp.points) {
+						if (!this.hoveredPoints.includes(point) && !this.selectedPoints.includes(point)) {
+							ctx.rect(point.x, point.y, 3, 3);
 						}
-						ctx.globalCompositeOperation = "difference";
-						ctx.stroke();
-						ctx.globalCompositeOperation = "source-over";
-						ctx.fill();
-						if (this.hoveredPoint) {
-							ctx.beginPath();
-							ctx.rect(this.hoveredPoint.x, this.hoveredPoint.y, 3, 3);
-							ctx.fillStyle = "#f00";
-							ctx.globalCompositeOperation = "difference";
-							ctx.stroke();
-							ctx.globalCompositeOperation = "source-over";
-							ctx.fill();
-						}
-					} else {
-						ctx.strokeStyle = "#f00";
-						ctx.lineWidth = 1.5;
-						ctx.moveTo(pathOp.points[0].x, pathOp.points[0].y);
-						for (let i = 1; i < pathOp.points.length; i += 1) {
-							ctx.lineTo(pathOp.points[i].x, pathOp.points[i].y);
-						}
-						ctx.stroke();
 					}
+					ctx.globalCompositeOperation = "difference";
+					ctx.stroke();
+					ctx.globalCompositeOperation = "source-over";
+					ctx.fill();
+				}
+				if (this.hoveredPoints.length) {
+					ctx.beginPath();
+					for (const point of this.hoveredPoints) {
+						ctx.rect(point.x, point.y, 3, 3);
+					}
+					ctx.fillStyle = "#f00";
+					ctx.strokeStyle = "#fff";
+					ctx.globalCompositeOperation = "difference";
+					ctx.stroke();
+					ctx.globalCompositeOperation = "source-over";
+					ctx.fill();
+				}
+				if (this.selectedPoints.length) {
+					ctx.beginPath();
+					ctx.translate(-1, -1);
+					for (const point of this.selectedPoints) {
+						ctx.rect(point.x, point.y, 5, 5);
+					}
+					ctx.fillStyle = "#00f";
+					ctx.strokeStyle = "#fff";
+					ctx.globalCompositeOperation = "difference";
+					ctx.stroke();
+					ctx.fill();
+				}
+				if (this.hoveredPathOp && !this.editingPathOp && !this.selectionBox) {
+					ctx.strokeStyle = "#f00";
+					ctx.lineWidth = 1.5;
+					ctx.moveTo(this.hoveredPathOp.points[0].x, this.hoveredPathOp.points[0].y);
+					for (let i = 1; i < this.hoveredPathOp.points.length; i += 1) {
+						ctx.lineTo(this.hoveredPathOp.points[i].x, this.hoveredPathOp.points[i].y);
+					}
+					ctx.stroke();
+				}
+				ctx.restore();
+				if (this.selectionBox) {
+					ctx.save();
+					ctx.beginPath();
+					ctx.translate(0.5, 0.5); // if view.scale is 1
+					ctx.rect(this.selectionBox.x1, this.selectionBox.y1, this.selectionBox.x2 - this.selectionBox.x1, this.selectionBox.y2 - this.selectionBox.y1);
+					ctx.fillStyle = "rgba(0, 155, 255, 0.1)";
+					ctx.strokeStyle = "rgba(0, 155, 255, 0.8)";
+					ctx.lineWidth = 1; // 1 / view.scale;
+					ctx.fill();
+					ctx.stroke();
 					ctx.restore();
 				}
 			} else {
 				this.hoveredPathOp = null;
+				this.hoveredPoints = [];
 			}
 		});
 	}
@@ -198,6 +228,10 @@ class DrawingCanvas extends Component {
 		event.preventDefault();
 
 		this.pointerPos = this.toCanvasCoords(event);
+		if (this.selectionBox) {
+			this.selectionBox.x2 = this.pointerPos.x;
+			this.selectionBox.y2 = this.pointerPos.y;
+		}
 		if (!this.operation) {
 			return;
 		}
@@ -245,6 +279,32 @@ class DrawingCanvas extends Component {
 			return { closestPoint, closestPointOp };
 		}
 	}
+	pointsWithinSelectionBox(operations=this.props.operations) {
+		if (!this.selectionBox) {
+			return [];
+		}
+		const {x1, y1, x2, y2} = this.selectionBox;
+		const points = [];
+		for (const op of operations) {
+			if (op.points) {
+				for (const point of op.points) {
+					const minX = Math.min(x1, x2);
+					const maxX = Math.max(x1, x2);
+					const minY = Math.min(y1, y2);
+					const maxY = Math.max(y1, y2);
+					if (
+						minX <= point.x && point.x <= maxX &&
+						minY <= point.y && point.y <= maxY &&
+						minX <= point.x && point.x <= maxX &&
+						minY <= point.y && point.y <= maxY
+					) {
+						points.push(point);
+					}
+				}
+			}
+		}
+		return points;
+	}
 	onPointerDown(event) {
 		if (event.which !== 1) {
 			return;
@@ -268,6 +328,9 @@ class DrawingCanvas extends Component {
 				this.draw();
 			} else {
 				this.doubleClickTimer = Date.now();
+				if (!this.hoveredPathOp) {
+					this.selectionBox = { x1: this.pointerPos.x, y1: this.pointerPos.y, x2: this.pointerPos.x, y2: this.pointerPos.y, };
+				}
 			}
 		} else {
 			this.operation = {
@@ -293,6 +356,10 @@ class DrawingCanvas extends Component {
 		// this.operation.points.push(this.pointerPos);
 
 		const { updateOperation } = this.props;
+		if (this.selectionBox) {
+			this.selectedPoints = this.hoveredPoints;
+			this.selectionBox = null;
+		}
 		if (!this.operation) {
 			return;
 		}
