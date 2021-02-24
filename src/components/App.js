@@ -23,6 +23,7 @@ import HistoryNode from "../HistoryNode.js";
 import { undo, redo, goToHistoryNode } from "../history.js";
 import DocumentPickerDialog from "./DocumentPickerDialog.js";
 import DarkModeToggle from "./DarkModeToggle.js";
+import LoadingIndicator from "./LoadingIndicator.js";
 
 const getToolByName = (toolID) => {
 	const tool = toolsByName[toolID];
@@ -869,8 +870,8 @@ class App extends Component {
 							onClick={saveFileAndCloseDialog}
 							disabled={!blobUrl}
 						>
-							{/* TODO: loading spinner instead */}
-							Save {!blobUrl ? "(please wait...)" : ""}
+							{!blobUrl ? <LoadingIndicator/> : null}
+							Save
 						</button>
 					}
 				/>

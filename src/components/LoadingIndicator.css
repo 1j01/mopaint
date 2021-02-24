@@ -3,12 +3,13 @@
 .LoadingIndicator {
 	--color-one: #e93a27; /* Benigoi */
 	--color-two: #d7984b; /* Kigoi */
+	--size: 48px;
 
 	align-self: center;
 	margin: auto;
 
-	width: 48px;
-	height: 48px;
+	width: var(--size);
+	height: var(--size);
 	border-radius: 50%;
 	display: inline-block;
 	border-top: 4px solid var(--color-one);
@@ -22,8 +23,8 @@
 	position: absolute;
 	left: 0;
 	top: 0;
-	width: 48px;
-	height: 48px;
+	width: var(--size);
+	height: var(--size);
 	border-radius: 50%;
 
 	border-left: 4px solid var(--color-two);
@@ -32,6 +33,9 @@
 	/* transform: rotate(180deg);
 	border-top: 4px solid var(--color-two);
 	border-right: 4px solid transparent; */
+}
+button .LoadingIndicator {
+	--size: 1em;
 }
 @keyframes rotation {
 	0% {
