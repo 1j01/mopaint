@@ -12,6 +12,10 @@ class DrawingCanvas extends Component {
 		this.operation = null;
 		this.pointerPos = null;
 		this.pointerOverCanvas = false;
+		this.hoveredPathOp = null;
+		this.editingPathOp = null;
+		this.doubleClickTimer = 0;
+		this.doubleClickTime = 500;
 
 		this.canvasRef = React.createRef();
 
@@ -48,13 +52,13 @@ class DrawingCanvas extends Component {
 				}
 			}
 
-			if (this.pointerOverCanvas && this.props.selectedTool.name === "Edit Paths") {
-				const pathOp = this.findPathOp(this.pointerPos);
+			if (this.props.selectedTool.name === "Edit Paths") {
+				this.hoveredPathOp = this.pointerOverCanvas ? this.findPathOp(this.pointerPos) : null;
+				const pathOp = this.editingPathOp || this.hoveredPathOp;
 				if (pathOp) {
 					const canvas = this.canvasRef.current;
 					const ctx = canvas.getContext("2d");
-					const points = pathOp.points;
-					for (const point of points) {
+					for (const point of pathOp.points) {
 						ctx.beginPath();
 						ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
 						ctx.fillStyle = "#fff";
@@ -64,6 +68,8 @@ class DrawingCanvas extends Component {
 						ctx.stroke();
 					}
 				}
+			} else {
+				this.hoveredPathOp = null;
 			}
 		});
 	}
@@ -144,7 +150,16 @@ class DrawingCanvas extends Component {
 		this.pointerPos = this.toCanvasCoords(event);
 
 		if (selectedTool.name === "Edit Paths") {
-			// TODO
+			if (Date.now() - this.doubleClickTimer < this.doubleClickTime) {
+				if (this.editingPathOp) {
+					this.editingPathOp = null;
+				} else {
+					this.editingPathOp = this.hoveredPathOp;
+				}
+				this.doubleClickTimer = 0;
+			} else {
+				this.doubleClickTimer = Date.now();
+			}
 		} else {
 			this.operation = {
 				id: generateID(10),
