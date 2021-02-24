@@ -8,9 +8,13 @@ import rotationallyReflect from "./rotational-symmetry.js";
 // // import { ReactComponent as SymmetryIcon } from "../icons/noun-symmetry.svg";
 // // import { ReactComponent as CelticKnotIcon } from "../icons/noun-celtic-knot.svg";
 import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket-flipped.svg";
+import { ReactComponent as VectorEditIcon } from "../icons/edit-path-importable.svg";
 
 
 const tools = {
+	"Edit Paths": {
+		Icon: VectorEditIcon,
+	},
 	"Freeform Line": freeformLineTool,
 	"Line": {
 		drawShape: line,

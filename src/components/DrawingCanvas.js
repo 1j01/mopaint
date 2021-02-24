@@ -47,6 +47,24 @@ class DrawingCanvas extends Component {
 					ctx.stroke();
 				}
 			}
+
+			if (this.pointerOverCanvas && this.props.selectedTool.name === "Edit Paths") {
+				const pathOp = this.findPathOp(this.pointerPos);
+				if (pathOp) {
+					const canvas = this.canvasRef.current;
+					const ctx = canvas.getContext("2d");
+					const points = pathOp.points;
+					for (const point of points) {
+						ctx.beginPath();
+						ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
+						ctx.fillStyle = "#fff";
+						ctx.fill();
+						ctx.strokeStyle = "#000";
+						ctx.lineWidth = 1;
+						ctx.stroke();
+					}
+				}
+			}
 		});
 	}
 	render() {
@@ -74,14 +92,14 @@ class DrawingCanvas extends Component {
 	onPointerMove(event) {
 		this.pointerPos = this.toCanvasCoords(event);
 
-		if (this.props.selectedTool.getSymmetryPoints) {
+		if (this.props.selectedTool.getSymmetryPoints || this.props.selectedTool.name === "Edit Paths") {
 			this.draw();
 		}
 	}
 	onPointerLeave() {
 		this.pointerOverCanvas = false;
 
-		if (this.props.selectedTool.getSymmetryPoints) {
+		if (this.props.selectedTool.getSymmetryPoints || this.props.selectedTool.name === "Edit Paths") {
 			this.draw();
 		}
 	}
@@ -101,6 +119,18 @@ class DrawingCanvas extends Component {
 		const { updateOperation } = this.props;
 		updateOperation(this.operation);
 	}
+	findPathOp(pos) {
+		// TODO: a sense of occlusion, path width, etc.
+		for (const op of this.props.operations) {
+			if (op.points) {
+				for (const point of op.points) {
+					if (Math.hypot(point.x - pos.x, point.y - pos.y) < 10) {
+						return op;
+					}
+				}
+			}
+		}
+	}
 	onPointerDown(event) {
 		if (event.which !== 1) {
 			return;
@@ -112,15 +142,20 @@ class DrawingCanvas extends Component {
 			return;
 		}
 		this.pointerPos = this.toCanvasCoords(event);
-		this.operation = {
-			id: generateID(10),
-			points: [this.pointerPos],
-			tool: selectedTool,
-			swatch: selectedSwatch,
-			updatingContinously: true, // TODO: this should probably be extrinsic!
-		};
-		const { addOperation } = this.props;
-		addOperation(this.operation);
+
+		if (selectedTool.name === "Edit Paths") {
+			// TODO
+		} else {
+			this.operation = {
+				id: generateID(10),
+				points: [this.pointerPos],
+				tool: selectedTool,
+				swatch: selectedSwatch,
+				updatingContinously: true, // TODO: this should probably be extrinsic!
+			};
+			const { addOperation } = this.props;
+			addOperation(this.operation);
+		}
 		if (event.target.setCapture) {
 			event.target.setCapture();
 		} else {
