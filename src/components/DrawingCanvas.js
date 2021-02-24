@@ -62,8 +62,11 @@ class DrawingCanvas extends Component {
 		this.pointerOverCanvas = false;
 		this.hoveredPathOp = null;
 		this.editingPathOp = null;
+		this.hoveredPoint = null;
+		this.selectedPoints = [];
 		this.doubleClickTimer = 0;
 		this.doubleClickTime = 500;
+		this.selectionBox = null;
 
 		this.canvasRef = React.createRef();
 
@@ -101,7 +104,11 @@ class DrawingCanvas extends Component {
 			}
 
 			if (this.props.selectedTool.name === "Edit Paths") {
-				this.hoveredPathOp = this.pointerOverCanvas ? this.findPathOp(this.pointerPos) : null;
+				// if (this.pointerOverCanvas) assert(this.pointerPos);
+				this.hoveredPathOp = this.pointerOverCanvas ? this.closestPathOp(this.pointerPos) : null;
+				// this.hoveredPoint = this.pointerPos ? (this.hoveredPathOp ? this.closestPoint(this.pointerPos, [this.hoveredPathOp]) : this.closestPoint(this.pointerPos, this.props.operations))?.closestPoint : null;
+				// if (this.hoveredPathOp) assert(this.pointerPos);
+				this.hoveredPoint = this.editingPathOp ? this.closestPoint(this.pointerPos, [this.editingPathOp])?.closestPoint : null;
 				const pathOp = this.editingPathOp || this.hoveredPathOp;
 				if (pathOp) {
 					const canvas = this.canvasRef.current;
@@ -114,12 +121,23 @@ class DrawingCanvas extends Component {
 						ctx.lineWidth = 2;
 						ctx.translate(-1.5, -1.5);
 						for (const point of pathOp.points) {
-							ctx.rect(point.x, point.y, 3, 3);
+							if (point !== this.hoveredPoint) {
+								ctx.rect(point.x, point.y, 3, 3);
+							}
 						}
 						ctx.globalCompositeOperation = "difference";
 						ctx.stroke();
 						ctx.globalCompositeOperation = "source-over";
 						ctx.fill();
+						if (this.hoveredPoint) {
+							ctx.beginPath();
+							ctx.rect(this.hoveredPoint.x, this.hoveredPoint.y, 3, 3);
+							ctx.fillStyle = "#f00";
+							ctx.globalCompositeOperation = "difference";
+							ctx.stroke();
+							ctx.globalCompositeOperation = "source-over";
+							ctx.fill();
+						}
 					} else {
 						ctx.strokeStyle = "#f00";
 						ctx.lineWidth = 1.5;
@@ -188,7 +206,7 @@ class DrawingCanvas extends Component {
 		const { updateOperation } = this.props;
 		updateOperation(this.operation);
 	}
-	findPathOp(pos) {
+	closestPathOp(pos) {
 		// TODO: a sense of path width, shape, symmetry, occlusion etc.
 		const minGrabDist = 10;
 		let closestDist = Infinity;
@@ -204,6 +222,27 @@ class DrawingCanvas extends Component {
 		}
 		if (closestOp) {
 			return closestOp;
+		}
+	}
+	closestPoint(pos, operations) {
+		const minGrabDist = 10;
+		let closestDist = Infinity;
+		let closestPointOp = null;
+		let closestPoint = null;
+		for (const op of operations) {
+			if (op.points) {
+				for (const point of op.points) {
+					const dist = distance(point, pos);
+					if (dist < minGrabDist && dist < closestDist) {
+						closestPointOp = op;
+						closestPoint = point;
+						closestDist = dist;
+					}
+				}
+			}
+		}
+		if (closestPoint) {
+			return { closestPoint, closestPointOp };
 		}
 	}
 	onPointerDown(event) {
