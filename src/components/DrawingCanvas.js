@@ -78,7 +78,7 @@ class DrawingCanvas extends Component {
 		const width = 640;
 		const height = 480;
 		return (
-			<div className="DrawingCanvas" style={{ width, height, position: "relative" }}>
+			<div className="DrawingCanvas" style={{ width, height, position: "relative", cursor: this.props.selectedTool.name === "Edit Paths" ? "default" : "crosshair" }}>
 				<canvas width={width} height={height} ref={this.canvasRef} />
 				{!this.props.loaded && <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
 					<LoadingIndicator />
@@ -174,7 +174,8 @@ class DrawingCanvas extends Component {
 		if (event.target.setCapture) {
 			event.target.setCapture();
 		} else {
-			document.body.classList.add("cursor-override-DrawingCanvas");
+			document.body.classList.add("cursor-override");
+			document.body.style.cursor = this.canvasRef.current.style.cursor;
 		}
 	}
 	onPointerUp() {
@@ -190,7 +191,8 @@ class DrawingCanvas extends Component {
 		updateOperation(this.operation);
 		this.operation = null;
 
-		document.body.classList.remove("cursor-override-DrawingCanvas");
+		document.body.classList.remove("cursor-override");
+		document.body.style.cursor = "";
 	}
 	componentDidMount() {
 		const canvas = this.canvasRef.current;

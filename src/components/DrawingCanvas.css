@@ -4,7 +4,3 @@
 	touch-action: none;
 }
 
-.DrawingCanvas,
-.cursor-override-DrawingCanvas {
-	cursor: crosshair;
-}
