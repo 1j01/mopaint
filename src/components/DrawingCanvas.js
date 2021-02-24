@@ -106,15 +106,30 @@ class DrawingCanvas extends Component {
 				if (pathOp) {
 					const canvas = this.canvasRef.current;
 					const ctx = canvas.getContext("2d");
-					for (const point of pathOp.points) {
-						ctx.beginPath();
-						ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
-						ctx.fillStyle = "#fff";
+					ctx.beginPath();
+					ctx.save();
+					if (this.editingPathOp) {
+						ctx.fillStyle = "#ccc";
+						ctx.strokeStyle = "#fff";
+						ctx.lineWidth = 2;
+						ctx.translate(-1.5, -1.5);
+						for (const point of pathOp.points) {
+							ctx.rect(point.x, point.y, 3, 3);
+						}
+						ctx.globalCompositeOperation = "difference";
+						ctx.stroke();
+						ctx.globalCompositeOperation = "source-over";
 						ctx.fill();
-						ctx.strokeStyle = "#000";
-						ctx.lineWidth = 1;
+					} else {
+						ctx.strokeStyle = "#f00";
+						ctx.lineWidth = 1.5;
+						ctx.moveTo(pathOp.points[0].x, pathOp.points[0].y);
+						for (let i = 1; i < pathOp.points.length; i += 1) {
+							ctx.lineTo(pathOp.points[i].x, pathOp.points[i].y);
+						}
 						ctx.stroke();
 					}
+					ctx.restore();
 				}
 			} else {
 				this.hoveredPathOp = null;
