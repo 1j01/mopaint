@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.f97fec85.chunk.css",
-    "main.js": "/static/js/main.8a22e58e.chunk.js",
-    "main.js.map": "/static/js/main.8a22e58e.chunk.js.map",
+    "main.css": "/static/css/main.e3505cd9.chunk.css",
+    "main.js": "/static/js/main.dca207d5.chunk.js",
+    "main.js.map": "/static/js/main.dca207d5.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.211eeef3.js",
     "runtime-main.js.map": "/static/js/runtime-main.211eeef3.js.map",
     "static/js/2.c9db846f.chunk.js": "/static/js/2.c9db846f.chunk.js",
     "static/js/2.c9db846f.chunk.js.map": "/static/js/2.c9db846f.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/main.f97fec85.chunk.css.map": "/static/css/main.f97fec85.chunk.css.map",
+    "static/css/main.e3505cd9.chunk.css.map": "/static/css/main.e3505cd9.chunk.css.map",
     "static/js/2.c9db846f.chunk.js.LICENSE.txt": "/static/js/2.c9db846f.chunk.js.LICENSE.txt",
     "static/media/document-new-16px-importable.2ded795a.svg": "/static/media/document-new-16px-importable.2ded795a.svg",
     "static/media/document-new-importable.138e383a.svg": "/static/media/document-new-importable.138e383a.svg",
@@ -20,7 +20,7 @@
   "entrypoints": [
     "static/js/runtime-main.211eeef3.js",
     "static/js/2.c9db846f.chunk.js",
-    "static/css/main.f97fec85.chunk.css",
-    "static/js/main.8a22e58e.chunk.js"
+    "static/css/main.e3505cd9.chunk.css",
+    "static/js/main.dca207d5.chunk.js"
   ]
 }
