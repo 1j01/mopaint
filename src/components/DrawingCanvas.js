@@ -353,7 +353,9 @@ class DrawingCanvas extends Component {
 			const { addOperation } = this.props;
 			addOperation(this.operation);
 		}
-		if (event.target.setCapture) {
+		if (event.target.setPointerCapture) {
+			event.target.setPointerCapture(event.pointerId);
+		} else if (event.target.setCapture) {
 			event.target.setCapture();
 		} else {
 			document.body.classList.add("cursor-override");
