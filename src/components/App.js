@@ -245,7 +245,7 @@ class App extends Component {
 		});
 	}
 
-	createPNGram(serializedDocument, callback, mismatchedCallback) {
+	createPNGram(serializedDocument, callback, mismatchedCallback, errorCallback) {
 		const json = JSON.stringify(serializedDocument);
 		const metadata = {
 			"Software": "Mopaint",
@@ -261,9 +261,7 @@ class App extends Component {
 			verifiedCallback,
 			mismatchedCallback,
 		) => {
-			const fileReader = new FileReader();
-			fileReader.onload = () => {
-				const arrayBuffer = fileReader.result;
+			encodedBlob.arrayBuffer().then((arrayBuffer) => {
 				const uint8Array = new Uint8Array(arrayBuffer);
 				const encodedMetadata = readMetadataSync(uint8Array);
 				if (encodedMetadata["Program Source"] === json) {
@@ -271,12 +269,16 @@ class App extends Component {
 				} else {
 					mismatchedCallback();
 				}
-			};
-			fileReader.readAsArrayBuffer(encodedBlob);
+			}, (error)=> {
+				errorCallback(error);
+			});
 		};
 
 		this.createRawPNG((rawImageBlob) => {
-			injectMetadataIntoBlob(rawImageBlob, metadata, (pngramBlob) => {
+			injectMetadataIntoBlob(rawImageBlob, metadata, (error, pngramBlob) => {
+				if (error) {
+					return errorCallback(error);
+				}
 				verifyEncodedBlob(
 					pngramBlob,
 					() => {
@@ -353,9 +355,7 @@ class App extends Component {
 		// TODO: progress indication
 		const file = files[0];
 		if (file) {
-			const fileReader = new FileReader();
-			fileReader.onload = () => {
-				const arrayBuffer = fileReader.result;
+			file.arrayBuffer().then((arrayBuffer) => {
 				const uint8Array = new Uint8Array(arrayBuffer);
 				if (isPNG(uint8Array)) {
 					const metadata = readMetadataSync(uint8Array);
@@ -371,19 +371,20 @@ class App extends Component {
 						});
 					}
 				} else if (uint8Array[0] === "{".charCodeAt(0)) {
-					const fileReader = new FileReader();
-					fileReader.onload = () => {
-						this.loadDocumentFromJSON(fileReader.result, file.name, ()=> {
+					file.text().then((text) => {
+						this.loadDocumentFromJSON(text, file.name, ()=> {
 							tryPalette(file);
 						});
-					};
-					fileReader.readAsText(file);
+					}, (error)=> {
+						this.showError({error});
+					});
 				} else {
 					// TODO: handle plain image files, Photoshop/GIMP/Paint.NET documents, etc.
 					tryPalette(file);
 				}
-			};
-			fileReader.readAsArrayBuffer(file);
+			}, (error)=> {
+				this.showError({error});
+			});
 		}
 	}
 
@@ -785,6 +786,8 @@ class App extends Component {
 						revokeOldAndSetBlobUrl(pngramBlobUrl);
 					}, () => {
 						alert("Failed to save hybrid document (probably too large) - try the other save options.");
+					}, (error) => {
+						alert("Failed to save hybrid document - try the other save options.\n\n"+error);
 					});
 				} else if (saveType === "raw-image") {
 					createRawPNG((rawPngBlob) => {
