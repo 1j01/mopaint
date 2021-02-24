@@ -156,7 +156,9 @@ class DrawingCanvas extends Component {
 					ctx.stroke();
 					ctx.fill();
 				}
+				ctx.restore();
 				if (this.hoveredPathOp && !this.editingPathOp && !this.selectionBox) {
+					ctx.beginPath();
 					ctx.strokeStyle = "#f00";
 					ctx.lineWidth = 1.5;
 					ctx.moveTo(this.hoveredPathOp.points[0].x, this.hoveredPathOp.points[0].y);
@@ -165,7 +167,6 @@ class DrawingCanvas extends Component {
 					}
 					ctx.stroke();
 				}
-				ctx.restore();
 				if (this.selectionBox) {
 					ctx.save();
 					ctx.beginPath();
