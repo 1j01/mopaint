@@ -338,8 +338,10 @@ class App extends Component {
 			loadPalette(file, (error, palette) => {
 				if (error) {
 					this.showError({
-						message: "Failed to load file as a color palette.", // TODO: more generic message? uh? er? hm? uh...
-						error,
+						message: "This does not appear to be a Mopaint file or color palette.",
+						error, // @TODO: instead of generic error display,
+						// list the formats that were tried in a nice way, including non-palette formats,
+						// with palette formats as a group
 					});
 				} else {
 					this.setState(
