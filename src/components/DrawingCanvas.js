@@ -319,7 +319,7 @@ class DrawingCanvas extends Component {
 		this.pointerPos = this.toCanvasCoords(event);
 
 		if (selectedTool.name === "Edit Paths") {
-			if (Date.now() - this.doubleClickTimer < this.doubleClickTime) {
+			if (Date.now() - this.doubleClickTimer < this.doubleClickTime && (!this.editingPathOp || this.hoveredPathOp !== this.editingPathOp)) {
 				if (this.editingPathOp) {
 					this.editingPathOp = null;
 				} else {
@@ -329,24 +329,17 @@ class DrawingCanvas extends Component {
 				this.doubleClickTimer = 0;
 				this.draw();
 			} else {
-				this.doubleClickTimer = Date.now();
+				this.doubleClickTimer = (this.editingPathOp && this.hoveredPathOp === this.editingPathOp) ? 0 : Date.now();
 				if (this.hoveredPoints.length) {
-					// leaving open shift for potentially doing a range selection analogous to text editors / file browsers
-					if (event.ctrlKey) {
-						for (const hoveredPoint of this.hoveredPoints) {
-							if (this.selectedPoints.includes(hoveredPoint)) {
-								this.selectedPoints.splice(this.selectedPoints.indexOf(hoveredPoint));
-							} else {
-								this.selectedPoints.push(hoveredPoint);
-							}
-						}
-					} else {
-						this.selectedPoints = this.hoveredPoints;
-					}
+					// Leaving open Shift for potentially doing a range selection analogous to text editors / file browsers.
+					// (Inkscape uses Shift for this.)
+					this.selectPoints(this.hoveredPoints, event.ctrlKey);
 				}
 				if (this.editingPathOp ? this.hoveredPathOp !== this.editingPathOp : !this.hoveredPathOp) {
-					this.selectionBox = { x1: this.pointerPos.x, y1: this.pointerPos.y, x2: this.pointerPos.x, y2: this.pointerPos.y, };
-					this.selectedPoints = [];
+					this.selectionBox = { x1: this.pointerPos.x, y1: this.pointerPos.y, x2: this.pointerPos.x, y2: this.pointerPos.y };
+					// if (!event.ctrlKey) {
+					// 	this.selectedPoints = [];
+					// }
 				}
 			}
 		} else {
@@ -367,14 +360,27 @@ class DrawingCanvas extends Component {
 			document.body.style.cursor = this.canvasRef.current.style.cursor;
 		}
 	}
-	onPointerUp() {
+	selectPoints(hoveredPoints, toggle) {
+		if (toggle) {
+			for (const hoveredPoint of hoveredPoints) {
+				if (this.selectedPoints.includes(hoveredPoint)) {
+					this.selectedPoints.splice(this.selectedPoints.indexOf(hoveredPoint), 1);
+				} else {
+					this.selectedPoints.push(hoveredPoint);
+				}
+			}
+		} else {
+			this.selectedPoints = hoveredPoints;
+		}
+	}
+	onPointerUp(event) {
 		// TODO: add position if different? (is that possible? and does this matter?)
 		// this.pointerPos = this.toCanvasCoords(event);
 		// this.operation.points.push(this.pointerPos);
 
 		const { updateOperation } = this.props;
 		if (this.selectionBox) {
-			this.selectedPoints = this.hoveredPoints;
+			this.selectPoints(this.hoveredPoints, event.ctrlKey);
 			this.selectionBox = null;
 		}
 		if (!this.operation) {
