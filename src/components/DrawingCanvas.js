@@ -148,7 +148,9 @@ class DrawingCanvas extends Component {
 					ctx.beginPath();
 					ctx.translate(-1, -1);
 					for (const point of this.selectedPoints) {
-						ctx.rect(point.x, point.y, 5, 5);
+						if (!this.hoveredPoints.includes(point)) {
+							ctx.rect(point.x, point.y, 5, 5);
+						}
 					}
 					ctx.fillStyle = "#00f";
 					ctx.strokeStyle = "#fff";
