@@ -330,6 +330,20 @@ class DrawingCanvas extends Component {
 				this.draw();
 			} else {
 				this.doubleClickTimer = Date.now();
+				if (this.hoveredPoints.length) {
+					// leaving open shift for potentially doing a range selection analogous to text editors / file browsers
+					if (event.ctrlKey) {
+						for (const hoveredPoint of this.hoveredPoints) {
+							if (this.selectedPoints.includes(hoveredPoint)) {
+								this.selectedPoints.splice(this.selectedPoints.indexOf(hoveredPoint));
+							} else {
+								this.selectedPoints.push(hoveredPoint);
+							}
+						}
+					} else {
+						this.selectedPoints = this.hoveredPoints;
+					}
+				}
 				if (this.editingPathOp ? this.hoveredPathOp !== this.editingPathOp : !this.hoveredPathOp) {
 					this.selectionBox = { x1: this.pointerPos.x, y1: this.pointerPos.y, x2: this.pointerPos.x, y2: this.pointerPos.y, };
 					this.selectedPoints = [];
