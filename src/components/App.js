@@ -721,11 +721,14 @@ class App extends Component {
 	}
 
 	showSaveDialog() {
+		// Can't use showError generally here, as only a single dialog is supported as of writing,
+		// so it would replace the save dialog making it impossible to save.
+		/* eslint no-restricted-syntax: ["error", "CallExpression[callee.name='showError']"] */
 		const { documentID } = this.props;
 		const createPNGram = this.createPNGram.bind(this);
 		const createRawPNG = this.createRawPNG.bind(this);
 		const closeDialog = this.closeDialog.bind(this);
-		const showError = this.showError.bind(this);
+		const showErrorReplacingSaveDialog = this.showError.bind(this);
 		const state = this.state;
 
 		const a = document.createElement("a");
@@ -737,11 +740,17 @@ class App extends Component {
 			const [saveType, setSaveType] = useState("hybrid");
 			const [name, setName] = useState(props.defaultName);
 			const [blobUrl, setBlobUrlWithoutRevokingOld] = useState(null);
+			const [hybridFailed, setHybridFailed] = useState(false);
+
 			const revokeOldAndSetBlobUrl = (newBlobUrl) => {
 				setBlobUrlWithoutRevokingOld((oldBlobUrl) => {
 					URL.revokeObjectURL(oldBlobUrl);
 					return newBlobUrl;
 				});
+			};
+			const onHybridFailed = () => {
+				setHybridFailed(true);
+				setSaveType("program");
 			};
 			const inputRef = useRef(null);
 
@@ -787,9 +796,12 @@ class App extends Component {
 						const pngramBlobUrl = URL.createObjectURL(pngramBlob);
 						revokeOldAndSetBlobUrl(pngramBlobUrl);
 					}, () => {
-						alert("Failed to save hybrid document (probably too large) - try the other save options.");
-					}, (error) => {
-						alert("Failed to save hybrid document - try the other save options.\n\n"+error);
+						// Failed to save hybrid document. It's probably too large.
+						// @TODO: would it help to create PNG with UPNG.js?
+						onHybridFailed();
+					}, (/*error*/) => {
+						// alert("Failed to save hybrid document - try the other save options.\n\n"+error);
+						onHybridFailed();
 					});
 				} else if (saveType === "raw-image") {
 					createRawPNG((rawPngBlob) => {
@@ -807,7 +819,8 @@ class App extends Component {
 					const programBlobUrl = URL.createObjectURL(programSourceBlob);
 					revokeOldAndSetBlobUrl(programBlobUrl);
 				} else {
-					showError({ message: `This shouldn't happen, saveType=${saveType}`, requestBugReport: true });
+					// eslint-disable-next-line no-restricted-syntax
+					showErrorReplacingSaveDialog({ message: `This shouldn't happen, saveType=${saveType}`, requestBugReport: true });
 				}
 			}, [saveType]);
 
@@ -839,7 +852,7 @@ class App extends Component {
 										value={saveType}
 										onChange={(event) => setSaveType(event.target.value)}
 									>
-										<option value="hybrid">Hybrid Mopaint Document and Image (.png)</option>
+										<option value="hybrid">{hybridFailed ? "⚠️ " : ""}Hybrid Mopaint Document and Image (.png)</option>
 										<option value="program">Mopaint Document (.mop)</option>
 										<option value="raw-image">Raw Image (.png)</option>
 										{/*<option value="hybrid">Hybrid Mopaint Program and Image (.png)</option>*/}
@@ -869,6 +882,7 @@ class App extends Component {
 		}, (/*error*/) => {
 			this.showDialog(<SaveDialog defaultName="Drawing" />);
 		});
+		/* eslint no-restricted-syntax: ["off"] */
 	}
 }
 
