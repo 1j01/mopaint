@@ -354,7 +354,7 @@ class DrawingCanvas extends Component {
 					// (Inkscape uses Shift for this.)
 					this.selectPoints(this.hoveredPoints, event.ctrlKey);
 				}
-				if (this.editingPathOp ? this.hoveredPathOp !== this.editingPathOp : !this.hoveredPathOp) {
+				if (this.editingPathOp ? (this.hoveredPoints.length === 0 && this.hoveredPathOp !== this.editingPathOp) : !this.hoveredPathOp) {
 					this.selectionBox = { x1: this.pointerPos.x, y1: this.pointerPos.y, x2: this.pointerPos.x, y2: this.pointerPos.y };
 					// if (!event.ctrlKey) {
 					// 	this.selectedPoints = [];
