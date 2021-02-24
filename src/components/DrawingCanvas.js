@@ -5,6 +5,54 @@ import { draw } from "../engine.js";
 import { generateID } from "../helpers.js";
 import LoadingIndicator from "./LoadingIndicator";
 
+
+const distanceSquared = (v, w) => (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
+const distance = (v, w) => Math.sqrt(distanceSquared(v, w));
+const distanceToLineSegmentSquared = (p, v, w) => {
+	const l2 = distanceSquared(v, w);
+	if (l2 === 0) {
+		return distanceSquared(p, v);
+	}
+	let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+	t = Math.max(0, Math.min(1, t));
+	return distanceSquared(p, {
+		x: v.x + t * (w.x - v.x),
+		y: v.y + t * (w.y - v.y),
+	});
+};
+const distanceToLineSegment = (p, v, w) =>
+	Math.sqrt(distanceToLineSegmentSquared(p, v, w));
+
+const distanceToPath = (pathOp, fromPoint) => {
+	let closestDist = Infinity;
+
+	for (let i = 1; i < pathOp.points.length; i += 1) {
+		const a = pathOp.points[i - 1];
+		const b = pathOp.points[i];
+		const dist = distanceToLineSegment(fromPoint, a, b);
+		// dist = Math.max(0, dist - segment.width / 2) if segment.width
+		closestDist = Math.min(closestDist, dist);
+	}
+
+	// Case 1: single-point path, should be selectable.
+	// Case 2:
+	// A
+	// |
+	// |
+	// | x C----------D
+	// |
+	// |
+	// B
+	// Should probably select the line with the nearer point,
+	// since you might be clicking on visible points to try to select something.
+	for (const point of pathOp.points) {
+		const dist = distance(fromPoint, point);
+		// dist = Math.max(0, dist - segment.radius) if segment.radius or point.radius
+		closestDist = Math.min(closestDist, dist);
+	}
+
+	return closestDist;
+};
 class DrawingCanvas extends Component {
 	constructor(props) {
 		super(props);
@@ -126,15 +174,21 @@ class DrawingCanvas extends Component {
 		updateOperation(this.operation);
 	}
 	findPathOp(pos) {
-		// TODO: a sense of occlusion, path width, etc.
+		// TODO: a sense of path width, shape, symmetry, occlusion etc.
+		const minGrabDist = 10;
+		let closestDist = Infinity;
+		let closestOp = null;
 		for (const op of this.props.operations) {
 			if (op.points) {
-				for (const point of op.points) {
-					if (Math.hypot(point.x - pos.x, point.y - pos.y) < 10) {
-						return op;
-					}
+				const dist = distanceToPath(op, pos);
+				if (dist < minGrabDist && dist < closestDist) {
+					closestOp = op;
+					closestDist = dist;
 				}
 			}
+		}
+		if (closestOp) {
+			return closestOp;
 		}
 	}
 	onPointerDown(event) {
