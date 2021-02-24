@@ -324,12 +324,14 @@ class DrawingCanvas extends Component {
 				} else {
 					this.editingPathOp = this.hoveredPathOp;
 				}
+				this.selectedPoints = [];
 				this.doubleClickTimer = 0;
 				this.draw();
 			} else {
 				this.doubleClickTimer = Date.now();
-				if (!this.hoveredPathOp) {
+				if (this.editingPathOp ? this.hoveredPathOp !== this.editingPathOp : !this.hoveredPathOp) {
 					this.selectionBox = { x1: this.pointerPos.x, y1: this.pointerPos.y, x2: this.pointerPos.x, y2: this.pointerPos.y, };
+					this.selectedPoints = [];
 				}
 			}
 		} else {
