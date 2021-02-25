@@ -89,10 +89,17 @@ class DrawingCanvas extends Component {
 				hashInDocumentByOperation: this.hashInDocumentByOperation,
 			});
 
+			const canvas = this.canvasRef.current;
+			const ctx = canvas.getContext("2d");
+
+			ctx.save();
+			ctx.fillStyle = "#fff";
+			ctx.globalCompositeOperation = "destination-over";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.restore();
+
 			// show preview dots for symmetry if the pointer is over the canvas OR the pointer is down, actively interacting with the canvas
 			if ((this.pointerOverCanvas || this.operation) && this.props.selectedTool.getSymmetryPoints && this.pointerPos) {
-				const canvas = this.canvasRef.current;
-				const ctx = canvas.getContext("2d");
 				const symmetryPoints = this.props.selectedTool.getSymmetryPoints(ctx, this.pointerPos);
 				for (const point of symmetryPoints) {
 					ctx.beginPath();
@@ -106,8 +113,6 @@ class DrawingCanvas extends Component {
 			}
 
 			if (this.props.selectedTool.name === "Edit Paths") {
-				const canvas = this.canvasRef.current;
-				const ctx = canvas.getContext("2d");
 				// if (this.pointerOverCanvas) assert(this.pointerPos);
 				this.hoveredPathOp = this.pointerOverCanvas ? this.closestPathOp(this.pointerPos) : null;
 				// const hoveredPoint = this.pointerPos ? (this.hoveredPathOp ? this.closestPoint(this.pointerPos, [this.hoveredPathOp]) : this.closestPoint(this.pointerPos, this.props.operations))?.closestPoint : null;
