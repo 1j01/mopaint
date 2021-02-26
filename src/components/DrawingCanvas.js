@@ -321,6 +321,11 @@ class DrawingCanvas extends Component {
 		}
 		this.draw();
 	}
+	deselect() {
+		this.editingPathOp = null;
+		this.selectedPoints = [];
+		this.draw();
+	}
 	onPointerDown(event) {
 		if (event.which !== 1) {
 			return;

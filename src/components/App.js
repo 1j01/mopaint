@@ -538,6 +538,7 @@ class App extends Component {
 			},
 			this.saveDebounced.bind(this),
 		);
+		this.drawingCanvasComponent.deselect();
 	}
 
 	redo() {
@@ -552,6 +553,7 @@ class App extends Component {
 			},
 			this.saveDebounced.bind(this),
 		);
+		this.drawingCanvasComponent.deselect();
 	}
 
 	goToHistoryNode(targetHistoryNode) {
@@ -566,6 +568,7 @@ class App extends Component {
 			},
 			this.saveDebounced.bind(this),
 		);
+		this.drawingCanvasComponent.deselect();
 	}
 
 	render() {
