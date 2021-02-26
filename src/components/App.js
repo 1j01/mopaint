@@ -270,7 +270,7 @@ class App extends Component {
 				} else {
 					mismatchedCallback();
 				}
-			}, (error)=> {
+			}, (error) => {
 				errorCallback(error);
 			});
 		};
@@ -335,7 +335,7 @@ class App extends Component {
 	}
 
 	handleDroppedOrOpenedFiles(files) {
-		const tryPalette = (file)=> {
+		const tryPalette = (file) => {
 			loadPalette(file, (error, palette) => {
 				if (error) {
 					this.showError({
@@ -375,18 +375,18 @@ class App extends Component {
 					}
 				} else if (uint8Array[0] === "{".charCodeAt(0)) {
 					file.text().then((text) => {
-						this.loadDocumentFromJSON(text, file.name, ()=> {
+						this.loadDocumentFromJSON(text, file.name, () => {
 							tryPalette(file);
 						});
-					}, (error)=> {
-						this.showError({error});
+					}, (error) => {
+						this.showError({ error });
 					});
 				} else {
 					// TODO: handle plain image files, Photoshop/GIMP/Paint.NET documents, etc.
 					tryPalette(file);
 				}
-			}, (error)=> {
-				this.showError({error});
+			}, (error) => {
+				this.showError({ error });
 			});
 		}
 	}
@@ -875,7 +875,7 @@ class App extends Component {
 							onClick={saveFileAndCloseDialog}
 							disabled={!blobUrl}
 						>
-							{!blobUrl ? <LoadingIndicator/> : null}
+							{!blobUrl ? <LoadingIndicator /> : null}
 							Save
 						</button>
 					}

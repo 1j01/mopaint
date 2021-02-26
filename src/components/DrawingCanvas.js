@@ -280,11 +280,11 @@ class DrawingCanvas extends Component {
 			return { closestPoint, closestPointOp };
 		}
 	}
-	pointsWithinSelectionBox(operations=this.props.operations) {
+	pointsWithinSelectionBox(operations = this.props.operations) {
 		if (!this.selectionBox) {
 			return [];
 		}
-		const {x1, y1, x2, y2} = this.selectionBox;
+		const { x1, y1, x2, y2 } = this.selectionBox;
 		const points = [];
 		for (const op of operations) {
 			if (op.points) {
