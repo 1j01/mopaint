@@ -75,6 +75,17 @@ class DrawingCanvas extends Component {
 		this.cache = {};
 		// hashes of operations up to and including the given operation in the document
 		this.hashInDocumentByOperation = new Map();
+
+		const transparencyPatternCanvas = document.createElement("canvas");
+		const transparencyPatternContext = transparencyPatternCanvas.getContext("2d");
+		transparencyPatternCanvas.width = 16;
+		transparencyPatternCanvas.height = 16;
+		transparencyPatternContext.fillStyle = "#fff";
+		transparencyPatternContext.fillRect(0, 0, transparencyPatternCanvas.width, transparencyPatternCanvas.height);
+		transparencyPatternContext.fillStyle = "#ccc";
+		transparencyPatternContext.fillRect(0, 0, transparencyPatternCanvas.width / 2, transparencyPatternCanvas.height / 2);
+		transparencyPatternContext.fillRect(transparencyPatternCanvas.width / 2, transparencyPatternCanvas.height / 2, transparencyPatternCanvas.width / 2, transparencyPatternCanvas.height / 2);
+		this.transparencyPattern = transparencyPatternContext.createPattern(transparencyPatternCanvas, "repeat");
 	}
 	draw() {
 		if (this.animationFrameID) {
@@ -93,7 +104,7 @@ class DrawingCanvas extends Component {
 			const ctx = canvas.getContext("2d");
 
 			ctx.save();
-			ctx.fillStyle = "#fff";
+			ctx.fillStyle = this.transparencyPattern;
 			ctx.globalCompositeOperation = "destination-over";
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 			ctx.restore();
