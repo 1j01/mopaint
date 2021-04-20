@@ -61,33 +61,40 @@ it("should resolve metahistory", () => {
 
 function compute({ program, cache, goalNode }) {
 
-	resolveMetaHistory(program);
+	// resolveMetaHistory(program);
 
 }
 
 function deleteHistory({ opsByID, cache, stepsToDelete }) {
 
-	let computeNeeded = false;
-	// for (const [id, op] of Object.entries(opsByID)) {
-	// 	if (cache[id]) {
+	// TODO: what does it mean to delete history entry without deleting parent?
+	// should it just implicitly delete isolated parents?
 
-	// 	}
-	// }
-	const dependentOpEntries = Object.entries(opsByID).filter(([op, id]) =>
+	let computeNeeded = false;
+	const dependentOpEntries = Object.entries(opsByID).filter(([id, op]) =>
 		stepsToDelete.includes(id)
 	);
-	// const dependencyReplacements = dependentOpEntries.map(([op, id]) => {
-
-	// });
-	for (const [op, id] of dependentOpEntries) {
-
+	const dependencyReplacements = dependentOpEntries.map(([id, oldOp]) => {
+		let value = cache[id];
+		if (!value) {
+			if (oldOp.type === "array" || oldOp.type === "data") {
+				value = oldOp.data;
+			}
+		}
 		if (cache[id]) {
-			delete opsByID[id];
-			// delete cache[id];
+			const newOp = { value };
+			newOp.type = newOp.value instanceof Array ? "array" : "data";
+			return { id, oldOp, newOp };
 		} else {
 			computeNeeded = true;
 		}
-
+	});
+	if (computeNeeded) {
+		return { computeNeeded: true };
+	}
+	for (const { id, oldOp, newOp } of dependencyReplacements) {
+		delete opsByID[id];
+		delete cache[id];
 	}
 
 
@@ -111,18 +118,19 @@ function crop(array, x1, x2) {
 
 
 /* global it:false expect:false */
-describe("compute", () => {
-	test("should use cache", () => {
-		compute([], { someCachedID: "some cached value" });
-	});
-});
+// describe("compute", () => {
+// 	test("should use cache", () => {
+// 		const program = ...;
+// 		expect(compute(program, { someCachedID: "some cached value" })).toEqual("some cached value");
+// 	});
+// });
 
 test("history deletion", () => {
 	// var program = {
 	// 	image: [loadImageFile, [0, 0, 0, 0, 255, 255, 255, 255, 255, 0, 255, 255]],
 	// 	cropped: [crop, "@@@@image"],
 	// };
-	var program = {
+	var opsByID = {
 		imageFileData: {
 			type: "array",
 			data: [/*magic bytes (not a real format)*/0, 0, 0, 0, /*pixel data*/255, 255, 255, 255, 255, 0, 255, 255],
@@ -152,6 +160,13 @@ test("history deletion", () => {
 		"imageFileData",
 		"imageData",
 	];
-	expect(deleteHistory({ program, stepsToDelete }))
+
+	expect(deleteHistory({ opsByID, cache: {}, stepsToDelete }))
+		.toEqual({ computeNeeded: true });
+
+	const cache = {
+		imageData: [255, 255, 255, 255, 255, 0, 255, 255],
+	};
+	expect(deleteHistory({ opsByID, cache, stepsToDelete }))
 		.toMatchSnapshot();
 });
