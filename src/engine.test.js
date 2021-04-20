@@ -94,12 +94,12 @@ function deleteHistory({ opsByID, cache, stepsToDelete }) {
 	if (computeNeeded) {
 		return { computeNeeded: true };
 	}
-	return dependencyReplacements;
-	// for (const { id, oldOp, newOp } of dependencyReplacements) {
-	// 	delete opsByID[id];
-	// 	delete cache[id];
-	// }
-
+	// return dependencyReplacements;
+	for (const { id, oldOp, newOp } of dependencyReplacements) {
+		delete opsByID[id];
+		delete cache[id];
+	}
+	return { computeNeeded: false };
 
 	// TODO: non-destructive (DDDBD), prereq: metahistory
 
@@ -171,5 +171,6 @@ test("history deletion", () => {
 		imageData: [255, 255, 255, 255, 255, 0, 255, 255],
 	};
 	expect(deleteHistory({ opsByID, cache, stepsToDelete }))
-		.toMatchSnapshot();
+		.toEqual({ computeNeeded: false });
+	expect(opsByID).toMatchSnapshot();
 });
