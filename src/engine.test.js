@@ -1,4 +1,12 @@
 
+
+// TODO: what does it look like if it's more goal oriented?
+// TODO: is cache part of the program object?
+//    I want to store cache in memory, and in exported files and over the network in a peer to peer setting,
+//    although with different heuristics
+// is the step pointers part of the program object?
+
+
 function resolveMetaHistory(metaHistory) {
 
 	const maxMHI = metaHistory.reduce((maxMHI, op) => Math.max(maxMHI, op.mhi), 0);
@@ -57,9 +65,31 @@ function compute({ program, cache, goalNode }) {
 
 }
 
-function deleteHistory({ program, cache, stepsToDelete }) {
+function deleteHistory({ opsByID, cache, stepsToDelete }) {
 
-	// TODO: delete history, prereq: cache being populated?
+	let computeNeeded = false;
+	// for (const [id, op] of Object.entries(opsByID)) {
+	// 	if (cache[id]) {
+
+	// 	}
+	// }
+	const dependentOpEntries = Object.entries(opsByID).filter(([op, id]) =>
+		stepsToDelete.includes(id)
+	);
+	// const dependencyReplacements = dependentOpEntries.map(([op, id]) => {
+
+	// });
+	for (const [op, id] of dependentOpEntries) {
+
+		if (cache[id]) {
+			delete opsByID[id];
+			// delete cache[id];
+		} else {
+			computeNeeded = true;
+		}
+
+	}
+
 
 	// TODO: non-destructive (DDDBD), prereq: metahistory
 
@@ -81,10 +111,13 @@ function crop(array, x1, x2) {
 
 
 /* global it:false expect:false */
-// it("compute", () => {
-// });
+describe("compute", () => {
+	test("should use cache", () => {
+		compute([], { someCachedID: "some cached value" });
+	});
+});
 
-it("history deletion", () => {
+test("history deletion", () => {
 	// var program = {
 	// 	image: [loadImageFile, [0, 0, 0, 0, 255, 255, 255, 255, 255, 0, 255, 255]],
 	// 	cropped: [crop, "@@@@image"],
