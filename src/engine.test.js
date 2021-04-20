@@ -76,12 +76,14 @@ function deleteHistory({ opsByID, cache, stepsToDelete }) {
 	);
 	const dependencyReplacements = dependentOpEntries.map(([id, oldOp]) => {
 		let value = cache[id];
+		// overcomplicated: this doesn't need to be in here
+		// can just use cache
 		if (!value) {
 			if (oldOp.type === "array" || oldOp.type === "data") {
 				value = oldOp.data;
 			}
 		}
-		if (cache[id]) {
+		if (value) {
 			const newOp = { value };
 			newOp.type = newOp.value instanceof Array ? "array" : "data";
 			return { id, oldOp, newOp };
@@ -92,10 +94,11 @@ function deleteHistory({ opsByID, cache, stepsToDelete }) {
 	if (computeNeeded) {
 		return { computeNeeded: true };
 	}
-	for (const { id, oldOp, newOp } of dependencyReplacements) {
-		delete opsByID[id];
-		delete cache[id];
-	}
+	return dependencyReplacements;
+	// for (const { id, oldOp, newOp } of dependencyReplacements) {
+	// 	delete opsByID[id];
+	// 	delete cache[id];
+	// }
 
 
 	// TODO: non-destructive (DDDBD), prereq: metahistory

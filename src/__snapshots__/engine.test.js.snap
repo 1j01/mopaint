@@ -1,7 +1,66 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`history deletion 1`] = `
-Object {
-  "computeNeeded": true,
-}
+Array [
+  Object {
+    "id": "imageFileData",
+    "newOp": Object {
+      "type": "array",
+      "value": Array [
+        0,
+        0,
+        0,
+        0,
+        255,
+        255,
+        255,
+        255,
+        255,
+        0,
+        255,
+        255,
+      ],
+    },
+    "oldOp": Object {
+      "data": Array [
+        0,
+        0,
+        0,
+        0,
+        255,
+        255,
+        255,
+        255,
+        255,
+        0,
+        255,
+        255,
+      ],
+      "type": "array",
+    },
+  },
+  Object {
+    "id": "imageData",
+    "newOp": Object {
+      "type": "array",
+      "value": Array [
+        255,
+        255,
+        255,
+        255,
+        255,
+        0,
+        255,
+        255,
+      ],
+    },
+    "oldOp": Object {
+      "function": [Function],
+      "inputs": Object {
+        "imageFileData": "imageFileData",
+      },
+      "type": "call",
+    },
+  },
+]
 `;
