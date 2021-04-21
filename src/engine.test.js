@@ -120,7 +120,7 @@ function crop(array, x1, x2) {
 
 
 
-/* global it:false expect:false */
+/* global it:false expect:false test:false describe:false */
 // describe("compute", () => {
 // 	test("should use cache", () => {
 // 		const program = ...;
@@ -128,49 +128,97 @@ function crop(array, x1, x2) {
 // 	});
 // });
 
-test("history deletion", () => {
-	// var program = {
-	// 	image: [loadImageFile, [0, 0, 0, 0, 255, 255, 255, 255, 255, 0, 255, 255]],
-	// 	cropped: [crop, "@@@@image"],
-	// };
-	var opsByID = {
-		imageFileData: {
-			type: "array",
-			data: [/*magic bytes (not a real format)*/0, 0, 0, 0, /*pixel data*/255, 255, 255, 255, 255, 0, 255, 255],
-		},
-		imageData: {
-			type: "call",
-			function: loadImageFile,
-			inputs: {
-				imageFileData: "imageFileData",
+describe("history deletion", () => {
+	const getTestProgram = () => {
+		return {
+			imageFileData: {
+				type: "array",
+				data: [/*magic bytes (not a real format)*/0, 0, 0, 0, /*pixel data*/255, 255, 255, 255, 255, 0, 255, 255],
 			},
-			// outputs: {
-			// imageData: "imageData",
-			// },
-		},
-		croppedImageData: {
-			type: "call",
-			function: crop,
-			inputs: {
-				imageData: "imageData",
+			imageData: {
+				type: "call",
+				function: loadImageFile,
+				inputs: {
+					imageFileData: "imageFileData",
+				},
+				// outputs: {
+				// imageData: "imageData",
+				// },
 			},
-			// outputs: {
-			// croppedImageData: "croppedImageData",
-			// },
-		},
+			croppedImageData: {
+				type: "call",
+				function: crop,
+				inputs: {
+					imageData: "imageData",
+					x1: 4,
+					x2: 8,
+				},
+				// outputs: {
+				// croppedImageData: "croppedImageData",
+				// },
+			},
+		};
 	};
-	const stepsToDelete = [
-		"imageFileData",
-		"imageData",
-	];
 
-	expect(deleteHistory({ opsByID, cache: {}, stepsToDelete }))
-		.toEqual({ computeNeeded: true });
+	test("when cache is not ready, returns computeNeeded: true", () => {
+		var opsByID = getTestProgram();
+		const stepsToDelete = [
+			"imageFileData",
+			"imageData",
+		];
+		expect(deleteHistory({
+			opsByID: getTestProgram(),
+			cache: {},
+			stepsToDelete
+		}))
+			.toEqual({ computeNeeded: true });
 
-	const cache = {
-		imageData: [255, 255, 255, 255, 255, 0, 255, 255],
-	};
-	expect(deleteHistory({ opsByID, cache, stepsToDelete }))
-		.toEqual({ computeNeeded: false });
-	expect(opsByID).toMatchSnapshot();
+		expect(deleteHistory({
+			opsByID,
+			cache: {
+				imageData: [255, 255, 255, 255, 255, 0, 255, 255],
+			},
+			stepsToDelete,
+		}))
+			.toEqual({ computeNeeded: true });
+	});
+	test("when cache is ready, deletes history", () => {
+		var opsByID = getTestProgram();
+		expect(deleteHistory({
+			opsByID: getTestProgram(),
+			cache: {
+				croppedImageData: [255, 0, 255, 255],
+			},
+			stepsToDelete: [
+				"imageFileData",
+				"imageData",
+			],
+		}))
+			.toEqual({ computeNeeded: false });
+		expect(opsByID).toEqual({
+			croppedImageData: {
+				type: "array",
+				data: [255, 0, 255, 255],
+			},
+		});
+	});
+	test("when parent but not parent of parent is specified for deletion, ???????", () => {
+		var opsByID = getTestProgram();
+		expect(deleteHistory({
+			opsByID: getTestProgram(),
+			cache: {
+				croppedImageData: [255, 0, 255, 255],
+			},
+			stepsToDelete: [
+				"imageFileData",
+			],
+		}))
+			.toEqual({ computeNeeded: false });
+		expect(opsByID).toEqual({
+			croppedImageData: {
+				type: "array",
+				data: [255, 0, 255, 255],
+			},
+		});
+	});
 });
