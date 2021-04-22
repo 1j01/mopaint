@@ -59,11 +59,12 @@ it("should resolve metahistory", () => {
 });
 
 
-function compute({ program, cache, goalNode }) {
-
-	// resolveMetaHistory(program);
-
-}
+// function compute({ program, cache, goalNode }) {
+// 	const steps = resolveMetaHistory(program);
+// 	for (const step of step) {
+// 		step.execute();
+// 	}
+// }
 
 function deleteHistory({ opsByID, cache, stepsToDelete }) {
 
@@ -77,12 +78,12 @@ function deleteHistory({ opsByID, cache, stepsToDelete }) {
 	const dependencyReplacements = dependentOpEntries.map(([id, oldOp]) => {
 		let value = cache[id];
 		// overcomplicated: this doesn't need to be in here
-		// can just use cache
-		if (!value) {
-			if (oldOp.type === "array" || oldOp.type === "data") {
-				value = oldOp.data;
-			}
-		}
+		// can just use cache; cache can reference same objects, so it's not using much extra memory
+		// if (!value) {
+		// 	if (oldOp.type === "array" || oldOp.type === "data") {
+		// 		value = oldOp.data;
+		// 	}
+		// }
 		if (value) {
 			const newOp = { value };
 			newOp.type = newOp.value instanceof Array ? "array" : "data";
