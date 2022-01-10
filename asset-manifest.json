@@ -1,26 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.e3505cd9.chunk.css",
-    "main.js": "/static/js/main.dca207d5.chunk.js",
-    "main.js.map": "/static/js/main.dca207d5.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.211eeef3.js",
-    "runtime-main.js.map": "/static/js/runtime-main.211eeef3.js.map",
-    "static/js/2.c9db846f.chunk.js": "/static/js/2.c9db846f.chunk.js",
-    "static/js/2.c9db846f.chunk.js.map": "/static/js/2.c9db846f.chunk.js.map",
+    "main.css": "/static/css/main.c6cbf5cf.css",
+    "main.js": "/static/js/main.ba21c0db.js",
+    "static/media/flaticons-fill-bucket-flipped.svg": "/static/media/flaticons-fill-bucket-flipped.06bf323f5ca3e928e73e8c1312801355.svg",
+    "static/media/file-picture-multiple-importable.svg": "/static/media/file-picture-multiple-importable.4393f4828bdfd0baaf375bc75eb77b4f.svg",
+    "static/media/document-open-importable.svg": "/static/media/document-open-importable.6c3a0b1ac216ce90b8d13517a8e56749.svg",
+    "static/media/document-new-importable.svg": "/static/media/document-new-importable.138e383a97e1dcf101ffa0f27b56fc8f.svg",
+    "static/media/document-new-16px-importable.svg": "/static/media/document-new-16px-importable.2ded795ab32c25bff7a7709872b5df2e.svg",
     "index.html": "/index.html",
-    "static/css/main.e3505cd9.chunk.css.map": "/static/css/main.e3505cd9.chunk.css.map",
-    "static/js/2.c9db846f.chunk.js.LICENSE.txt": "/static/js/2.c9db846f.chunk.js.LICENSE.txt",
-    "static/media/document-new-16px-importable.2ded795a.svg": "/static/media/document-new-16px-importable.2ded795a.svg",
-    "static/media/document-new-importable.138e383a.svg": "/static/media/document-new-importable.138e383a.svg",
-    "static/media/document-open-importable.6c3a0b1a.svg": "/static/media/document-open-importable.6c3a0b1a.svg",
-    "static/media/document-save-importable.ddfaa4d7.svg": "/static/media/document-save-importable.ddfaa4d7.svg",
-    "static/media/file-picture-multiple-importable.4393f482.svg": "/static/media/file-picture-multiple-importable.4393f482.svg",
-    "static/media/flaticons-fill-bucket-flipped.06bf323f.svg": "/static/media/flaticons-fill-bucket-flipped.06bf323f.svg"
+    "static/media/document-save-importable.svg": "/static/media/document-save-importable.ddfaa4d7a821b4518de3ca16e3b8ce54.svg",
+    "static/media/edit-path-importable.svg": "/static/media/edit-path-importable.44e955ae8b010da788a9b233a684037c.svg",
+    "main.c6cbf5cf.css.map": "/static/css/main.c6cbf5cf.css.map",
+    "main.ba21c0db.js.map": "/static/js/main.ba21c0db.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.211eeef3.js",
-    "static/js/2.c9db846f.chunk.js",
-    "static/css/main.e3505cd9.chunk.css",
-    "static/js/main.dca207d5.chunk.js"
+    "static/css/main.c6cbf5cf.css",
+    "static/js/main.ba21c0db.js"
   ]
 }
