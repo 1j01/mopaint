@@ -66,7 +66,7 @@ it("should resolve metahistory", () => {
 // 	}
 // }
 
-function deleteHistory({ opsByID, cache, stepsToDelete }) {
+function squashHistory({ opsByID, cache, stepsToDelete }) {
 
 	// TODO: what does it mean to delete history entry without deleting parent?
 	// should it just implicitly delete isolated parents?
@@ -167,14 +167,14 @@ describe("history deletion", () => {
 			"imageFileData",
 			"imageData",
 		];
-		expect(deleteHistory({
+		expect(squashHistory({
 			opsByID: getTestProgram(),
 			cache: {},
 			stepsToDelete
 		}))
 			.toEqual({ computeNeeded: true });
 
-		expect(deleteHistory({
+		expect(squashHistory({
 			opsByID,
 			cache: {
 				imageData: [255, 255, 255, 255, 255, 0, 255, 255],
@@ -185,7 +185,7 @@ describe("history deletion", () => {
 	});
 	test("when cache is ready, deletes history", () => {
 		var opsByID = getTestProgram();
-		expect(deleteHistory({
+		expect(squashHistory({
 			opsByID: getTestProgram(),
 			cache: {
 				croppedImageData: [255, 0, 255, 255],
@@ -205,7 +205,7 @@ describe("history deletion", () => {
 	});
 	test("when parent but not parent of parent is specified for deletion, ???????", () => {
 		var opsByID = getTestProgram();
-		expect(deleteHistory({
+		expect(squashHistory({
 			opsByID: getTestProgram(),
 			cache: {
 				croppedImageData: [255, 0, 255, 255],
