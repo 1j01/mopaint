@@ -8,6 +8,8 @@ These are just IDEAS for a possible file format, this doesn't reflect the curren
 	- Binary data chunks also specify the length in bytes for optimization (when possible), but this is optional
 	- Case-insensitive? But canonically things should be a certain way, mostly title case
 	- `#` comments?
+	- Good for understandability, fixing corrupted files, extracting data with dumb scripts, etc.
+	- Might want binary format for performance
 - At least a little bit self documenting
 	- Include a link to the spec
 		- This link should be updated when forking the format
