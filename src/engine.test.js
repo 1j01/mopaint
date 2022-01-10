@@ -18,7 +18,7 @@ function resolveMetaHistory(metaHistory) {
 			if (op.mhi === mhi) {
 				// console.log(op, mhi);
 				// TODO: handle all op types?
-				// TODO: make sure it matches a target, and the metahistory index of the target is less, etc.
+				// TODO: make sure it matches a target, and the meta-history index of the target is less, etc.
 				if (op.type === "undo") {
 					for (const otherOp of mutableMH) {
 						if (otherOp.id === op.target) {
@@ -43,7 +43,7 @@ function resolveMetaHistory(metaHistory) {
 	return mutableMH;
 }
 
-it("should resolve metahistory", () => {
+it("should resolve meta-history", () => {
 	expect(resolveMetaHistory([
 		{ id: "abc1", mhi: 0, type: "line", name: "Draw Line", color: "blue", },
 		{ id: "abc2", mhi: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green" },
@@ -102,7 +102,7 @@ function squashHistory({ opsByID, cache, stepsToDelete }) {
 	}
 	return { computeNeeded: false };
 
-	// TODO: non-destructive (DDDBD), prereq: metahistory
+	// TODO: non-destructive (DDDBD), prereq: meta-history
 
 	// return {
 	// 	permanentlyDelete: function () {

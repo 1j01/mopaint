@@ -167,7 +167,7 @@ class App extends Component {
 					: "document";
 				// Enable one of these lines to emit Error Message Itself Test (EMIT) errors (I'm coining that! 😛)
 				// error = new Error(); error.name = "QuotaExceededError";
-				// error = new Error("asdftest"); error.name = "QuotaExceededError";
+				// error = new Error("EMIT"); error.name = "QuotaExceededError";
 				if (error) {
 					// TODO: investigate these different error cases (in different browsers), and improve the messages
 					// This "QuotaExceededError" without a message seems to happen in Chrome when the disk is full
@@ -489,8 +489,8 @@ class App extends Component {
 
 	// TODO: collaborative sync with undo/redo, showing operations from other users in realtime
 	// Note: should be able to support time-based tools in a reproducible way
-	// with timestamps and periodic updates to the lastest timestamp
-	// and support psuedorandomness by seeding from operation ID
+	// with timestamps and periodic updates to the latest timestamp value
+	// and support pseudorandomness by seeding from operation ID
 	// TODO: move this state manipulation stuff out of the component
 	addOperation(operation) {
 

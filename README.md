@@ -42,7 +42,7 @@ Limitations:
 - Instead of having "Clipping Masks", in addition to being able to select a region and delete (for a one-off), you can just do the latter and then "edit earlier" and it'll live-update.
 - (There can still be tools/UI that help you set up masks etc., but the document structure will be much more general. Part of the point is that you could do something like that yourself, even something new (it doesn't need to be built-in), and, there isn't a feature that *doesn't* have an equivalent "Smart" feature where you can edit source material and see results live update.)
 - Texturing 3D models by drawing directly on them would be fun (like [Chameleon][], [Chameleon.js][], [SculptGL][], [Paint 3D][]).
-- If we can do texturing on 3D models, it should be possible to extend that to drawing on tesselated canvases, to create different types of repeating patterns, like [EscherSketch][].
+- If we can do texturing on 3D models, it should be possible to extend that to drawing on tessellated canvases, to create different types of repeating patterns, like [EscherSketch][].
 - Everything can be accessible by command (like the ideal of Sublime Text, that it doesn't achieve, instead having some things only accessible in menus), but not just by typing, but by speech input too if you want, with natural language understanding, and that understanding can apply to typed commands as well. It can be conversational, disambiguating and clarifying commands, filling in parameters. Make no mistake of thinking the system should end as a list of commands to select; functions need parameters.
 	- Parameters can be answered graphically, with a slider or by selecting or drawing things, or textually (speech/typing).
 	- "Draw some trees next to the house... All around it... About fifty... No, that's too many... Make them fir trees."
@@ -56,6 +56,7 @@ Limitations:
 
 What might we stand to gain?
 
+<!-- cspell:disable -->
 - **m**obily **o**perable
 - **m**ultiuser **o**nline
 - **mo**dern
@@ -75,6 +76,8 @@ Mopaint. More than paint.
 Mo' painters, mo' fun! Mopaint.
 
 **m**aking **o**ssum **p**ossum **a**rtistic **i**nterfaces & **n**ovel **t**ools, that's my M.O.
+
+<!-- cspell:enable -->
 
 The file extension could be `.mop`, and it could stand for Mopaint Project,
 and/or relate to tools, like a mop (which is sort of like a big brush) -

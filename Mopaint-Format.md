@@ -7,11 +7,11 @@ These are just IDEAS for a possible file format, this doesn't reflect the curren
 	- Binary data chunks are delimited with random ID tokens chosen to guarantee their absence within the data
 	- Binary data chunks also specify the length in bytes for optimization (when possible), but this is optional
 	- Case-insensitive? But canonically things should be a certain way, mostly title case
-	- `#` coments?
+	- `#` comments?
 - At least a little bit self documenting
 	- Include a link to the spec
 		- This link should be updated when forking the format
-- Append-only log like, good for filesytem/storage performance and streaming over the network
+- Append-only log like, good for filesystem/storage performance and streaming over the network
 - Documents can be split across multiple files, and parts stored on IPFS or other peer to peer technology
 	- Peers can request parts that are most needed
 - Self-container format, self-referential, recursive, however you want to put it, including older versions of the format in order to:
