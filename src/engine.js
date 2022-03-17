@@ -59,7 +59,7 @@ export const draw = ({ documentCanvas, operations, /*thumbnailsByOperation,*/ ca
 			hashInDocumentByOperation.set(operation, operationHash);
 
 			// fill the cache
-			if (!operation.updatingContinously) {
+			if (!operation.updatingContinuously) {
 				if (operationIndex >= lastCachedOpIndex + cacheHeuristicPeriod) {
 					cache[`document-at-${operationHash}`] = document.createElement("canvas");
 					cache[`document-at-${operationHash}`].width = opCanvas.width;

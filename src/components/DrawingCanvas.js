@@ -396,7 +396,7 @@ class DrawingCanvas extends Component {
 				points: [this.pointerPos],
 				tool: selectedTool,
 				swatch: selectedSwatch,
-				updatingContinously: true, // TODO: this should probably be extrinsic!
+				updatingContinuously: true, // TODO: this should probably be extrinsic!
 			};
 			const { addOperation } = this.props;
 			addOperation(this.operation);
@@ -437,7 +437,7 @@ class DrawingCanvas extends Component {
 		if (!this.operation) {
 			return;
 		}
-		delete this.operation.updatingContinously; // bit of a hack so let's uh clean it up / make it less present in the document store... (as opposed to setting it to false)
+		delete this.operation.updatingContinuously; // bit of a hack so let's uh clean it up / make it less present in the document store... (as opposed to setting it to false)
 		updateOperation(this.operation);
 		this.operation = null;
 
