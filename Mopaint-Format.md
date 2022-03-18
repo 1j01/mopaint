@@ -21,7 +21,7 @@ These are just IDEAS for a possible file format, this doesn't reflect the curren
 	- Maintain the append-only nature
 	- Maximize backward/forward compatibility because the application can scan for data sections with a format version it can handle, and if it can't handle the latest of the versions present, it can show a dialog
 - A graph of computation
-	- Self-editing graph? Like it describes modifications to itself?
+	- Self-editing graph, a [retroactive data structure](https://en.wikipedia.org/wiki/Retroactive_data_structure)
 	- An amount of cache can be stored in the document, for performance, and can be traded off for file size (with user control)
 		- Record times operations took to compute so a warning can be shown (and probably a red area on a slider) based on an estimate of how long it would take to recompute
 
