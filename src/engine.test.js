@@ -1,12 +1,4 @@
 
-
-// TODO: what does it look like if it's more goal oriented?
-// TODO: is cache part of the program object?
-//    I want to store cache in memory, and in exported files and over the network in a peer to peer setting,
-//    although with different heuristics
-// is the step pointers part of the program object?
-
-
 function resolveMetaHistory(metaHistory) {
 
 	const maxMHI = metaHistory.reduce((maxMHI, op) => Math.max(maxMHI, op.mhi), 0);
