@@ -160,7 +160,7 @@ describe("history deletion", () => {
 			"imageData",
 		];
 		expect(squashHistory({
-			opsByID: getTestProgram(),
+			opsByID: getTestProgram(), // todo: why new call??
 			cache: {},
 			stepsToDelete
 		}))
