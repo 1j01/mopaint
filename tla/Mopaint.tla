@@ -34,58 +34,58 @@ end macro;
 
 begin
     FindBiggestMHI:
-        while i <= Len(aID) do
-            if aMHI[i] > maxMHI then
-                maxMHI := aMHI[i];
-            end if;
-            Inc: \* why the label?
-                i := i + 1
-        end while;
-    
+    while i <= Len(aID) do
+        if aMHI[i] > maxMHI then
+            maxMHI := aMHI[i];
+        end if;
+        Inc: \* why the label?
+        i := i + 1
+    end while;
+
     \* Can't use the name Init, because of PlusCal's leaky abstraction.
     InitLoop:
-        mhi := maxMHI;
+    mhi := maxMHI;
 
     ResolveMetaHistory:
-        \* Note: purposely skipping mhi of 0, at that point it should be resolved.
-        \* (Just mentioning it because most loops of this type you'd want >= 0)
-        while mhi > 0 do
-            i := 1;
-            ResolveMetaHistoryLevel:
-            while i <= Len(aID) do
-                if aMHI[i] = mhi then
-                    \* TODO: make sure it matches a target, and the meta-history index of the target is less, etc.
-                    if aType[i] = "undo" then
-                        j := 1;
-                        FindTargetAndHandleUndoOp:
-                        while j <= Len(aID) do
-                            if aID[j] = aParams[i][1] then
-                                \* print("undoing", otherOp);
-                                removeOp(j);
-                                \* break; optimization
-                            end if;
-                        end while;
-                    elsif aType[i] = "recolor" then
-                        j := 1;
-                        FindTargetAndHandleRecolorOp:
-                        while j <= Len(aID) do
-                            if aID[j] = aParams[i][1] then
-                                \* print("recoloring", otherOp);
-                                \* color is first parameter of "line", second parameter of "recolor"
-                                aParams[j][1] := aParams[i][2];
-                                \* break; optimization
-                            end if;
-                        end while;
-                    end if;
-                    RemoveTheOp:
-                        removeOp(i);
+    \* Note: purposely skipping mhi of 0, at that point it should be resolved.
+    \* (Just mentioning it because most loops of this type you'd want >= 0)
+    while mhi > 0 do
+        i := 1;
+        ResolveMetaHistoryLevel:
+        while i <= Len(aID) do
+            if aMHI[i] = mhi then
+                \* TODO: make sure it matches a target, and the meta-history index of the target is less, etc.
+                if aType[i] = "undo" then
+                    j := 1;
+                    FindTargetAndHandleUndoOp:
+                    while j <= Len(aID) do
+                        if aID[j] = aParams[i][1] then
+                            \* print("undoing", otherOp);
+                            removeOp(j);
+                            \* break; optimization
+                        end if;
+                    end while;
+                elsif aType[i] = "recolor" then
+                    j := 1;
+                    FindTargetAndHandleRecolorOp:
+                    while j <= Len(aID) do
+                        if aID[j] = aParams[i][1] then
+                            \* print("recoloring", otherOp);
+                            \* color is first parameter of "line", second parameter of "recolor"
+                            aParams[j][1] := aParams[i][2];
+                            \* break; optimization
+                        end if;
+                    end while;
                 end if;
-                AnotherInc: \* is this really necessary?
-                    i := i + 1
-            end while;
-            SomebodySpilledTheInc: \* please tell me the example didn't just do this to show that you CAN include labels in the body
-                mhi := mhi - 1
+                RemoveTheOp:
+                removeOp(i);
+            end if;
+            AnotherInc: \* is this really necessary?
+            i := i + 1
         end while;
+        SomebodySpilledTheInc: \* please tell me the example didn't just do this to show that you CAN include labels in the body
+        mhi := mhi - 1
+    end while;
 end algorithm; *)
 \* BEGIN TRANSLATION (chksum(pcal) = "d6f9c6fb" /\ chksum(tla) = "baef1ab3")
 VARIABLES maxMHI, mhi, i, j, op, aMHI, aID, aType, aName, aParams, pc
