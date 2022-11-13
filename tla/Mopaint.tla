@@ -8,7 +8,6 @@ variables
     mhi = 0;
     i = 1;
     j = 1;
-    op = <<>>;
     aMHI = <<0, 1, 2, 3, 0, 0, 1>>;
     aID = <<"abc1", "abc2", "abc3", "abc4", "abc5", "abc6", "abc7">>;
     aType = <<"line", "recolor", "undo", "undo", "circle", "triangle", "undo">>;
@@ -87,8 +86,8 @@ begin
         mhi := mhi - 1
     end while;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "d6f9c6fb" /\ chksum(tla) = "baef1ab3")
-VARIABLES maxMHI, mhi, i, j, op, aMHI, aID, aType, aName, aParams, pc
+\* BEGIN TRANSLATION (chksum(pcal) = "b2f733bd" /\ chksum(tla) = "6a03c60b")
+VARIABLES maxMHI, mhi, i, j, aMHI, aID, aType, aName, aParams, pc
 
 (* define statement *)
 OK == pc = "Done" =>
@@ -99,14 +98,13 @@ OK == pc = "Done" =>
     /\ (aParams = <<"green", "pink">>)
 
 
-vars == << maxMHI, mhi, i, j, op, aMHI, aID, aType, aName, aParams, pc >>
+vars == << maxMHI, mhi, i, j, aMHI, aID, aType, aName, aParams, pc >>
 
 Init == (* Global variables *)
         /\ maxMHI = 0
         /\ mhi = 0
         /\ i = 1
         /\ j = 1
-        /\ op = <<>>
         /\ aMHI = <<0, 1, 2, 3, 0, 0, 1>>
         /\ aID = <<"abc1", "abc2", "abc3", "abc4", "abc5", "abc6", "abc7">>
         /\ aType = <<"line", "recolor", "undo", "undo", "circle", "triangle", "undo">>
@@ -123,18 +121,17 @@ FindBiggestMHI == /\ pc = "FindBiggestMHI"
                              /\ pc' = "Inc"
                         ELSE /\ pc' = "InitLoop"
                              /\ UNCHANGED maxMHI
-                  /\ UNCHANGED << mhi, i, j, op, aMHI, aID, aType, aName, 
-                                  aParams >>
+                  /\ UNCHANGED << mhi, i, j, aMHI, aID, aType, aName, aParams >>
 
 Inc == /\ pc = "Inc"
        /\ i' = i + 1
        /\ pc' = "FindBiggestMHI"
-       /\ UNCHANGED << maxMHI, mhi, j, op, aMHI, aID, aType, aName, aParams >>
+       /\ UNCHANGED << maxMHI, mhi, j, aMHI, aID, aType, aName, aParams >>
 
 InitLoop == /\ pc = "InitLoop"
             /\ mhi' = maxMHI
             /\ pc' = "ResolveMetaHistory"
-            /\ UNCHANGED << maxMHI, i, j, op, aMHI, aID, aType, aName, aParams >>
+            /\ UNCHANGED << maxMHI, i, j, aMHI, aID, aType, aName, aParams >>
 
 ResolveMetaHistory == /\ pc = "ResolveMetaHistory"
                       /\ IF mhi > 0
@@ -142,8 +139,8 @@ ResolveMetaHistory == /\ pc = "ResolveMetaHistory"
                                  /\ pc' = "ResolveMetaHistoryLevel"
                             ELSE /\ pc' = "Done"
                                  /\ i' = i
-                      /\ UNCHANGED << maxMHI, mhi, j, op, aMHI, aID, aType, 
-                                      aName, aParams >>
+                      /\ UNCHANGED << maxMHI, mhi, j, aMHI, aID, aType, aName, 
+                                      aParams >>
 
 ResolveMetaHistoryLevel == /\ pc = "ResolveMetaHistoryLevel"
                            /\ IF i <= Len(aID)
@@ -160,14 +157,13 @@ ResolveMetaHistoryLevel == /\ pc = "ResolveMetaHistoryLevel"
                                                  /\ j' = j
                                  ELSE /\ pc' = "SomebodySpilledTheInc"
                                       /\ j' = j
-                           /\ UNCHANGED << maxMHI, mhi, i, op, aMHI, aID, 
-                                           aType, aName, aParams >>
+                           /\ UNCHANGED << maxMHI, mhi, i, aMHI, aID, aType, 
+                                           aName, aParams >>
 
 AnotherInc == /\ pc = "AnotherInc"
               /\ i' = i + 1
               /\ pc' = "ResolveMetaHistoryLevel"
-              /\ UNCHANGED << maxMHI, mhi, j, op, aMHI, aID, aType, aName, 
-                              aParams >>
+              /\ UNCHANGED << maxMHI, mhi, j, aMHI, aID, aType, aName, aParams >>
 
 RemoveTheOp == /\ pc = "RemoveTheOp"
                /\ aMHI' = SubSeq(aMHI, 0, i) \o SubSeq(aMHI, i + 1, Len(aMHI))
@@ -176,7 +172,7 @@ RemoveTheOp == /\ pc = "RemoveTheOp"
                /\ aName' = SubSeq(aName, 0, i) \o SubSeq(aName, i + 1, Len(aName))
                /\ aParams' = SubSeq(aParams, 0, i) \o SubSeq(aParams, i + 1, Len(aParams))
                /\ pc' = "AnotherInc"
-               /\ UNCHANGED << maxMHI, mhi, i, j, op >>
+               /\ UNCHANGED << maxMHI, mhi, i, j >>
 
 FindTargetAndHandleUndoOp == /\ pc = "FindTargetAndHandleUndoOp"
                              /\ IF j <= Len(aID)
@@ -195,7 +191,7 @@ FindTargetAndHandleUndoOp == /\ pc = "FindTargetAndHandleUndoOp"
                                    ELSE /\ pc' = "RemoveTheOp"
                                         /\ UNCHANGED << aMHI, aID, aType, 
                                                         aName, aParams >>
-                             /\ UNCHANGED << maxMHI, mhi, i, j, op >>
+                             /\ UNCHANGED << maxMHI, mhi, i, j >>
 
 FindTargetAndHandleRecolorOp == /\ pc = "FindTargetAndHandleRecolorOp"
                                 /\ IF j <= Len(aID)
@@ -206,14 +202,14 @@ FindTargetAndHandleRecolorOp == /\ pc = "FindTargetAndHandleRecolorOp"
                                            /\ pc' = "FindTargetAndHandleRecolorOp"
                                       ELSE /\ pc' = "RemoveTheOp"
                                            /\ UNCHANGED aParams
-                                /\ UNCHANGED << maxMHI, mhi, i, j, op, aMHI, 
-                                                aID, aType, aName >>
+                                /\ UNCHANGED << maxMHI, mhi, i, j, aMHI, aID, 
+                                                aType, aName >>
 
 SomebodySpilledTheInc == /\ pc = "SomebodySpilledTheInc"
                          /\ mhi' = mhi - 1
                          /\ pc' = "ResolveMetaHistory"
-                         /\ UNCHANGED << maxMHI, i, j, op, aMHI, aID, aType, 
-                                         aName, aParams >>
+                         /\ UNCHANGED << maxMHI, i, j, aMHI, aID, aType, aName, 
+                                         aParams >>
 
 (* Allow infinite stuttering to prevent deadlock on termination. *)
 Terminating == pc = "Done" /\ UNCHANGED vars
