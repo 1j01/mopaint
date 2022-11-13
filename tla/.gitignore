@@ -1,0 +1,20 @@
+# Based on https://github.com/toptal/gitignore/blob/cd59ba14609ff08b50b607ee2798fb32952b85fc/templates/TLA%2B.gitignore
+
+# Some sort of cache?
+states/**
+
+# Some log file
+*.out
+
+# TLA+ Toolbox
+# Exclude all files related to TLA+ Toolbox
+*.toolbox/**
+
+# PlusCal
+*.old
+
+# LaTex output
+*aux
+*.log
+*.pdf
+*.tex
