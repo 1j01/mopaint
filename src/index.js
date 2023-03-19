@@ -1,7 +1,7 @@
 import localforage from "localforage";
 import { nanoid } from "nanoid";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./components/App";
 import registerServiceWorker from "./registerServiceWorker";
@@ -48,8 +48,9 @@ const loadNewDocument = (serializedDocument, fileName) => {
 	});
 };
 
+const container = document.getElementById("root");
+const root = createRoot(container);
 const render = () => {
-	const container = document.getElementById("root");
 	const documentID = getIDFromCurrentURL();
 	if (!documentID) {
 		createNewDocument();
@@ -63,7 +64,7 @@ const render = () => {
 			documentID: null,
 		};
 	}
-	ReactDOM.render(
+	root.render(
 		<App
 			key={documentID}
 			documentID={documentID}
@@ -71,8 +72,7 @@ const render = () => {
 			createNewDocument={createNewDocument}
 			loadNewDocument={loadNewDocument}
 			serializedDocumentToLoad={serializedDocumentToLoad}
-		/>,
-		container
+		/>
 	);
 };
 
