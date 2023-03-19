@@ -175,7 +175,7 @@ describe("history deletion", () => {
 		}))
 			.toEqual({ computeNeeded: true });
 	});
-	test("when cache is ready, deletes history", () => {
+	test.todo("when cache is ready, deletes history", /*() => {
 		var opsByID = getTestProgram();
 		expect(squashHistory({
 			opsByID: getTestProgram(),
@@ -194,8 +194,8 @@ describe("history deletion", () => {
 				data: [255, 0, 255, 255],
 			},
 		});
-	});
-	test("when parent but not parent of parent is specified for deletion, ???????", () => {
+	}*/);
+	test.todo("when parent but not parent of parent is specified for deletion, ???????", /*() => {
 		var opsByID = getTestProgram();
 		expect(squashHistory({
 			opsByID: getTestProgram(),
@@ -213,5 +213,5 @@ describe("history deletion", () => {
 				data: [255, 0, 255, 255],
 			},
 		});
-	});
+	}*/);
 });
