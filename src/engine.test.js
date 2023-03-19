@@ -21,6 +21,7 @@ function resolveMetaHistory(metaHistory) {
 	// Note: stopping loop before mhi of 0, as at that point it should be resolved.
 	// (With most loops counting down you'd want >= 0.)
 	for (let mhi = maxMHI; mhi > 0; mhi--) {
+		// FIXME: this loop can miss some operations if they are not in the right order.
 		for (const op of mutableMH) {
 			if (op.mhi === mhi) {
 				// console.log(op, mhi);
@@ -35,6 +36,8 @@ function resolveMetaHistory(metaHistory) {
 					targetOp.color = op.color;
 				}
 				mutableMH.splice(mutableMH.indexOf(op), 1);
+			} else if (op.mhi > mhi) {
+				throw new Error(`operation '${op.id}' which is more meta than the current MHI iteration was left behind.`);
 			}
 		}
 	}
