@@ -31,6 +31,7 @@
 	],
 	"dependencies": {
 		"anypalette": "0.6.0",
+		"canvas": "^2.11.0",
 		"eslint": "^8.6.0",
 		"eslint-plugin-react": "^7.28.0",
 		"gh-pages": "3.2.3",
