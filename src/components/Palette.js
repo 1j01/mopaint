@@ -31,8 +31,8 @@ class Palette extends Component {
 Palette.propTypes = {
 	palette: PropTypes.array.isRequired,
 	selectedSwatch: PropTypes.oneOfType([
-		PropTypes.instanceOf(CanvasPattern),
-		PropTypes.instanceOf(CanvasGradient),
+		// PropTypes.instanceOf(CanvasPattern),
+		// PropTypes.instanceOf(CanvasGradient),
 		PropTypes.string,
 	]).isRequired,
 	selectSwatch: PropTypes.func.isRequired,

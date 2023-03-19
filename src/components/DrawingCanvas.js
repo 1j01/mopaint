@@ -501,8 +501,8 @@ DrawingCanvas.propTypes = {
 	selectedTool: PropTypes.object,
 	selectedSwatch: PropTypes.oneOfType([
 		PropTypes.string,
-		PropTypes.instanceOf(CanvasGradient),
-		PropTypes.instanceOf(CanvasPattern),
+		// PropTypes.instanceOf(CanvasGradient),
+		// PropTypes.instanceOf(CanvasPattern),
 	]).isRequired,
 	loaded: PropTypes.bool.isRequired,
 	thumbnailsByOperation: PropTypes.instanceOf(Map).isRequired,
