@@ -1,12 +1,12 @@
 
-function findTargetOp(metaHistory, targetID, metaOpMHI) {
+function findTargetOp(metaHistory, targetID, metaOpRefDeg) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
 	for (const otherOp of metaHistory) {
 		if (otherOp.id === targetID) {
-			if (otherOp.mhi < metaOpMHI) {
+			if (otherOp.refDeg < metaOpRefDeg) {
 				return otherOp;
 			} else {
-				throw new Error(`target operation '${targetID}' has equal or higher meta-history index than meta operation. Operations must only target operations less meta than themselves.`);
+				throw new Error(`target operation '${targetID}' has equal or higher referential degree than meta operation. Operations must only target operations less meta than themselves.`);
 			}
 		}
 	}
@@ -15,29 +15,29 @@ function findTargetOp(metaHistory, targetID, metaOpMHI) {
 
 function resolveMetaHistory(metaHistory) {
 
-	const maxMHI = metaHistory.reduce((maxMHI, op) => Math.max(maxMHI, op.mhi), 0);
+	const maxRefDeg = metaHistory.reduce((maxRefDeg, op) => Math.max(maxRefDeg, op.refDeg), 0);
 	const mutableMH = JSON.parse(JSON.stringify(metaHistory));
 
-	// Note: stopping loop before mhi of 0, as at that point it should be resolved.
+	// Note: stopping loop before refDeg of 0, as at that point it should be resolved.
 	// (With most loops counting down you'd want >= 0.)
-	for (let mhi = maxMHI; mhi > 0; mhi--) {
+	for (let refDeg = maxRefDeg; refDeg > 0; refDeg--) {
 		// FIXME: this loop can miss some operations if they are not in the right order.
 		for (const op of mutableMH) {
-			if (op.mhi === mhi) {
-				// console.log(op, mhi);
+			if (op.refDeg === refDeg) {
+				// console.log(op, refDeg);
 				// TODO: handle all op types?
 				if (op.type === "undo") {
-					const targetOp = findTargetOp(mutableMH, op.target, op.mhi);
+					const targetOp = findTargetOp(mutableMH, op.target, op.refDeg);
 					console.log("undoing", targetOp);
 					mutableMH.splice(mutableMH.indexOf(targetOp), 1);
 				} else if (op.type === "recolor") {
-					const targetOp = findTargetOp(mutableMH, op.target, op.mhi);
+					const targetOp = findTargetOp(mutableMH, op.target, op.refDeg);
 					console.log("recoloring", targetOp);
 					targetOp.color = op.color;
 				}
 				mutableMH.splice(mutableMH.indexOf(op), 1);
-			} else if (op.mhi > mhi) {
-				throw new Error(`operation '${op.id}' which is more meta than the current MHI iteration was left behind.`);
+			} else if (op.refDeg > refDeg) {
+				throw new Error(`operation '${op.id}' which is more meta than the current referential degree iteration was left behind.`);
 			}
 		}
 	}
@@ -47,35 +47,35 @@ function resolveMetaHistory(metaHistory) {
 describe("resolveMetaHistory", () => {
 	it("should resolve meta-history", () => {
 		expect(resolveMetaHistory([
-			{ id: "abc1", mhi: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc2", mhi: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green" },
-			{ id: "abc3", mhi: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
-			{ id: "abc4", mhi: 3, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc3" }, // AKA Redo
-			{ id: "abc5", mhi: 0, type: "circle", name: "Draw Circle", color: "pink", },
-			{ id: "abc6", mhi: 0, type: "triangle", name: "Draw Triangle", color: "red", },
-			{ id: "abc7", mhi: 1, type: "undo", name: "Undo Draw Triangle", target: "abc6" },
+			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc2", refDeg: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green" },
+			{ id: "abc3", refDeg: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
+			{ id: "abc4", refDeg: 3, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc3" }, // AKA Redo
+			{ id: "abc5", refDeg: 0, type: "circle", name: "Draw Circle", color: "pink", },
+			{ id: "abc6", refDeg: 0, type: "triangle", name: "Draw Triangle", color: "red", },
+			{ id: "abc7", refDeg: 1, type: "undo", name: "Undo Draw Triangle", target: "abc6" },
 		])).toEqual([
-			{ id: "abc1", mhi: 0, type: "line", name: "Draw Line", color: "green", },
-			{ id: "abc5", mhi: 0, type: "circle", name: "Draw Circle", color: "pink", },
+			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "green", },
+			{ id: "abc5", refDeg: 0, type: "circle", name: "Draw Circle", color: "pink", },
 		]);
 	});
 	it("should throw error if meta operation targets itself", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "so-meta", mhi: 1, type: "undo", name: "Undo Self!?", target: "so-meta" },
-		])).toThrowError("target operation 'so-meta' has equal or higher meta-history index than meta operation");
+			{ id: "so-meta", refDeg: 1, type: "undo", name: "Undo Self!?", target: "so-meta" },
+		])).toThrowError("target operation 'so-meta' has equal or higher referential degree than meta operation");
 	});
-	it("should throw error if target operation has equal or higher meta-history index than meta operation", () => {
+	it("should throw error if target operation has equal or higher referential degree than meta operation", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "abc1", mhi: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc2", mhi: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc1" },
-			{ id: "abc3", mhi: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc2" }, // AKA Redo
-			{ id: "abc4", mhi: 2, type: "undo", name: "Undo Undo Undo Edit Draw Line?", target: "abc3" }, // incorrect mhi
-		])).toThrowError("target operation 'abc3' has equal or higher meta-history index than meta operation");
+			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc2", refDeg: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc1" },
+			{ id: "abc3", refDeg: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc2" }, // AKA Redo
+			{ id: "abc4", refDeg: 2, type: "undo", name: "Undo Undo Undo Edit Draw Line?", target: "abc3" }, // incorrect refDeg
+		])).toThrowError("target operation 'abc3' has equal or higher referential degree than meta operation");
 	});
 	it("should throw error if target operation not found", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "abc1", mhi: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc3", mhi: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
+			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc3", refDeg: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
 		])).toThrowError("target operation 'abc2' not found");
 	});
 });
