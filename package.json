@@ -39,7 +39,7 @@
 		"immutable": "^4.3.0",
 		"is-png": "^2.0.0",
 		"localforage": "1.10.0",
-		"nanoid": "^3.1.30",
+		"nanoid": "^4.0.1",
 		"png-chunk-text": "1.0.0",
 		"png-chunks-encode": "1.0.0",
 		"png-chunks-extract": "1.0.0",
