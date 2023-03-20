@@ -3,12 +3,14 @@
 // It doesn't test any code used by the actual application, yet.
 
 // The meta-history is a list of operations, some of which can act on other operations.
-// These are called meta operations. The meta-history is resolved by applying the meta operations
-// to the operations they target, in order of referential degree, from most meta to least meta.
+// These are called meta operations. The meta-history is resolved into a linear history
+// by applying the meta operations to the operations they target,
+// in order of referential degree, from most meta to least meta.
 // The referential degree (refDeg) represents how far removed an operation is from a base operation.
 
 // refDeg of 0 = base operation, 1 = meta operation, 2 = meta-meta operation, etc.
 
+// Base operations are things that directly affect the document, like inserting text.
 // Undo is a meta operation that negates the effect of another operation.
 // Redo is an undo applied to an undo. This makes it a meta-meta operation.
 
@@ -18,7 +20,32 @@
 // and in that case, there's no need to increase the refDeg above 0.
 // It is also completely normal to have operations with a lower refDeg than the previous operation
 // in the list, for example, if the user undoes an operation, then adds a new operation.
+
 // One invariant is that a meta operation's refDeg must be greater than the refDeg of the operation it targets.
+// Also, I believe there's no reason a meta operation should precede its target in the list.
+
+// The meta-history system may be called retroactive, persistent, non-destructive, or non-linear.
+// Each of these terms seem to overlap.
+
+// Note some things that may be base operations in one document model may need meta operations in another.
+// Take for example changing the color of a circle. Suppose the circle is occluded by a translucent rectangle.
+// In an SVG document, changing the color of the circle would be a base operation,
+// as it simply involves changing an attribute of the circle element.
+// In a raster document, there is no circle object, only a circle-drawing operation,
+// and the color of the circle must be changed before the rectangle was drawn,
+// by editing the circle-drawing operation, which would be a meta operation.
+// (If there is a flood fill tool, another solution might be to insert a flood fill operation
+// before the rectangle, which would also be a meta operation, as it edits history.)
+// (If the flood fill tool is fuzzy and smart enough, it might be able to work on its own,
+// without any retroactive history editing. But a fill tool easily leads to artifacts.)
+
+// To embrace the non-linear nature of the meta-history system,
+// my plan has been to use raster as the base document model, so that there isn't an
+// object model to use as a crutch.
+// That said, it might be nice to target SVG just as a practical matter,
+// since I often want CAD precision when making icons, and this system would be a good fit for that.
+// Also, SVG could be a container format for the meta-history system,
+// providing thumbnails in supporting file managers.
 
 function findTargetOp(metaHistory, targetID, metaOpRefDeg, removals) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
