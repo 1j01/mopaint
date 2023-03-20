@@ -27,13 +27,15 @@ function resolveMetaHistory(metaHistory) {
 	const maxRefDeg = metaHistory.reduce((maxRefDeg, op) => Math.max(maxRefDeg, op.refDeg), 0);
 	const mutableMH = JSON.parse(JSON.stringify(metaHistory));
 	const removals = [];
+	// Prevent accidental mutation of the original metaHistory.
+	metaHistory = undefined;
 
 	// Note: stopping loop before refDeg of 0, as at that point it should be resolved.
 	// (With most loops counting down you'd want >= 0.)
 	for (let refDeg = maxRefDeg; refDeg > 0; refDeg--) {
 		// The for-of loop could miss operations due to mutation without a copy.
 		// We don't need a deep clone to handle splicing, just a new array.
-		const frozenMH = [...mutableMH];
+		const frozenMH = Object.freeze([...mutableMH]);
 		for (const op of frozenMH) {
 			if (op.refDeg === refDeg) {
 				// console.log(op, refDeg);
