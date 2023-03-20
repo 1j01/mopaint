@@ -9,6 +9,17 @@
 
 // refDeg of 0 = base operation, 1 = meta operation, 2 = meta-meta operation, etc.
 
+// Undo is a meta operation that negates the effect of another operation.
+// Redo is an undo applied to an undo. This makes it a meta-meta operation.
+
+// It is possible for multiple operations to have the same referential degree.
+// Thus the order of the list matters, and not just the referential degree.
+// For instance, there may be many base operations, without any meta operations,
+// and in that case, there's no need to increase the refDeg above 0.
+// It is also completely normal to have operations with a lower refDeg than the previous operation
+// in the list, for example, if the user undoes an operation, then adds a new operation.
+// One invariant is that a meta operation's refDeg must be greater than the refDeg of the operation it targets.
+
 function findTargetOp(metaHistory, targetID, metaOpRefDeg, removals) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
 	for (const otherOp of metaHistory) {
