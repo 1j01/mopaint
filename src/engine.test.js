@@ -29,8 +29,12 @@ function findTargetOp(metaHistory, targetID, metaOpMetaLevel, removals) {
 		if (otherOp.id === targetID) {
 			if (otherOp.metaLevel < metaOpMetaLevel) {
 				return otherOp;
+			} else if (otherOp.metaLevel === metaOpMetaLevel) {
+				throw new Error(`target operation '${targetID}' has equal meta level to the meta operation. Meta operations must only target operations less meta than themselves.`);
 			} else {
-				throw new Error(`target operation '${targetID}' has equal or higher meta level than meta operation. Operations must only target operations less meta than themselves.`);
+				// This may never happen, since operations will be removed upon application,
+				// so it will get the "already applied and thus can't be affected" error instead.
+				throw new Error(`target operation '${targetID}' has greater meta level than the meta operation. Meta operations must only target operations less meta than themselves.`);
 			}
 		}
 	}
@@ -102,9 +106,9 @@ describe("resolveMetaHistory", () => {
 	it("should throw error if meta operation targets itself", () => {
 		expect(() => resolveMetaHistory([
 			{ id: "so-meta", metaLevel: 1, type: "undo", name: "Undo Self!?", target: "so-meta" },
-		])).toThrowError("target operation 'so-meta' has equal or higher meta level than meta operation");
+		])).toThrowError("target operation 'so-meta' has equal meta level to the meta operation");
 	});
-	it("should throw error if target operation has higher meta level than meta operation", () => {
+	it("should throw error if target operation has higher meta level to meta operation", () => {
 		expect(() => resolveMetaHistory([
 			{ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", },
 			{ id: "abc2", metaLevel: 1, type: "undo", name: "Undo Undo Undo Edit Draw Line", target: "abc4" }, // incorrect metaLevel
@@ -126,7 +130,7 @@ describe("resolveMetaHistory", () => {
 			{ id: "abc2", metaLevel: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc1" },
 			{ id: "abc4", metaLevel: 2, type: "undo", name: "Undo Undo Undo Edit Draw Line?", target: "abc3" }, // incorrect metaLevel
 			{ id: "abc3", metaLevel: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc2" }, // AKA Redo
-		])).toThrowError("target operation 'abc3' has equal or higher meta level than meta operation");
+		])).toThrowError("target operation 'abc3' has equal meta level to the meta operation");
 	});
 	it("should throw error if target operation not found", () => {
 		expect(() => resolveMetaHistory([
