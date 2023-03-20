@@ -1,4 +1,14 @@
 
+// This file contains a sketch of the engine for meta-history.
+// It doesn't test any code used by the actual application, yet.
+
+// The meta-history is a list of operations, some of which can act on other operations.
+// These are called meta operations. The meta-history is resolved by applying the meta operations
+// to the operations they target, in order of referential degree, from most meta to least meta.
+// The referential degree (refDeg) represents how far removed an operation is from a base operation.
+
+// refDeg of 0 = base operation, 1 = meta operation, 2 = meta-meta operation, etc.
+
 function findTargetOp(metaHistory, targetID, metaOpRefDeg, removals) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
 	for (const otherOp of metaHistory) {
