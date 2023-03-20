@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.c6cbf5cf.css",
-    "main.js": "/static/js/main.ba21c0db.js",
+    "main.css": "/static/css/main.b2241b4e.css",
+    "main.js": "/static/js/main.fb1479ce.js",
     "static/media/flaticons-fill-bucket-flipped.svg": "/static/media/flaticons-fill-bucket-flipped.06bf323f5ca3e928e73e8c1312801355.svg",
     "static/media/file-picture-multiple-importable.svg": "/static/media/file-picture-multiple-importable.4393f4828bdfd0baaf375bc75eb77b4f.svg",
     "static/media/document-open-importable.svg": "/static/media/document-open-importable.6c3a0b1ac216ce90b8d13517a8e56749.svg",
@@ -10,11 +10,11 @@
     "index.html": "/index.html",
     "static/media/document-save-importable.svg": "/static/media/document-save-importable.ddfaa4d7a821b4518de3ca16e3b8ce54.svg",
     "static/media/edit-path-importable.svg": "/static/media/edit-path-importable.44e955ae8b010da788a9b233a684037c.svg",
-    "main.c6cbf5cf.css.map": "/static/css/main.c6cbf5cf.css.map",
-    "main.ba21c0db.js.map": "/static/js/main.ba21c0db.js.map"
+    "main.b2241b4e.css.map": "/static/css/main.b2241b4e.css.map",
+    "main.fb1479ce.js.map": "/static/js/main.fb1479ce.js.map"
   },
   "entrypoints": [
-    "static/css/main.c6cbf5cf.css",
-    "static/js/main.ba21c0db.js"
+    "static/css/main.b2241b4e.css",
+    "static/js/main.fb1479ce.js"
   ]
 }
