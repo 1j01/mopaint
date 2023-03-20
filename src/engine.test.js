@@ -5,32 +5,32 @@
 // The meta-history is a list of operations, some of which can act on other operations.
 // These are called meta operations. The meta-history is resolved into a linear history
 // by applying the meta operations to the operations they target,
-// in order of referential degree, from most meta to least meta.
-// The referential degree (refDeg) represents how far removed an operation is from a base operation.
+// in order of meta level, from most meta to least meta.
+// The meta level (mel) represents how far removed an operation is from a base operation.
 
-// refDeg of 0 = base operation, 1 = meta operation, 2 = meta-meta operation, etc.
+// mel of 0 = base operation, 1 = meta operation, 2 = meta-meta operation, etc.
 
 // Base operations are things that directly affect the document, like inserting text.
 // Undo is a meta operation that negates the effect of another operation.
 // Redo is an undo applied to an undo. This makes it a meta-meta operation.
 
-// It is possible for multiple operations to have the same referential degree.
-// Thus the order of the list matters, and not just the referential degree.
+// It is possible for multiple operations to have the same meta level.
+// Thus the order of the list matters, and not just the meta level.
 // For instance, there may be many base operations, without any meta operations,
-// and in that case, there's no need to increase the refDeg above 0.
-// It is also completely normal to have operations with a lower refDeg than the previous operation
+// and in that case, there's no need to increase the mel above 0.
+// It is also completely normal to have operations with a lower mel than the previous operation
 // in the list, for example, if the user undoes an operation, then adds a new operation.
 
-// One invariant is that a meta operation's refDeg must be greater than the refDeg of the operation it targets.
+// One invariant is that a meta operation's mel must be greater than the mel of the operation it targets.
 
-function findTargetOp(metaHistory, targetID, metaOpRefDeg, removals) {
+function findTargetOp(metaHistory, targetID, metaOpMel, removals) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
 	for (const otherOp of metaHistory) {
 		if (otherOp.id === targetID) {
-			if (otherOp.refDeg < metaOpRefDeg) {
+			if (otherOp.mel < metaOpMel) {
 				return otherOp;
 			} else {
-				throw new Error(`target operation '${targetID}' has equal or higher referential degree than meta operation. Operations must only target operations less meta than themselves.`);
+				throw new Error(`target operation '${targetID}' has equal or higher meta level than meta operation. Operations must only target operations less meta than themselves.`);
 			}
 		}
 	}
@@ -48,24 +48,24 @@ function findTargetOp(metaHistory, targetID, metaOpRefDeg, removals) {
 
 function resolveMetaHistory(metaHistory) {
 
-	const maxRefDeg = metaHistory.reduce((maxRefDeg, op) => Math.max(maxRefDeg, op.refDeg), 0);
+	const maxMel = metaHistory.reduce((maxMel, op) => Math.max(maxMel, op.mel), 0);
 	const mutableMH = JSON.parse(JSON.stringify(metaHistory));
 	const removals = [];
 	// Prevent accidental mutation of the original metaHistory.
 	metaHistory = undefined;
 
-	// Note: stopping loop before refDeg of 0, as at that point it should be resolved.
+	// Note: stopping loop before mel of 0, as at that point it should be resolved.
 	// (With most loops counting down you'd want >= 0.)
-	for (let refDeg = maxRefDeg; refDeg > 0; refDeg--) {
+	for (let mel = maxMel; mel > 0; mel--) {
 		// The for-of loop could miss operations due to mutation without a copy.
 		// We don't need a deep clone to handle splicing, just a new array.
 		const frozenMH = Object.freeze([...mutableMH]);
 		for (const op of frozenMH) {
-			if (op.refDeg === refDeg) {
-				// console.log(op, refDeg);
+			if (op.mel === mel) {
+				// console.log(op, mel);
 				// TODO: handle all op types?
 				if (op.type === "undo") {
-					const targetOp = findTargetOp(mutableMH, op.target, op.refDeg, removals);
+					const targetOp = findTargetOp(mutableMH, op.target, op.mel, removals);
 					console.log("undoing", targetOp);
 					const index = mutableMH.indexOf(targetOp);
 					if (index === -1) {
@@ -74,19 +74,19 @@ function resolveMetaHistory(metaHistory) {
 					mutableMH.splice(index, 1);
 					removals.push({ removedOp: targetOp, removedByOp: op });
 				} else if (op.type === "recolor") {
-					const targetOp = findTargetOp(mutableMH, op.target, op.refDeg, removals);
+					const targetOp = findTargetOp(mutableMH, op.target, op.mel, removals);
 					console.log("recoloring", targetOp);
 					targetOp.color = op.color;
 				}
 				mutableMH.splice(mutableMH.indexOf(op), 1);
 				removals.push({ removedOp: op, removedByOp: null });
-			} else if (op.refDeg > refDeg) {
-				throw new Error(`operation '${op.id}' which is more meta than the current referential degree iteration was left behind.`);
+			} else if (op.mel > mel) {
+				throw new Error(`operation '${op.id}' which is more meta than the current meta level iteration was left behind.`);
 			}
 		}
 	}
 	for (const op of mutableMH) {
-		if (op.refDeg > 0) {
+		if (op.mel > 0) {
 			throw new Error(`meta operation '${op.id}' was left behind.`);
 		}
 	}
@@ -96,51 +96,51 @@ function resolveMetaHistory(metaHistory) {
 describe("resolveMetaHistory", () => {
 	it("should resolve meta-history", () => {
 		expect(resolveMetaHistory([
-			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc2", refDeg: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green" },
-			{ id: "abc3", refDeg: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
-			{ id: "abc4", refDeg: 3, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc3" }, // AKA Redo
-			{ id: "abc5", refDeg: 0, type: "circle", name: "Draw Circle", color: "pink", },
-			{ id: "abc6", refDeg: 0, type: "triangle", name: "Draw Triangle", color: "red", },
-			{ id: "abc7", refDeg: 1, type: "undo", name: "Undo Draw Triangle", target: "abc6" },
+			{ id: "abc1", mel: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc2", mel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green" },
+			{ id: "abc3", mel: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
+			{ id: "abc4", mel: 3, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc3" }, // AKA Redo
+			{ id: "abc5", mel: 0, type: "circle", name: "Draw Circle", color: "pink", },
+			{ id: "abc6", mel: 0, type: "triangle", name: "Draw Triangle", color: "red", },
+			{ id: "abc7", mel: 1, type: "undo", name: "Undo Draw Triangle", target: "abc6" },
 		])).toEqual([
-			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "green", },
-			{ id: "abc5", refDeg: 0, type: "circle", name: "Draw Circle", color: "pink", },
+			{ id: "abc1", mel: 0, type: "line", name: "Draw Line", color: "green", },
+			{ id: "abc5", mel: 0, type: "circle", name: "Draw Circle", color: "pink", },
 		]);
 	});
 	it("should throw error if meta operation targets itself", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "so-meta", refDeg: 1, type: "undo", name: "Undo Self!?", target: "so-meta" },
-		])).toThrowError("target operation 'so-meta' has equal or higher referential degree than meta operation");
+			{ id: "so-meta", mel: 1, type: "undo", name: "Undo Self!?", target: "so-meta" },
+		])).toThrowError("target operation 'so-meta' has equal or higher meta level than meta operation");
 	});
-	it("should throw error if target operation has higher referential degree than meta operation", () => {
+	it("should throw error if target operation has higher meta level than meta operation", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc2", refDeg: 1, type: "undo", name: "Undo Undo Undo Edit Draw Line", target: "abc4" }, // incorrect refDeg
-			{ id: "abc3", refDeg: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
-			{ id: "abc4", refDeg: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc3" }, // AKA Redo
+			{ id: "abc1", mel: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc2", mel: 1, type: "undo", name: "Undo Undo Undo Edit Draw Line", target: "abc4" }, // incorrect mel
+			{ id: "abc3", mel: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
+			{ id: "abc4", mel: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc3" }, // AKA Redo
 		])).toThrowError("target operation 'abc4' was already applied and thus can't be affected");
 	});
-	it("should throw error if target operation has equal referential degree to meta operation", () => {
+	it("should throw error if target operation has equal meta level to meta operation", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc2", refDeg: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc1" },
-			{ id: "abc3", refDeg: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc2" }, // AKA Redo
-			{ id: "abc4", refDeg: 2, type: "undo", name: "Undo Undo Undo Edit Draw Line?", target: "abc3" }, // incorrect refDeg
+			{ id: "abc1", mel: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc2", mel: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc1" },
+			{ id: "abc3", mel: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc2" }, // AKA Redo
+			{ id: "abc4", mel: 2, type: "undo", name: "Undo Undo Undo Edit Draw Line?", target: "abc3" }, // incorrect mel
 		])).toThrowError("target operation 'abc3' was already applied and thus can't be affected.");
 	});
-	it("should throw error if target operation has equal referential degree to meta operation, with target after meta", () => {
+	it("should throw error if target operation has equal meta level to meta operation, with target after meta", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc2", refDeg: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc1" },
-			{ id: "abc4", refDeg: 2, type: "undo", name: "Undo Undo Undo Edit Draw Line?", target: "abc3" }, // incorrect refDeg
-			{ id: "abc3", refDeg: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc2" }, // AKA Redo
-		])).toThrowError("target operation 'abc3' has equal or higher referential degree than meta operation");
+			{ id: "abc1", mel: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc2", mel: 1, type: "undo", name: "Undo Edit Draw Line", target: "abc1" },
+			{ id: "abc4", mel: 2, type: "undo", name: "Undo Undo Undo Edit Draw Line?", target: "abc3" }, // incorrect mel
+			{ id: "abc3", mel: 2, type: "undo", name: "Undo Undo Edit Draw Line", target: "abc2" }, // AKA Redo
+		])).toThrowError("target operation 'abc3' has equal or higher meta level than meta operation");
 	});
 	it("should throw error if target operation not found", () => {
 		expect(() => resolveMetaHistory([
-			{ id: "abc1", refDeg: 0, type: "line", name: "Draw Line", color: "blue", },
-			{ id: "abc3", refDeg: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
+			{ id: "abc1", mel: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "abc3", mel: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
 		])).toThrowError("target operation 'abc2' not found");
 	});
 });
