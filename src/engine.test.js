@@ -62,32 +62,23 @@ function resolveMetaHistory(metaHistory) {
 		const frozenMH = Object.freeze([...mutableMH]);
 		for (const op of frozenMH) {
 			if (op.metaLevel === metaLevel) {
-				// console.log(op, metaLevel);
-				// TODO: handle all op types?
 				if (op.type === "undo") {
 					const targetOp = findTargetOp(mutableMH, op.target, op.metaLevel, removals);
-					console.log("undoing", targetOp);
-					const index = mutableMH.indexOf(targetOp);
-					if (index === -1) {
-						throw new Error(`target operation '${targetOp.id}' not found in array.`);
-					}
-					mutableMH.splice(index, 1);
+					mutableMH.splice(mutableMH.indexOf(targetOp), 1);
 					removals.push({ removedOp: targetOp, removedByOp: op });
 				} else if (op.type === "recolor") {
 					const targetOp = findTargetOp(mutableMH, op.target, op.metaLevel, removals);
-					console.log("recoloring", targetOp);
 					targetOp.color = op.color;
 				}
 				mutableMH.splice(mutableMH.indexOf(op), 1);
 				removals.push({ removedOp: op, removedByOp: null });
-			} else if (op.metaLevel > metaLevel) {
-				throw new Error(`operation '${op.id}' which is more meta than the current meta level iteration was left behind.`);
 			}
 		}
 	}
+	// Sanity check: make sure all meta operations were applied.
 	for (const op of mutableMH) {
 		if (op.metaLevel > 0) {
-			throw new Error(`meta operation '${op.id}' was left behind.`);
+			throw new Error(`meta operation '${op.id}' was left behind, never applied while resolving meta-history.`);
 		}
 	}
 	return mutableMH;
