@@ -73,6 +73,10 @@ function resolveMetaHistory(metaHistory) {
 				} else if (op.type === "recolor") {
 					const targetOp = findTargetOp(mutableMH, op.target, op.metaLevel, removals);
 					targetOp.color = op.color;
+				} else if (op.type === "insert") {
+					mutableMH.splice(op.insertIndex, 0, op.insertOp);
+				} else {
+					throw new Error(`unknown meta operation type '${op.type}'.`);
 				}
 				mutableMH.splice(mutableMH.indexOf(op), 1);
 				removals.push({ removedOp: op, removedByOp: null });
@@ -89,7 +93,7 @@ function resolveMetaHistory(metaHistory) {
 }
 
 describe("resolveMetaHistory", () => {
-	it("should resolve meta-history", () => {
+	it("should resolve to a linear history without any meta operations", () => {
 		expect(resolveMetaHistory([
 			{ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", },
 			{ id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green" },
@@ -101,6 +105,17 @@ describe("resolveMetaHistory", () => {
 		])).toEqual([
 			{ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "green", },
 			{ id: "abc5", metaLevel: 0, type: "circle", name: "Draw Circle", color: "pink", },
+		]);
+	});
+	it("should handle 'insert' meta-operations", () => {
+		expect(resolveMetaHistory([
+			{ id: "c", metaLevel: 0, type: "circle", name: "Draw Circle", color: "pink", },
+			{ id: "t", metaLevel: 0, type: "triangle", name: "Draw Triangle", color: "red", },
+			{ id: "i", metaLevel: 1, type: "insert", name: "Insert Draw Line", insertIndex: 1, insertOp: { id: "l", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", } },
+		])).toEqual([
+			{ id: "c", metaLevel: 0, type: "circle", name: "Draw Circle", color: "pink", },
+			{ id: "l", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", },
+			{ id: "t", metaLevel: 0, type: "triangle", name: "Draw Triangle", color: "red", },
 		]);
 	});
 	it("should throw error if meta operation targets itself", () => {
