@@ -24,8 +24,8 @@ Limitations:
 
 #### Other Sketches
 
-- [src/engine.js](src/engine.js): This file is used by the app, but also contains (in commented out code) a sketch of an API for embedding a Mopaint document in a webpage, for a use case where you could decorate a web page by drawing shapes that are dynamically constrained to the layout of elements on the page.
-- [src/engine.test.js](src/engine.test.js): NOT ACTUALLY RELATED TO `engine.js` 😣 - An implementation of a meta-history system, where operations can edit other operations within the history. The meta-history is resolved into a linear history. This file contains the code under test as well as tests for it.
+- [src/experiments/overlay-on-page.js](src/experiments/overlay-on-page.js): A sketch of an API for embedding a Mopaint document in a webpage, for a use case where you could decorate a web page by drawing shapes that are dynamically constrained to the layout of elements on the page.
+- [src/experiments/meta-history.test.js](src/experiments/meta-history.test.js): An implementation of a meta-history system, where operations can edit other operations within the history. The meta-history is resolved into a linear history. This file contains the code under test as well as tests for it.
 - [tla/Mopaint.tla](tla/Mopaint.tla): a TLA+ spec. This sort of thing would be more useful when optimizing the system by ensuring that a denormalized version (with caching, incremental updates, etc.) is equivalent to a basic version (that computes everything from scratch). I don't know that I managed to make it "prove" anything meaningful.
 - [Mopaint-Format.md](Mopaint-Format.md): A draft of a file format for Mopaint documents, designed for append-only writes (even when upgrading the format version) and embedding binary data.
 
