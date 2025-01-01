@@ -94,12 +94,16 @@ export class Client {
 		operation.clientId ??= this.clientId;
 		operation.timestamp ??= Date.now();
 
-		// this.metaHistory.push(operation);
 		// Search backwards to find where to insert the operation
 		let i = this.metaHistory.length - 1;
 		for (; i >= 0; i--) {
 			const otherOperation = this.metaHistory[i];
-			if (otherOperation.timestamp <= operation.timestamp) {
+			if (
+				otherOperation.timestamp <= operation.timestamp &&
+				// use client ID as a tiebreaker for equal timestamps
+				// might need vector clocks or something more sophisticated in the future
+				(otherOperation.timestamp !== operation.timestamp || otherOperation.clientId < operation.clientId)
+			) {
 				break;
 			}
 		}
