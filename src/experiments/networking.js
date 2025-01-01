@@ -74,10 +74,11 @@ class InMemoryComms extends Comms { // UNUSED
 	}
 }
 
-let nextClientId = 1;
 export class Client {
+	static nextClientId = 1;
+
 	constructor() {
-		this.clientId = nextClientId++;
+		this.clientId = Client.nextClientId++;
 		this.metaHistory = [];
 		this.operationListeners = [];
 	}
@@ -92,7 +93,18 @@ export class Client {
 	addOperation(operation) {
 		operation.clientId ??= this.clientId;
 		operation.timestamp ??= Date.now();
-		this.metaHistory.push(operation);
+
+		// this.metaHistory.push(operation);
+		// Search backwards to find where to insert the operation
+		let i = this.metaHistory.length - 1;
+		for (; i >= 0; i--) {
+			const otherOperation = this.metaHistory[i];
+			if (otherOperation.timestamp <= operation.timestamp) {
+				break;
+			}
+		}
+		this.metaHistory.splice(i + 1, 0, operation);
+
 		if (operation.clientId === this.clientId) {
 			for (const listener of this.operationListeners) {
 				listener(operation);
@@ -101,6 +113,7 @@ export class Client {
 	}
 
 	/**
+	 * Listen for operations from other clients.
 	 * @param {(operation: Operation) => void} listener
 	 * @returns {() => void} function to remove the listener
 	 */
