@@ -158,3 +158,35 @@ export class InProcessPeerParty {
 		}
 	}
 }
+
+/**
+ * Communicates with a WebSocket server. (See server.js)
+ */
+export class WebSocketClient {
+	constructor(client, url) {
+		this.ws = new WebSocket(url);
+		this.client = client;
+
+		this.ws.addEventListener('open', () => {
+			console.log('Connected to WebSocket server');
+		});
+
+		this.ws.addEventListener('message', (data) => {
+			// Receive operations from the server
+			const operation = JSON.parse(data);
+			this.client.addOperation(operation);
+		});
+
+		this.client.onOperation((operation) => {
+			// Send local operations to the server
+			if (this.ws.readyState === WebSocket.OPEN) {
+				this.ws.send(JSON.stringify(operation));
+			}
+		});
+	}
+
+	dispose() {
+		this.ws.close();
+	}
+}
+
