@@ -35,7 +35,7 @@ import { resolveMetaHistory } from "./meta-history";
  * 
  * @abstract
  */
-export class Comms {
+class Comms { // UNUSED
 	/**
 	 * @param {Operation} operation
 	 */
@@ -51,7 +51,7 @@ export class Comms {
 	}
 }
 
-export class InMemoryComms extends Comms {
+class InMemoryComms extends Comms { // UNUSED
 	constructor() {
 		super();
 		this.otherComms = [];
@@ -74,13 +74,12 @@ export class InMemoryComms extends Comms {
 	}
 }
 
+let nextClientId = 1;
 export class Client {
-	/**
-	 * @param {Comms} comms
-	 */
-	constructor(comms) {
-		this.comms = comms;
+	constructor() {
+		this.clientId = nextClientId++;
 		this.metaHistory = [];
+		this.operationListeners = [];
 	}
 
 	computeLinearHistory() {
@@ -91,7 +90,54 @@ export class Client {
 	 * @param {Operation} operation
 	 */
 	addOperation(operation) {
+		operation.clientId ??= this.clientId;
+		operation.timestamp ??= Date.now();
 		this.metaHistory.push(operation);
-		this.comms.sendOperation(operation);
+		if (operation.clientId === this.clientId) {
+			for (const listener of this.operationListeners) {
+				listener(operation);
+			}
+		}
+	}
+
+	/**
+	 * @param {(operation: Operation) => void} listener
+	 * @returns {() => void} function to remove the listener
+	 */
+	onOperation(listener) {
+		this.operationListeners.push(listener);
+		return () => {
+			this.operationListeners = this.operationListeners.filter((fn) => fn !== listener);
+		};
+	}
+}
+
+/**
+ * Communicates between multiple clients in the same process.
+ */
+export class InProcessPeerParty {
+	constructor() {
+		this.peers = [];
+		this.cleanupFns = [];
+	}
+
+	/**
+	 * @param {Client} peer
+	 */
+	addPeer(peer) {
+		this.peers.push(peer);
+		this.cleanupFns.push(peer.onOperation((operation) => {
+			for (const otherPeer of this.peers) {
+				if (otherPeer !== peer) {
+					otherPeer.addOperation(operation);
+				}
+			}
+		}));
+	}
+
+	dispose() {
+		for (const cleanup of this.cleanupFns) {
+			cleanup();
+		}
 	}
 }
