@@ -47,8 +47,36 @@ describe("Client + InProcessPeerParty", () => {
 	});
 });
 
+/**
+ * @param {Client[]} clients 
+ * @param {number} expectedMetaHistoryLength 
+ * @returns {Promise<void>}
+ */
+const waitForSynchronization = (clients, expectedMetaHistoryLength) => {
+	return new Promise((resolve, reject) => {
+		const timeout = setTimeout(() => {
+			reject(new Error(`Synchronization timed out. Clients have metaHistory lengths that aren't ${expectedMetaHistoryLength}: ${clients.map((client) => `client '${client.clientId}' has ${client.metaHistory.length}`).join(", ")}`));
+		}, 4000);
+
+		const checkSynchronization = () => {
+			if (
+				clients.every((client) => client.metaHistory.length === expectedMetaHistoryLength)
+				// &&
+				// JSON.stringify(clientA.metaHistory) === JSON.stringify(clientB.metaHistory)
+			) {
+				clearTimeout(timeout);
+				resolve();
+			} else {
+				setTimeout(checkSynchronization, 50);
+			}
+		};
+		checkSynchronization();
+	});
+};
+
+
 describe("Client + WebSocketServer + WebSocketClient", () => {
-	it("should allow communication", () => {
+	it("should allow communication", async () => {
 		const server = new WebSocketServer({ port: 8283 });
 		try {
 			const clientA = new Client();
@@ -57,6 +85,7 @@ describe("Client + WebSocketServer + WebSocketClient", () => {
 			const wsClientB = new WebSocketClient(clientB, "ws://localhost:8283");
 			clientA.addOperation({ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 0 });
 			clientB.addOperation({ id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green", timestamp: 1 });
+			await waitForSynchronization([clientA, clientB], 2);
 			expect(clientA.metaHistory).toEqual([
 				{ clientId: 1, id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 0 },
 				{ clientId: 2, id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green", timestamp: 1 },

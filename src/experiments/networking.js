@@ -167,20 +167,33 @@ export class WebSocketClient {
 		this.ws = new WebSocket(url);
 		this.client = client;
 
+		const pendingMessages = [];
 		this.ws.addEventListener('open', () => {
 			console.log('Connected to WebSocket server');
+			for (const message of pendingMessages) {
+				console.log('Sending queued message:', message);
+				this.ws.send(message);
+			}
 		});
 
-		this.ws.addEventListener('message', (data) => {
+		this.ws.addEventListener('message', async (event) => {
 			// Receive operations from the server
-			const operation = JSON.parse(data);
+			if (typeof event.data !== 'string') {
+				console.error('Received non-string message:', event.data);
+				return;
+			}
+			const operation = JSON.parse(event.data);
 			this.client.addOperation(operation);
 		});
 
 		this.client.onOperation((operation) => {
 			// Send local operations to the server
 			if (this.ws.readyState === WebSocket.OPEN) {
+				console.log('Sending operation to server:', operation);
 				this.ws.send(JSON.stringify(operation));
+			} else {
+				console.log('WebSocket not open, queueing message for operation:', operation);
+				pendingMessages.push(JSON.stringify(operation));
 			}
 		});
 	}
