@@ -99,10 +99,10 @@ export class Client {
 		for (; i >= 0; i--) {
 			const otherOperation = this.metaHistory[i];
 			if (
-				otherOperation.timestamp <= operation.timestamp &&
+				otherOperation.timestamp < operation.timestamp ||
 				// use client ID as a tiebreaker for equal timestamps
 				// might need vector clocks or something more sophisticated in the future
-				(otherOperation.timestamp !== operation.timestamp || otherOperation.clientId < operation.clientId)
+				(otherOperation.timestamp === operation.timestamp && otherOperation.clientId < operation.clientId)
 			) {
 				break;
 			}
