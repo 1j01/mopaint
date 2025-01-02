@@ -2,11 +2,13 @@ import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createFilter, defineConfig, loadEnv, transformWithEsbuild } from "vite";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
 	setEnv(mode);
 	return {
 		plugins: [
+			nodePolyfills(),
 			react(),
 			envPlugin(),
 			devServerPlugin(),
