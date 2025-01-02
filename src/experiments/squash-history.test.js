@@ -1,5 +1,3 @@
-/* global expect:false test:false describe:false */
-
 import { squashHistory } from "./squash-history.js";
 
 function loadImageFile(bytes) {

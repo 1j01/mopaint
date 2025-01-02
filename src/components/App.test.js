@@ -1,4 +1,3 @@
-/* global global:false require:false */
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import App from "./App";
@@ -12,7 +11,6 @@ if (global.crypto) {
 	};
 }
 
-/* global it:false */
 it("renders without crashing", () => {
 	const div = document.createElement("div");
 	const root = ReactDOMClient.createRoot(div);

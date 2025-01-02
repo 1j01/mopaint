@@ -1,5 +1,3 @@
-/* global it:false expect:false describe:false */
-
 import { resolveMetaHistory } from "./meta-history.js";
 
 // describe("compute", () => {

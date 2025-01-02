@@ -1,3 +1,4 @@
+// FIXME: this file can't actually be run directly, although it's imported in tests successfully, since it's mixing ESM and CJS.
 /* global require, module */
 import WebSocket from "ws";
 
