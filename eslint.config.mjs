@@ -38,7 +38,6 @@ export default [
 	{
 		files: [
 			"src/CNAME.js",
-			// "src/experiments/server.js",
 		],
 		languageOptions: {
 			globals: {

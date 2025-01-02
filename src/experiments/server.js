@@ -1,5 +1,3 @@
-// FIXME: this file can't actually be run directly, although it's imported in tests successfully, since it's mixing ESM and CJS.
-/* global require, module */
 import WebSocket from "ws";
 
 export class WebSocketServer {
@@ -46,6 +44,9 @@ export class WebSocketServer {
 	}
 }
 
-if (require.main === module) {
-	new WebSocketServer({ port: 8080 });
-}
+// TODO: entry point for server
+// import.meta.main is proposed for ESM in Node.js https://github.com/nodejs/node/issues/49440
+// but there are workarounds, the simplest being to create a separate file that imports this one
+// if (require.main === module) {
+// 	new WebSocketServer({ port: 8080 });
+// }
