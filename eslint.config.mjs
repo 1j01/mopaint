@@ -1,48 +1,37 @@
-import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
-import react from "eslint-plugin-react";
+import reactRecommended from "eslint-plugin-react/configs/recommended.js";
 import globals from "globals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-	baseDirectory: __dirname,
-	recommendedConfig: js.configs.recommended,
-	allConfig: js.configs.all
-});
+export default [
+	js.configs.recommended,
+	reactRecommended,
+	{
+		languageOptions: {
+			globals: {
+				...globals.browser,
+				process: "readonly",
+			},
 
-export default [...compat.extends("eslint:recommended", "plugin:react/recommended"), {
-	plugins: {
-		react,
-	},
+			ecmaVersion: 12,
+			sourceType: "module",
 
-	languageOptions: {
-		globals: {
-			...globals.browser,
-			process: "readonly",
-		},
-
-		ecmaVersion: 12,
-		sourceType: "module",
-
-		parserOptions: {
-			ecmaFeatures: {
-				jsx: true,
+			parserOptions: {
+				ecmaFeatures: {
+					jsx: true,
+				},
 			},
 		},
-	},
 
-	settings: {
-		react: {
-			version: "detect",
+		settings: {
+			react: {
+				version: "detect",
+			},
 		},
-	},
 
-	rules: {
-		indent: ["error", "tab"],
-		quotes: ["error", "double"],
-		semi: ["error", "always"],
-	},
-}];
+		rules: {
+			indent: ["error", "tab"],
+			quotes: ["error", "double"],
+			semi: ["error", "always"],
+		},
+	}
+];
