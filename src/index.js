@@ -42,7 +42,7 @@ const loadNewDocument = (serializedDocument, fileName) => {
 	const documentID = nanoid(9);
 	toLoad = { serializedDocument, documentID };
 	console.log(`Start new document (${documentID}) from`, serializedDocument);
-	localforage.setItem(`document:${documentID}:name`, fileName.replace(/(\.mop(aint))?(\.png)?$/i, ""), (/*error*/) => {
+	localforage.setItem(`document:${documentID}:name`, fileName.replace(/(\.mop|\.mopaint)?(\.png)?$/i, ""), (/*error*/) => {
 		// ignoring error
 		goToDocument(documentID);
 	});

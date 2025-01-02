@@ -15,7 +15,7 @@
 // * Support fill with bitmap (pattern as swatch).
 // * Tolerance threshold, and maybe some fancier blending (i.e. non-binary)...
 // * Also, I want to support workflows where you draw fills underneath other shapes/strokes,
-// and have the fills extend by at least the antialiasing distance.
+// and have the fills extend by at least the anti-aliasing distance.
 // (This is good for comics, from what I've seen.)
 
 // Other optimizations may include:

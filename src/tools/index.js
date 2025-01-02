@@ -145,17 +145,17 @@ pointModifiers.forEach((modifier) => {
 		if (originalTool.drawFromPoints) {
 			const newTool = (tools[newKey] = {});
 			newTool.drawFromPoints = (opContext, points, swatch, documentContext) => {
-				const pointses = []; // very silly name
+				const pointLists = [];
 				const centerX = opContext.canvas.width / 2;
 				const centerY = opContext.canvas.height / 2;
 				for (const sourcePoint of points) {
 					const symmetricPoints = modifier.pointToPoints(sourcePoint.x, sourcePoint.y, centerX, centerY);
 					for (let i = 0; i < symmetricPoints.length; i++) {
-						pointses[i] = pointses[i] || [];
-						pointses[i].push(symmetricPoints[i]);
+						pointLists[i] = pointLists[i] || [];
+						pointLists[i].push(symmetricPoints[i]);
 					}
 				}
-				for (const points of pointses) {
+				for (const points of pointLists) {
 					originalTool.drawFromPoints(opContext, points, swatch, documentContext);
 				}
 			};

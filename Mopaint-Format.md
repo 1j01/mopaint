@@ -26,6 +26,7 @@ These are just IDEAS for a possible file format, this doesn't reflect the curren
 	- An amount of cache can be stored in the document, for performance, and can be traded off for file size (with user control)
 		- Record times operations took to compute so a warning can be shown (and probably a red area on a slider) based on an estimate of how long it would take to recompute
 
+<!-- spell-checker: disable -->
 Example sketch showing a document upgrade:
 ```
 Mopaint
@@ -47,10 +48,11 @@ UJFK5EDORT=Line(x1=34, y1=34, x2=24, y2=244, color="green") on RJHDPN3IZ3
 Head=UJFK5EDORT
 data end 19BL017EBV
 ```
+<!-- spell-checker: enable -->
 
 Note: need to guarantee ID uniqueness when importing a document (and in general)
 
-If the outer data section is continuously growing, 1. it might need to have the end delimiter be optional, and I don't really like the idea of it being unclear whether a file is complete or not (most likely due to a partial download) (altho I like that it might be able to read a partial file), 2. the data section's ID might need to be updated, all data added checked for conflict with the ID.
+If the outer data section is continuously growing, 1. it might need to have the end delimiter be optional, and I don't really like the idea of it being unclear whether a file is complete or not (most likely due to a partial download) (although I like that it might be able to read a partial file), 2. the data section's ID might need to be updated, all data added checked for conflict with the ID.
 
 So I might want to base the format more around performant seek-based updates rather than being append-only wherever possible.
 - Probably want a footer
