@@ -4,9 +4,9 @@ import React, { Component } from "react";
 import { getAllHistoryNodesSortedByTimestamp, getHistoryAncestors } from "../history.js";
 import HistoryNode from "../HistoryNode.js";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-16px-importable.svg";
-import HistoryEntry from "./HistoryEntry.js";
+import HistoryEntry from "./HistoryEntry.jsx";
 import "./HistoryView.css";
-import LoadingIndicator from "./LoadingIndicator.js";
+import LoadingIndicator from "./LoadingIndicator.jsx";
 
 class HistoryView extends Component {
 	constructor(props) {

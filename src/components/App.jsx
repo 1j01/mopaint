@@ -15,15 +15,15 @@ import { ReactComponent as PickDocumentIcon } from "../icons/small-n-flat/file-p
 import { injectMetadataIntoBlob, readMetadataSync } from "../png-metadata.js";
 import tools, { toolsByName } from "../tools";
 import "./App.css";
-import Colorbox from "./Colorbox.js";
-import DarkModeToggle from "./DarkModeToggle.js";
-import Dialog from "./Dialog.js";
-import DocumentPickerDialog from "./DocumentPickerDialog.js";
-import DrawingCanvas from "./DrawingCanvas.js";
-import HistoryView from "./HistoryView.js";
-import LoadingIndicator from "./LoadingIndicator.js";
-import Toolbox from "./Toolbox.js";
-import Warning from "./Warning.js";
+import Colorbox from "./Colorbox.jsx";
+import DarkModeToggle from "./DarkModeToggle.jsx";
+import Dialog from "./Dialog.jsx";
+import DocumentPickerDialog from "./DocumentPickerDialog.jsx";
+import DrawingCanvas from "./DrawingCanvas.jsx";
+import HistoryView from "./HistoryView.jsx";
+import LoadingIndicator from "./LoadingIndicator.jsx";
+import Toolbox from "./Toolbox.jsx";
+import Warning from "./Warning.jsx";
 
 const getToolByName = (toolID) => {
 	const tool = toolsByName[toolID];

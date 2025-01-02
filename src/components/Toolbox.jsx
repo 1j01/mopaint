@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import ToolPreview from "./ToolPreview.js";
+import ToolPreview from "./ToolPreview.jsx";
 import "./Toolbox.css";
 
 class Toolbox extends Component {

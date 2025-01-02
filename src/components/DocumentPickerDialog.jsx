@@ -1,7 +1,7 @@
 import localforage from "localforage";
 import PropTypes from "prop-types";
 import React from "react";
-import Dialog from "./Dialog.js";
+import Dialog from "./Dialog.jsx";
 import "./DocumentPickerDialog.css";
 
 class DocumentOption extends React.Component {
