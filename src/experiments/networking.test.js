@@ -1,19 +1,12 @@
-/* global it:false expect:false describe:false beforeEach:false */
+/* global it:false expect:false describe:false */
 
 import { Client, InProcessPeerParty, WebSocketClient } from "./networking";
 import { WebSocketServer } from "./server";
 
-beforeEach(() => {
-	// Another way to make this work would be to set the id of each client explicitly.
-	// Could give them letters instead of numbers that way, might be nice.
-	// Or, we could simply reference the id property of the client objects in the expected values. But making expectations dynamic like that can be confusing.
-	Client.nextClientId = 1;
-});
-
 describe("Client + InProcessPeerParty", () => {
 	it("should allow communication", () => {
-		const clientA = new Client();
-		const clientB = new Client();
+		const clientA = new Client({ clientId: 1 });
+		const clientB = new Client({ clientId: 2 });
 		const party = new InProcessPeerParty();
 		party.addPeer(clientA);
 		party.addPeer(clientB);
@@ -31,8 +24,8 @@ describe("Client + InProcessPeerParty", () => {
 		party.dispose();
 	});
 	it("should order operations according to timestamp", () => {
-		const clientA = new Client();
-		const clientB = new Client();
+		const clientA = new Client({ clientId: 1 });
+		const clientB = new Client({ clientId: 2 });
 		const party = new InProcessPeerParty();
 		party.addPeer(clientA);
 		party.addPeer(clientB);
@@ -79,8 +72,8 @@ describe("Client + WebSocketServer + WebSocketClient", () => {
 	it("should allow communication", async () => {
 		const server = new WebSocketServer({ port: 8283 });
 		try {
-			const clientA = new Client();
-			const clientB = new Client();
+			const clientA = new Client({ clientId: 1 });
+			const clientB = new Client({ clientId: 2 });
 			// TODO: dispose of these clients
 			new WebSocketClient(clientA, "ws://localhost:8283");
 			new WebSocketClient(clientB, "ws://localhost:8283");

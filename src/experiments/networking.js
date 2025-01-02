@@ -74,11 +74,11 @@ class InMemoryComms extends Comms { // UNUSED
 	}
 }
 
+let nextClientId = 1;
 export class Client {
-	static nextClientId = 1;
 
-	constructor() {
-		this.clientId = Client.nextClientId++;
+	constructor({ clientId } = {}) {
+		this.clientId = clientId ?? nextClientId++;
 		this.metaHistory = [];
 		this.operationListeners = [];
 	}
