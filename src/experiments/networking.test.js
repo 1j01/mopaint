@@ -1,4 +1,4 @@
-/* global it:false expect:false test:false describe:false beforeEach:false */
+/* global it:false expect:false describe:false beforeEach:false */
 
 import { Client, InProcessPeerParty, WebSocketClient } from "./networking";
 import { WebSocketServer } from "./server";
@@ -81,8 +81,9 @@ describe("Client + WebSocketServer + WebSocketClient", () => {
 		try {
 			const clientA = new Client();
 			const clientB = new Client();
-			const wsClientA = new WebSocketClient(clientA, "ws://localhost:8283");
-			const wsClientB = new WebSocketClient(clientB, "ws://localhost:8283");
+			// TODO: dispose of these clients
+			new WebSocketClient(clientA, "ws://localhost:8283");
+			new WebSocketClient(clientB, "ws://localhost:8283");
 			clientA.addOperation({ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 0 });
 			clientB.addOperation({ id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green", timestamp: 1 });
 			await waitForSynchronization([clientA, clientB], 2);

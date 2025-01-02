@@ -1,3 +1,4 @@
+/* global global:false require:false */
 import React from "react";
 import ReactDOMClient from "react-dom/client";
 import App from "./App";
@@ -5,7 +6,7 @@ import App from "./App";
 if (global.crypto) {
 	console.trace("global.crypto already exists; this code can be removed");
 } else {
-	var nodeCrypto = require('crypto');
+	var nodeCrypto = require("crypto");
 	global.crypto = {
 		getRandomValues: function (buffer) { return nodeCrypto.randomFillSync(buffer); }
 	};

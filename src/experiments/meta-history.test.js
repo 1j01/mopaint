@@ -1,4 +1,4 @@
-/* global it:false expect:false test:false describe:false */
+/* global it:false expect:false describe:false */
 
 import { resolveMetaHistory } from "./meta-history.js";
 

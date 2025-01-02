@@ -5,6 +5,7 @@ export function squashHistory({ opsByID, cache, stepsToDelete }) {
 	// should it just implicitly delete isolated parents?
 
 	let computeNeeded = false;
+	// eslint-disable-next-line no-unused-vars
 	const dependentOpEntries = Object.entries(opsByID).filter(([id, op]) =>
 		stepsToDelete.includes(id)
 	);
@@ -29,7 +30,7 @@ export function squashHistory({ opsByID, cache, stepsToDelete }) {
 		return { computeNeeded: true };
 	}
 	// return dependencyReplacements;
-	for (const { id, oldOp, newOp } of dependencyReplacements) {
+	for (const { id /*, oldOp, newOp*/ } of dependencyReplacements) {
 		delete opsByID[id];
 		delete cache[id];
 	}

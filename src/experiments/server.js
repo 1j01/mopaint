@@ -1,5 +1,5 @@
-
-import WebSocket from 'ws';
+/* global require, module */
+import WebSocket from "ws";
 
 export class WebSocketServer {
 	constructor(webSocketServerOptions) {
@@ -10,7 +10,7 @@ export class WebSocketServer {
 		// This is essentially the "document state".
 		const messages = [];
 
-		this.server.on('connection', (socket) => {
+		this.server.on("connection", (socket) => {
 			this.clients.add(socket);
 
 			// send previous messages to the new client
@@ -18,7 +18,7 @@ export class WebSocketServer {
 				socket.send(message.data, { binary: message.isBinary });
 			}
 
-			socket.on('message', (message, isBinary) => {
+			socket.on("message", (message, isBinary) => {
 				// Broadcast the received message to all other clients
 				for (const client of this.clients) {
 					if (client !== socket && client.readyState === WebSocket.OPEN) {
@@ -30,7 +30,7 @@ export class WebSocketServer {
 				messages.push({ data: message, isBinary });
 			});
 
-			socket.on('close', () => {
+			socket.on("close", () => {
 				this.clients.delete(socket);
 			});
 		});
@@ -41,7 +41,7 @@ export class WebSocketServer {
 
 	dispose() {
 		this.server.close();
-		console.log('WebSocket server is closed');
+		console.log("WebSocket server is closed");
 	}
 }
 

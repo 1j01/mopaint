@@ -1,4 +1,4 @@
-/* global it:false expect:false test:false describe:false */
+/* global expect:false test:false describe:false */
 
 import { squashHistory } from "./squash-history.js";
 

@@ -2,6 +2,8 @@
 // Use case: decorating web pages with brush strokes drawn in relation to the position of elements on the page.
 // This is not a proof of concept implementation.
 
+/* eslint-disable */
+
 export function render(mopaintDocument, canvas, inputs) {
 	const ctx = canvas.getContext("2d");
 
@@ -20,6 +22,8 @@ export function render(mopaintDocument, canvas, inputs) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.drawImage(documentCanvas, 0, 0);
 }
+
+/* eslint-enable */
 
 export function overlayOnPage(mopaintDocument, elements) {
 	const canvas = document.createElement("canvas");
