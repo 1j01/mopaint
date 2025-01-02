@@ -57,7 +57,7 @@ export default [
 			"no-sequences": "error",
 			"no-throw-literal": "error",
 			"no-unmodified-loop-condition": "error",
-			"no-unused-expressions": "error", // a && a() used a lot, could switch to a?.() etc. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+			"no-unused-expressions": "error", // Tip: `a && a();` can become `a?.();` https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
 			"no-useless-concat": "error",
 			"prefer-promise-reject-errors": "error",
 			"radix": "error",
@@ -73,7 +73,7 @@ export default [
 			// Stylistic:
 			"@stylistic/array-bracket-newline": ["error", "consistent"],
 			"@stylistic/array-bracket-spacing": ["error", "never"],
-			// "@stylistic/array-element-newline": ["error", "consistent"], // lot of big arrays with sometimes meaningful line breaks; could exclude certain files though
+			// "@stylistic/array-element-newline": ["error", "consistent"], // could enable this, but sometimes line breaks are useful for grouping (or limited compaction) in large arrays
 			"@stylistic/arrow-parens": ["error", "always"],
 			"@stylistic/arrow-spacing": ["error", { "before": true, "after": true }],
 			"@stylistic/block-spacing": ["error", "always"],
@@ -90,9 +90,9 @@ export default [
 			"@stylistic/computed-property-spacing": ["error", "never"],
 			"@stylistic/dot-location": ["error", "property"],
 			"@stylistic/eol-last": ["error", "always"],
-			// "@stylistic/function-call-argument-newline": ["error", "consistent"], // several places with meaningful line breaks grouping arguments
+			// "@stylistic/function-call-argument-newline": ["error", "consistent"], // line breaks can meaningfully group arguments (e.g. x1, y1, x2, y2)
 			"@stylistic/function-call-spacing": ["error", "never"],
-			// "@stylistic/function-paren-newline": ["error", "multiline-arguments"], // several places with meaningful line breaks grouping arguments
+			// "@stylistic/function-paren-newline": ["error", "multiline-arguments"], // line breaks can meaningfully group arguments (e.g. x1, y1, x2, y2)
 			"@stylistic/generator-star-spacing": ["error", "after"],
 			// "@stylistic/implicit-arrow-linebreak": ["error", "beside"], // could encourage parens for clarity, but ESLint won't mention that's the reason, so probably not a good idea
 			// The indent settings are mostly defaults copied from https://github.com/eslint-stylistic/eslint-stylistic/blob/c11f1d6f26c13b29fd44c95c908922cb79a0ac82/packages/eslint-plugin/configs/customize.ts#L115-L154
@@ -164,16 +164,16 @@ export default [
 			// "@stylistic/line-comment-position": "off",
 			// "@stylistic/linebreak-style": "off",
 			// "@stylistic/lines-around-comment": ["error", ""], // TODO maybe (so many options...)
-			// "@stylistic/lines-between-class-members": ["error", "never"], // TODO maybe (auto-fix seems to mess up indentation a bit)
-			// "@stylistic/max-len": ["error", ""], // TODO maybe along with changing export {} to individual exports
+			// "@stylistic/lines-between-class-members": ["error", "never"], // TODO maybe (auto-fix seems to mess up indentation a bit (but that's easily remedied); not sure about which style I prefer)
+			// "@stylistic/max-len": ["error", ""], // TODO: enforce a line length limit
 			"@stylistic/max-statements-per-line": ["error", { "max": 4 }], // TODO: maybe decrease this
 			// TODO: lint .d.ts files, and ideally JSDoc comments
 			// "@stylistic/member-delimiter-style": ["error", { "multiline": { "delimiter": "semi", "requireLast": true }, "singleline": { "delimiter": "semi", "requireLast": true } }],
-			// "@stylistic/multiline-comment-style": ["error", "separate-lines"], // I use block comments sometimes for disabled code; also this is detecting a few JSDoc comments even though it says it won't without "checkJSDoc" set to true.
+			// "@stylistic/multiline-comment-style": ["error", "separate-lines"], // I use block comments sometimes for disabled code; also this can apparently detect some JSDoc comments even though it says it won't without "checkJSDoc" set to true.
 			// "@stylistic/multiline-ternary": ["error", "always-multiline"], // might want to change the ternary style in the future...
 			"@stylistic/new-parens": ["error", "always"],
 			"@stylistic/newline-per-chained-call": ["error", { "ignoreChainWithDepth": 5 }], // TODO: maybe decrease this
-			// "@stylistic/no-confusing-arrow": ["error", { "allowParens": true }], // don't really like the changes this implies in the couple of places it flags
+			// "@stylistic/no-confusing-arrow": ["error", { "allowParens": true }], // don't always like the changes this implies
 			// "@stylistic/no-extra-parens": ["error", "all"], // if there are extra parens, it's probably for clarity (TODO: look at the granular options), also, this doesn't seem to detect cases it should for function calls?
 			"@stylistic/no-extra-semi": "error",
 			"@stylistic/no-floating-decimal": "error",
@@ -188,7 +188,7 @@ export default [
 			// "@stylistic/object-curly-newline": ["error", ""], // TODO: investigate options
 			"@stylistic/object-curly-spacing": ["error", "always"],
 			"@stylistic/object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
-			// "@stylistic/one-var-declaration-per-line": ["error", "always"], // TODO maybe? (too bad there's no "usually" option, haha)
+			// "@stylistic/one-var-declaration-per-line": ["error", "always"], // TODO maybe? (too bad there's no "unless-tightly-related" option, for things like `let x, y, z;`)
 			// "@stylistic/operator-linebreak": ["error", "after"], // TODO maybe: not sure about ternary operator tbh
 			// "@stylistic/padded-blocks": "off", // it depends, especially on how much stuff is in the block
 			// "@stylistic/padding-line-between-statements": ["error", ""], // TODO: investigate options, looks very complex
