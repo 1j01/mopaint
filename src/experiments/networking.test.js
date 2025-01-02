@@ -58,8 +58,8 @@ describe("Client + InProcessPeerParty", () => {
 });
 
 /**
- * @param {Client[]} clients 
- * @param {number} expectedMetaHistoryLength 
+ * @param {Client[]} clients
+ * @param {number} expectedMetaHistoryLength
  * @returns {Promise<void>}
  */
 const waitForSynchronization = (clients, expectedMetaHistoryLength) => {

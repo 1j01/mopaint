@@ -48,7 +48,7 @@ describe("history deletion", () => {
 		expect(squashHistory({
 			opsByID: getTestProgram(),
 			cache: {},
-			stepsToDelete
+			stepsToDelete,
 		}))
 			.toEqual({ computeNeeded: true });
 

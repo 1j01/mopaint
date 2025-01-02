@@ -7,7 +7,7 @@ if (global.crypto) {
 } else {
 	var nodeCrypto = require("crypto");
 	global.crypto = {
-		getRandomValues: function (buffer) { return nodeCrypto.randomFillSync(buffer); }
+		getRandomValues: function (buffer) { return nodeCrypto.randomFillSync(buffer); },
 	};
 }
 

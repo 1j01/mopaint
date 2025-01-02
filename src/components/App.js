@@ -326,7 +326,7 @@ class App extends Component {
 				fileIsSomethingElseCallback(serializedDocument);
 			} else {
 				this.showError({
-					message: "This is not a Mopaint document."
+					message: "This is not a Mopaint document.",
 				});
 			}
 			return;

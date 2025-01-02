@@ -79,11 +79,11 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 	if (serialized.formatVersion === 0.3) {
 		serialized.formatVersion = 0.4;
 		// Convert to Non-Linear History
-		// 
+		//
 		// linear undos/redos -> tree of nodes
 		// operations -> nodes containing operations
 		// last "undo" -> current history node
-		// 
+		//
 		// necessary lies:
 		// - time (previously not recorded)
 		// - document structure (previously not recorded / already a lie)
@@ -214,7 +214,7 @@ export function deserializeDocument(serialized, isFromFile, getToolByName) {
 					To load this {nounPhraseThingToLoad}, use the version of Mopaint at the Git branch&nbsp;
 					<a href={`https://github.com/1j01/mopaint/tree/${gitBranchName}`} style={{ fontFamily: "monospace" }}>{gitBranchName}</a>
 				</p>
-			</React.Fragment>
+			</React.Fragment>,
 		}];
 	}
 

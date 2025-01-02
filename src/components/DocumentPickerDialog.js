@@ -58,7 +58,7 @@ class DocumentPickerDialog extends React.Component {
 				documentIDs = [this.props.currentDocumentID, ...documentIDs.filter((id) => id !== this.props.currentDocumentID)];
 
 				// TODO: sort in more reasonable way(s) like modified time, accessed time
-				// for now, this just makes the order stay the same when switching documents 
+				// for now, this just makes the order stay the same when switching documents
 				documentIDs.sort();
 
 				this.setState({ documentIDs });
