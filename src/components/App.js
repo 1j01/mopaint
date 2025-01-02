@@ -3,7 +3,7 @@ import { List } from "immutable";
 import isPNG from "is-png";
 import localforage from "localforage";
 import PropTypes from "prop-types";
-import React, { Component, useEffect, useRef, useState } from "react";
+import { Component, useEffect, useRef, useState } from "react";
 import HistoryNode from "../HistoryNode.js";
 import defaultPalette, { defaultColor } from "../default-palette.js";
 import { deserializeDocument, serializeDocument } from "../document-format.js";

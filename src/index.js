@@ -1,6 +1,5 @@
 import localforage from "localforage";
 import { nanoid } from "nanoid";
-import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./components/App.js";
 import "./index.css";

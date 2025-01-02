@@ -1,11 +1,13 @@
 import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
+import jsxRuntime from "eslint-plugin-react/configs/jsx-runtime.js";
 import reactRecommended from "eslint-plugin-react/configs/recommended.js";
 import globals from "globals";
 
 export default [
 	js.configs.recommended,
 	reactRecommended,
+	jsxRuntime,
 	{
 		languageOptions: {
 			globals: {
