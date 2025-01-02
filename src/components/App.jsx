@@ -1,4 +1,4 @@
-import { loadPalette } from "anypalette";
+// import { loadPalette } from "anypalette";
 import { List } from "immutable";
 import isPNG from "is-png";
 import localforage from "localforage";
@@ -336,23 +336,23 @@ class App extends Component {
 
 	handleDroppedOrOpenedFiles(files) {
 		const tryPalette = (file) => {
-			loadPalette(file, (error, palette) => {
-				if (error) {
-					this.showError({
-						message: "This does not appear to be a Mopaint file or color palette.",
-						error, // @TODO: instead of generic error display,
-						// list the formats that were tried in a nice way, including non-palette formats,
-						// with palette formats as a group
-					});
-				} else {
-					this.setState(
-						{
-							palette: palette.map((color) => color.toString()),
-						},
-						this.saveDebounced.bind(this),
-					);
-				}
-			});
+			// loadPalette(file, (error, palette) => {
+			// 	if (error) {
+			// 		this.showError({
+			// 			message: "This does not appear to be a Mopaint file or color palette.",
+			// 			error, // @TODO: instead of generic error display,
+			// 			// list the formats that were tried in a nice way, including non-palette formats,
+			// 			// with palette formats as a group
+			// 		});
+			// 	} else {
+			// 		this.setState(
+			// 			{
+			// 				palette: palette.map((color) => color.toString()),
+			// 			},
+			// 			this.saveDebounced.bind(this),
+			// 		);
+			// 	}
+			// });
 		};
 
 		// TODO: progress indication
