@@ -26,13 +26,8 @@ const trimCanvas = (() => {
 
 		while (top < bottom && rowBlank(imageData, width, top)) ++top;
 		while (bottom - 1 > top && rowBlank(imageData, width, bottom - 1)) --bottom;
-		while (left < right && columnBlank(imageData, width, left, top, bottom))
-			++left;
-		while (
-			right - 1 > left &&
-			columnBlank(imageData, width, right - 1, top, bottom)
-		)
-			--right;
+		while (left < right && columnBlank(imageData, width, left, top, bottom)) ++left;
+		while (right - 1 > left && columnBlank(imageData, width, right - 1, top, bottom)) --right;
 
 		const trimmed = ctx.getImageData(
 			left,
