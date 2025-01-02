@@ -50,7 +50,9 @@
 		"ws": "^8.18.0"
 	},
 	"scripts": {
-		"lint": "eslint src/",
+		"lint-cspell": "cspell-cli lint .",
+		"lint-eslint": "eslint src/",
+		"lint": "npm-run-all --continue-on-error --serial lint-*",
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test --env=jsdom",
@@ -62,5 +64,9 @@
 		"not dead",
 		"not ie <= 11",
 		"not op_mini all"
-	]
+	],
+	"devDependencies": {
+		"cspell-cli": "^8.17.0",
+		"npm-run-all": "^4.1.5"
+	}
 }
