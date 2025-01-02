@@ -138,7 +138,7 @@ export class WebSocketClient {
 			}
 		});
 
-		this.ws.addEventListener("message", async (event) => {
+		this.ws.addEventListener("message", (event) => {
 			// Receive operations from the server
 			if (typeof event.data !== "string") {
 				console.error("Received non-string message:", event.data);
