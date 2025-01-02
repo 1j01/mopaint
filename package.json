@@ -32,6 +32,7 @@
 	"type": "module",
 	"dependencies": {
 		"@eslint/js": "^9.17.0",
+		"@stylistic/eslint-plugin": "^2.12.1",
 		"anypalette": "0.6.0",
 		"canvas": "^3.0.0",
 		"eslint": "^8.57.1",

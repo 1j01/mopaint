@@ -99,10 +99,11 @@ This project is built with [React](https://reactjs.org/), for now anyway.
 I picked it because reactivity is a big part of the vision for the project. That said, I am building a reactivity system with this project, so...
 I won't be using React for the reactivity of the core system, and I do have a pipe dream of a fully themeable UI, with brush strokes attached to UI elements, themeable with the app itself.
 
-ESLint is used for linting, and VS Code is used for formatting.
-I may bring in ESLint stylistic rules for formatting, matching VS Code's, as I've done in [JS Paint][].
+ESLint is used for linting and formatting code, and cspell is used for spell checking.
 
 Run code quality checks: `npm run lint` (runs eslint and cspell spell checker)
+
+Format code and auto-fix other lint: `npx eslint --fix src/`
 
 Run the development server: `npm start`
 
