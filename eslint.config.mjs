@@ -34,18 +34,6 @@ export default [
 			semi: ["error", "always"],
 		},
 	},
-	// Node.js scripts that use CommonJS
-	{
-		files: [
-			"src/CNAME.js",
-		],
-		languageOptions: {
-			globals: {
-				...globals.node,
-			},
-			sourceType: "commonjs",
-		},
-	},
 	// Tests
 	{
 		files: ["**/*.test.js"],

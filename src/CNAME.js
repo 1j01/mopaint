@@ -1,1 +1,2 @@
-require("fs").writeFileSync("build/CNAME", "mopaint.app", "utf8");
+import fs from "node:fs";
+fs.writeFileSync("build/CNAME", "mopaint.app", "utf8");
