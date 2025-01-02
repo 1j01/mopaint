@@ -38,6 +38,25 @@ describe("Client + InProcessPeerParty", () => {
 		expect(clientB.metaHistory).toEqual(clientA.metaHistory);
 		party.dispose();
 	});
+	it("should order operations according to clientId if timestamps are equal", () => {
+		const clientA = new Client({ clientId: 1 });
+		const clientB = new Client({ clientId: 2 });
+		const party = new InProcessPeerParty();
+		party.addPeer(clientA);
+		party.addPeer(clientB);
+		clientA.addOperation({ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 1 });
+		clientB.addOperation({ id: "abc2", metaLevel: 0, type: "line", name: "Draw Line", color: "yellow", timestamp: 1 });
+		clientB.addOperation({ id: "abc3", metaLevel: 0, type: "line", name: "Draw Line", color: "green", timestamp: 1 });
+		clientA.addOperation({ id: "abc4", metaLevel: 0, type: "line", name: "Draw Line", color: "red", timestamp: 1 });
+		expect(clientA.metaHistory).toEqual([
+			{ clientId: 1, id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 1 },
+			{ clientId: 1, id: "abc4", metaLevel: 0, type: "line", name: "Draw Line", color: "red", timestamp: 1 },
+			{ clientId: 2, id: "abc2", metaLevel: 0, type: "line", name: "Draw Line", color: "yellow", timestamp: 1 },
+			{ clientId: 2, id: "abc3", metaLevel: 0, type: "line", name: "Draw Line", color: "green", timestamp: 1 },
+		]);
+		expect(clientB.metaHistory).toEqual(clientA.metaHistory);
+		party.dispose();
+	});
 });
 
 /**
