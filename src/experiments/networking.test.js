@@ -38,7 +38,7 @@ describe("Client + InProcessPeerParty", () => {
 		expect(clientB.metaHistory).toEqual(clientA.metaHistory);
 		party.dispose();
 	});
-	it("should order operations according to clientId if timestamps are equal", () => {
+	it("should order operations according to clientId and order received if timestamps are equal", () => {
 		const clientA = new Client({ clientId: 1 });
 		const clientB = new Client({ clientId: 2 });
 		const party = new InProcessPeerParty();
