@@ -1,5 +1,18 @@
 import { resolveMetaHistory } from "./meta-history";
 
+// Networking Prototype
+// Goals:
+// - Transport agnostic.
+//   Establish a simple protocol that could be backed by WebSockets, WebRTC, WebTransport, etc.,
+//   possibly using a library like libp2p (which supports all of the above), or even a closed-source service like Firebase.
+//   Also, non-network transports like `BroadcastChannel`, or `iframe.contentWindow.postMessage`, or Electron's IPC system
+//   will be useful for locally syncing views of the same document across different page contexts (browser tabs, `iframe`s, or Electron `BrowserWindow`s).
+//   Also, an in-process implementation is useful for testing.
+// - Syncing an append-only list of operations
+//   - Eventual consistency
+//   - Conflict resolution can be ignored for now, as drawing operations can always be considered independently ordered
+// - In the future, sharing cache data using content-addressable storage
+
 // Should there be a message type separate from the operation type?
 // Probably, something like that.
 // Eventually we'll want to stream buffers of data like mouse movements, associated with a single operation,
@@ -22,57 +35,6 @@ import { resolveMetaHistory } from "./meta-history";
  * @property {string} metaLevel
  */
 
-/** 
- * Represents an arbitrary transport layer that may be backed by WebSockets, WebRTC, WebTransport, etc.,
- * possibly using a library like libp2p, or a closed-source service like Firebase,
- * or `postMessage` for locally syncing views across page contexts (`iframe`s, browser tabs, or Electron `BrowserWindow`s).
- * 
- * Main responsibilities:
- * - Syncing an append-only list of operations
- *   - Eventual consistency
- *   - Conflict resolution can be ignored for now, as drawing operations can always be considered before or after another operation
- * - In the future, sharing cache data using content-addressable storage
- * 
- * @abstract
- */
-class Comms { // UNUSED
-	/**
-	 * @param {Operation} operation
-	 */
-	sendOperation(operation) { // eslint-disable-line no-unused-vars
-		throw new Error("Not implemented");
-	}
-
-	/**
-	 * @param {(operation: Operation) => void} callback
-	 */
-	onOperation(callback) { // eslint-disable-line no-unused-vars
-		throw new Error("Not implemented");
-	}
-}
-
-class InMemoryComms extends Comms { // UNUSED
-	constructor() {
-		super();
-		this.otherComms = [];
-	}
-
-	/**
-	 * @param {Operation} operation
-	 */
-	sendOperation(operation) {
-		this.otherComms.forEach((comms) => {
-			comms.onOperation(operation);
-		});
-	}
-
-	/**
-	 * @param {(operation: Operation) => void} callback
-	 */
-	onOperation(callback) {
-		throw new Error("Nothing sensible to do here. Back to the drawing board.");
-	}
-}
 
 let nextClientId = 1;
 export class Client {
@@ -168,18 +130,18 @@ export class WebSocketClient {
 		this.client = client;
 
 		const pendingMessages = [];
-		this.ws.addEventListener('open', () => {
-			console.log('Connected to WebSocket server');
+		this.ws.addEventListener("open", () => {
+			console.log("Connected to WebSocket server");
 			for (const message of pendingMessages) {
-				console.log('Sending queued message:', message);
+				console.log("Sending queued message:", message);
 				this.ws.send(message);
 			}
 		});
 
-		this.ws.addEventListener('message', async (event) => {
+		this.ws.addEventListener("message", async (event) => {
 			// Receive operations from the server
-			if (typeof event.data !== 'string') {
-				console.error('Received non-string message:', event.data);
+			if (typeof event.data !== "string") {
+				console.error("Received non-string message:", event.data);
 				return;
 			}
 			const operation = JSON.parse(event.data);
@@ -189,10 +151,10 @@ export class WebSocketClient {
 		this.client.onOperation((operation) => {
 			// Send local operations to the server
 			if (this.ws.readyState === WebSocket.OPEN) {
-				console.log('Sending operation to server:', operation);
+				console.log("Sending operation to server:", operation);
 				this.ws.send(JSON.stringify(operation));
 			} else {
-				console.log('WebSocket not open, queueing message for operation:', operation);
+				console.log("WebSocket not open, queueing message for operation:", operation);
 				pendingMessages.push(JSON.stringify(operation));
 			}
 		});
