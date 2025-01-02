@@ -1,7 +1,7 @@
-import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Palette from "./Palette.js";
+import React, { Component } from "react";
 import "./Colorbox.css";
+import Palette from "./Palette.js";
 
 class Colorbox extends Component {
 	render() {

@@ -1,14 +1,14 @@
-import line from "./line.js";
-import freeformLineTool from "./freeform-line.js";
 import circle from "./circle.js";
-import rectangle from "./rectangle.js";
 import fill from "./fill.js";
+import freeformLineTool from "./freeform-line.js";
+import line from "./line.js";
 import mirrorReflect from "./mirror-symmetry.js";
+import rectangle from "./rectangle.js";
 import rotationallyReflect from "./rotational-symmetry.js";
 // // import { ReactComponent as SymmetryIcon } from "../icons/noun-symmetry.svg";
 // // import { ReactComponent as CelticKnotIcon } from "../icons/noun-celtic-knot.svg";
-import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket-flipped.svg";
 import { ReactComponent as VectorEditIcon } from "../icons/edit-path-importable.svg";
+import { ReactComponent as FillBucketIcon } from "../icons/flaticons-fill-bucket-flipped.svg";
 
 
 const tools = {

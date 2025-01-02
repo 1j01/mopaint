@@ -1,8 +1,8 @@
-import React, { Component } from "react";
 import PropTypes from "prop-types";
-import "./DrawingCanvas.css";
+import React, { Component } from "react";
 import { draw } from "../engine.js";
 import { generateID } from "../helpers.js";
+import "./DrawingCanvas.css";
 import LoadingIndicator from "./LoadingIndicator";
 
 

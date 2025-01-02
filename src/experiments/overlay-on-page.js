@@ -24,15 +24,15 @@ export function render(mopaintDocument, canvas, inputs) {
 export function overlayOnPage(mopaintDocument, elements) {
 	const canvas = document.createElement("canvas");
 
-	const makeFrameInputs = ()=> {
+	const makeFrameInputs = () => {
 		const rects = {};
 		for (let [id, element] of elements) {
-			const {left, top, right, bottom} = element.getBoundingClientRect();
+			const { left, top, right, bottom } = element.getBoundingClientRect();
 			const x = left, y = top, width = right - left, height = bottom - top;
-			rects[id] = {x, y, width, height};
+			rects[id] = { x, y, width, height };
 		}
 		const pageWidth = innerWidth, pageHeight = innerHeight;
-		const inputs = {rects, pageWidth, pageHeight};
+		const inputs = { rects, pageWidth, pageHeight };
 		return inputs;
 	};
 
@@ -42,7 +42,7 @@ export function overlayOnPage(mopaintDocument, elements) {
 	canvas.style.top = "0";
 	document.body.appendChild(canvas);
 
-	const animate = ()=> {
+	const animate = () => {
 		const inputs = makeFrameInputs();
 
 		canvas.width = inputs.pageWidth;

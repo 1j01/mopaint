@@ -1,8 +1,8 @@
-import React, { Component } from "react";
 import PropTypes from "prop-types";
-import ToolPreview from "./ToolPreview.js";
-import "./HistoryEntry.css";
+import React, { Component } from "react";
 import HistoryNode from "../HistoryNode.js";
+import "./HistoryEntry.css";
+import ToolPreview from "./ToolPreview.js";
 
 // const modulo = (a, b) => (+a % (b = +b) + b) % b;
 

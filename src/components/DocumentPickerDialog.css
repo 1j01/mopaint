@@ -21,10 +21,12 @@
 	margin-bottom: 5px;
 	padding: 5px;
 }
+
 .document-picker-dialog-documents li a:hover,
 .document-picker-dialog-documents li a:focus {
 	background: rgba(43, 75, 253, 0.1);
 }
+
 .document-thumbnail {
 	width: 100px;
 	height: 100px;
@@ -33,6 +35,7 @@
 	flex-direction: column;
 	justify-content: flex-end;
 }
+
 .document-picker-dialog-documents li img {
 	display: block;
 	border: 1px solid rgba(128, 128, 128, 0.5);

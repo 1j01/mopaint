@@ -1,12 +1,12 @@
-import React, { Component } from "react";
+import { List } from "immutable";
 import PropTypes from "prop-types";
-import HistoryEntry from "./HistoryEntry.js";
-import LoadingIndicator from "./LoadingIndicator.js";
-import "./HistoryView.css";
-import { getHistoryAncestors, getAllHistoryNodesSortedByTimestamp } from "../history.js";
+import React, { Component } from "react";
+import { getAllHistoryNodesSortedByTimestamp, getHistoryAncestors } from "../history.js";
 import HistoryNode from "../HistoryNode.js";
 import { ReactComponent as NewDocumentIcon } from "../icons/small-n-flat/document-new-16px-importable.svg";
-import { List } from "immutable";
+import HistoryEntry from "./HistoryEntry.js";
+import "./HistoryView.css";
+import LoadingIndicator from "./LoadingIndicator.js";
 
 class HistoryView extends Component {
 	constructor(props) {

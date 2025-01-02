@@ -13,25 +13,32 @@
 	text-overflow: ellipsis;
 	background: transparent;
 	color: inherit;
-	margin-bottom: 2px; /* to allow space for a focus ring */
+	/* to allow space for a focus ring */
+	margin-bottom: 2px;
 }
+
 [data-color-scheme="dark"] .HistoryEntry:active {
 	background: rgba(99, 156, 255, 0.13);
 	color: white;
 }
+
 [data-color-scheme="dark"] .HistoryEntry[aria-checked] {
 	background: rgba(99, 156, 255, 0.527);
 	color: white;
 }
+
 .HistoryEntry:active {
 	background: rgb(240, 240, 240);
 }
+
 .HistoryEntry[aria-checked] {
 	background: rgb(99, 155, 255);
 }
+
 .HistoryEntry:not(.current):not(.ancestor-of-current) {
 	color: gray;
 }
+
 .HistoryEntry canvas,
 .HistoryEntry svg,
 .HistoryEntry .question-mark,
@@ -39,8 +46,10 @@
 	margin-right: 5px;
 	vertical-align: middle;
 }
+
 [data-color-scheme="dark"] .HistoryEntry .ToolPreview {
-	background: lightgray; /* for now */
+	/* for now */
+	background: lightgray;
 }
 
 .HistoryEntry .question-mark {
@@ -51,6 +60,7 @@
 	background: rgba(128, 128, 128, 0.5);
 	color: white;
 }
+
 .HistoryEntry .question-mark::after {
 	content: "?";
 }

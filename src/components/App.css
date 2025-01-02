@@ -6,6 +6,7 @@ body,
 	display: flex;
 	flex-direction: column;
 }
+
 .App {
 	height: 100%;
 	overflow: hidden;
@@ -13,12 +14,13 @@ body,
 	flex-direction: row;
 	transition: background 0.8s ease;
 }
+
 [data-color-scheme="dark"] .App {
 	background: #333;
 	color: white;
 }
 
-.App > main {
+.App>main {
 	/* TODO: make the canvas area be the overflow area instead */
 	/* make the color and tool palettes compact enough to be on the screen at all times on mobile by collapsing */
 	overflow: auto;
@@ -42,6 +44,7 @@ body,
 	padding: 8px;
 	border-radius: 50%;
 }
+
 .toolbar-button:hover,
 .toolbar-button:focus {
 	background: rgba(128, 128, 128, 0.4);
@@ -53,10 +56,12 @@ body,
 	color: black;
 	outline: none;
 }
+
 .toolbar-button:active:not([aria-checked]) {
 	background: rgb(214, 228, 255);
 	color: black;
 }
+
 .toolbar-button[aria-checked] {
 	background: #639bff;
 	color: white;
@@ -68,6 +73,7 @@ body,
 	align-items: center;
 	padding: 0 15px;
 }
-#documents-options > * {
+
+#documents-options>* {
 	flex: 0 0 auto;
 }

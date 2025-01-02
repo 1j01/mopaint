@@ -10,6 +10,7 @@
 	justify-content: center;
 	align-items: center;
 }
+
 .Dialog-box {
 	pointer-events: auto;
 	padding: 30px;
@@ -18,10 +19,12 @@
 	border-radius: 5px;
 	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
+
 [data-color-scheme="dark"] .Dialog-box {
 	background: black;
 	color: white;
 }
+
 .Dialog-buttons {
 	/* TODO: friendly buttons */
 	display: flex;
@@ -29,6 +32,7 @@
 	justify-content: flex-end;
 	margin-top: 1em;
 }
+
 .Dialog-buttons button {
 	padding: 0.4em 1.5em;
 	background: rgba(128, 128, 128, 0.1);
@@ -37,20 +41,24 @@
 	border-radius: 2px;
 	color: inherit;
 }
+
 .Dialog-buttons button:hover,
 .Dialog-buttons button:focus {
 	background: rgba(128, 128, 128, 0.2);
 }
+
 .Dialog-buttons button:active {
 	background: rgba(128, 128, 128, 0.3);
 }
+
 .Dialog details {
 	margin: 1em 0;
 	width: 40em;
 	max-width: calc(100vw - 2em);
 	border: 1px solid rgba(128, 128, 128, 0.5);
 }
-.Dialog details > summary {
+
+.Dialog details>summary {
 	background: rgba(128, 128, 128, 0.1);
 	/*cursor: pointer;*/
 	/* We could do a pointer hand, but then it feels like *everything* should have a pointer hand,
@@ -58,17 +66,21 @@
 	but let's just make it *not* show a text selection cursor (over the text) for now */
 	cursor: default;
 }
-.Dialog details[open] > summary {
+
+.Dialog details[open]>summary {
 	border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 }
-.Dialog details > .actual-details {
+
+.Dialog details>.actual-details {
 	max-height: 10em;
 	overflow: auto;
 }
-.Dialog details > summary,
-.Dialog details > .actual-details {
+
+.Dialog details>summary,
+.Dialog details>.actual-details {
 	padding: 0.5em;
 }
+
 .Dialog details pre {
 	margin: 0;
 }

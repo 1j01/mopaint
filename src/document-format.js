@@ -1,5 +1,5 @@
-import React from "react";
 import { List } from "immutable";
+import React from "react";
 import HistoryNode from "./HistoryNode";
 import { generateID } from "./helpers.js";
 import { getAllHistoryNodesSortedByTimestamp } from "./history.js";

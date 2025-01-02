@@ -1,6 +1,6 @@
-import pngChunksExtract from "png-chunks-extract";
-import pngChunksEncode from "png-chunks-encode";
 import pngChunkText from "png-chunk-text";
+import pngChunksEncode from "png-chunks-encode";
+import pngChunksExtract from "png-chunks-extract";
 
 const readPngChunksFromBlob = (blob, callback) => {
 	blob.arrayBuffer().then((arrayBuffer) => {

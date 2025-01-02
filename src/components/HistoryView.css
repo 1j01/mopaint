@@ -7,8 +7,10 @@
 	box-shadow: -1px 0 5px rgba(0, 0, 0, 0.5);
 	background: white;
 	color: black;
-	transition: background 0.4s ease; /* it's not that good of a transition because the text color isn't transitioned, so make it relatively quick */
+	/* it's not that good of a transition because the text color isn't transitioned, so make it relatively quick */
+	transition: background 0.4s ease;
 }
+
 [data-color-scheme="dark"] .HistoryView {
 	background: black;
 	color: white;
