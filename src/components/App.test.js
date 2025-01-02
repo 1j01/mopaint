@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOMClient from "react-dom/client";
-import App from "./App";
+import App from "./App.js";
 
 if (global.crypto) {
 	console.trace("global.crypto already exists; this code can be removed");

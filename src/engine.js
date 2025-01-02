@@ -1,6 +1,6 @@
 // TODO: evaluate other hashing libraries
 // https://brillout.github.io/test-javascript-hash-implementations/
-import sha256 from "hash.js/lib/hash/sha/256";
+import sha256 from "hash.js/lib/hash/sha/256.js";
 
 const cacheHeuristicPeriod = 5;
 

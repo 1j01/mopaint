@@ -1,5 +1,5 @@
-import { Client, InProcessPeerParty, WebSocketClient } from "./networking";
-import { WebSocketServer } from "./server";
+import { Client, InProcessPeerParty, WebSocketClient } from "./networking.js";
+import { WebSocketServer } from "./server.js";
 
 describe("Client + InProcessPeerParty", () => {
 	it("should allow communication", () => {

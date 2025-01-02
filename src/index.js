@@ -2,9 +2,9 @@ import localforage from "localforage";
 import { nanoid } from "nanoid";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./components/App";
+import App from "./components/App.js";
 import "./index.css";
-import registerServiceWorker from "./registerServiceWorker";
+import registerServiceWorker from "./registerServiceWorker.js";
 import "./simulate-gestures.js";
 
 if (

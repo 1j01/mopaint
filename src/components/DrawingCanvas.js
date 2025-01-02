@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { draw } from "../engine.js";
 import { generateID } from "../helpers.js";
 import "./DrawingCanvas.css";
-import LoadingIndicator from "./LoadingIndicator";
+import LoadingIndicator from "./LoadingIndicator.js";
 
 
 const distanceSquared = (v, w) => (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
