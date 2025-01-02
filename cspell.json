@@ -1,6 +1,10 @@
 {
 	"ignorePaths": [
-		"icons"
+		"icons", // Don't want to spell check SVG files (at least not path data...)
+		"images", // Reserved; don't want to spell check SVG files
+		"build", // Used by CRA's `react-scripts build`
+		"out", // Reserved; may be used for an Electron app in the future
+		"dist" // Reserved
 	],
 	"words": [
 		"anypalette",

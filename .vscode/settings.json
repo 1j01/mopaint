@@ -5,12 +5,14 @@
 	// This hides files from the file tree as well as search results.
 	"files.exclude": {
 		"**/node_modules": true,
-		"**/out": true,
-		"**/dist": true,
+		"**/build": true, // Used by CRA's `react-scripts build`
+		"**/out": true, // Reserved; may be used for an Electron app in the future
+		"**/dist": true, // Reserved
 	},
 	// This affects Find In Files (Ctrl+Shift+F), Go To File (Ctrl+P), and Quick Search.
 	"search.exclude": {
 		"**/images": true,
+		"**/build": true,
 		"**/lib": true,
 		"**/out": true,
 		// The package lock files contain a lot of repetition, and are usually noise in search results.
@@ -21,6 +23,7 @@
 	// Prevent accidental editing.
 	// This can always be overridden with the command "File: Toggle Active Editor Read-only in Session"
 	"files.readonlyInclude": {
+		"**/build/**": true,
 		"**/out/**": true,
 		"**/dist/**": true,
 		// Node.js
