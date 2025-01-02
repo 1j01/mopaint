@@ -30,11 +30,13 @@
 		"composition"
 	],
 	"dependencies": {
+		"@eslint/js": "^9.17.0",
 		"anypalette": "0.6.0",
 		"canvas": "^3.0.0",
 		"eslint": "^8.57.1",
 		"eslint-plugin-react": "^7.32.2",
 		"gh-pages": "5.0.0",
+		"globals": "^15.14.0",
 		"hash.js": "1.1.7",
 		"immutable": "^4.3.0",
 		"is-png": "^2.0.0",
