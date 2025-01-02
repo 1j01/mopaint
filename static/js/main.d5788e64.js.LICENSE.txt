@@ -1,0 +1,166 @@
+/*!
+           * The buffer module from node.js, for the browser.
+           *
+           * @author   Feross Aboukhadijeh <https://feross.org>
+           * @license  MIT
+           */
+
+/*!
+    localForage -- Offline Storage, Improved
+    Version 1.10.0
+    https://localforage.github.io/localForage
+    (c) 2013-2017 Mozilla, Apache License 2.0
+*/
+
+/*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
+
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+
+/**
+ * @license React
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react-jsx-runtime.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * Modules in this bundle
+ * @license
+ *
+ * anypalette:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Isaiah Odhner <isaiahodhner@gmail.com>
+ *   homepage: https://1j01.github.io/anypalette.js/
+ *   version: 0.6.0
+ *
+ * base64-js:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: T. Jameson Little <t.jameson.little@gmail.com>
+ *   homepage: https://github.com/beatgammit/base64-js
+ *   version: 1.5.1
+ *
+ * browser-resolve:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Roman Shtylman <shtylman@gmail.com>
+ *   homepage: https://github.com/browserify/browser-resolve#readme
+ *   version: 2.0.0
+ *
+ * buffer:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Feross Aboukhadijeh <feross@feross.org>
+ *   contributors: Romain Beauxis <toots@rastageeks.org>, James Halliday <mail@substack.net>
+ *   homepage: https://github.com/feross/buffer
+ *   version: 5.2.1
+ *
+ * css.escape:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Mathias Bynens
+ *   homepage: https://mths.be/cssescape
+ *   version: 1.5.1
+ *
+ * events:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Irakli Gozalishvili <rfobic@gmail.com>
+ *   homepage: https://github.com/Gozala/events#readme
+ *   version: 3.2.0
+ *
+ * ieee754:
+ *   license: BSD-3-Clause (http://opensource.org/licenses/BSD-3-Clause)
+ *   author: Feross Aboukhadijeh <feross@feross.org>
+ *   contributors: Romain Beauxis <toots@rastageeks.org>
+ *   homepage: https://github.com/feross/ieee754#readme
+ *   version: 1.2.1
+ *
+ * inherits:
+ *   license: ISC (http://opensource.org/licenses/ISC)
+ *   homepage: https://github.com/isaacs/inherits#readme
+ *   version: 2.0.4
+ *
+ * jdataview:
+ *   licenses: WTFPL (http://www.wtfpl.net/about/)
+ *   author: Vjeux <vjeuxx@gmail.com>
+ *   contributors: Vjeux <vjeuxx@gmail.com>, RReverser <me@rreverser.com>
+ *   homepage: http://jDataView.github.io/
+ *   version: 2.5.0
+ *
+ * process:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Roman Shtylman <shtylman@gmail.com>
+ *   homepage: https://github.com/shtylman/node-process#readme
+ *   version: 0.11.10
+ *
+ * readable-stream:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   homepage: https://github.com/nodejs/readable-stream#readme
+ *   version: 3.6.0
+ *
+ * safe-buffer:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Feross Aboukhadijeh <feross@feross.org>
+ *   homepage: https://github.com/feross/safe-buffer
+ *   version: 5.1.2
+ *
+ * sax:
+ *   license: ISC (http://opensource.org/licenses/ISC)
+ *   author: Isaac Z. Schlueter <i@izs.me>
+ *   homepage: https://github.com/isaacs/sax-js#readme
+ *   version: 1.2.4
+ *
+ * stream-browserify:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: James Halliday <mail@substack.net>
+ *   homepage: https://github.com/browserify/stream-browserify
+ *   version: 3.0.0
+ *
+ * string_decoder:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   homepage: https://github.com/nodejs/string_decoder
+ *   version: 1.1.1
+ *
+ * util-deprecate:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Nathan Rajlich <nathan@tootallnate.net>
+ *   homepage: https://github.com/TooTallNate/util-deprecate
+ *   version: 1.0.2
+ *
+ * xml-js:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Yousuf Almarzooqi <ysf953@gmail.com>
+ *   homepage: https://github.com/nashwaan/xml-js#readme
+ *   version: 1.6.11
+ *
+ * This header is generated by licensify (https://github.com/twada/licensify)
+ */

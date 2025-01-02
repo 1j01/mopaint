@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.b2241b4e.css",
-    "main.js": "/static/js/main.fb1479ce.js",
-    "static/media/flaticons-fill-bucket-flipped.svg": "/static/media/flaticons-fill-bucket-flipped.06bf323f5ca3e928e73e8c1312801355.svg",
-    "static/media/file-picture-multiple-importable.svg": "/static/media/file-picture-multiple-importable.4393f4828bdfd0baaf375bc75eb77b4f.svg",
-    "static/media/document-open-importable.svg": "/static/media/document-open-importable.6c3a0b1ac216ce90b8d13517a8e56749.svg",
-    "static/media/document-new-importable.svg": "/static/media/document-new-importable.138e383a97e1dcf101ffa0f27b56fc8f.svg",
-    "static/media/document-new-16px-importable.svg": "/static/media/document-new-16px-importable.2ded795ab32c25bff7a7709872b5df2e.svg",
+    "main.css": "/static/css/main.df2881b6.css",
+    "main.js": "/static/js/main.d5788e64.js",
+    "static/media/flaticons-fill-bucket-flipped.svg": "/static/media/flaticons-fill-bucket-flipped.ae2dda741b94b4136c0332686a680269.svg",
+    "static/media/file-picture-multiple-importable.svg": "/static/media/file-picture-multiple-importable.21b0c8795c98f734ec49124cbc9a50cc.svg",
+    "static/media/document-open-importable.svg": "/static/media/document-open-importable.2a12bf7e263aa2c71df52e8f9780a531.svg",
+    "static/media/document-new-importable.svg": "/static/media/document-new-importable.9f2774407a8ff1b113cf7b76e6500620.svg",
+    "static/media/document-new-16px-importable.svg": "/static/media/document-new-16px-importable.09af81b74e435a64c078c3d7849c01ae.svg",
     "index.html": "/index.html",
-    "static/media/document-save-importable.svg": "/static/media/document-save-importable.ddfaa4d7a821b4518de3ca16e3b8ce54.svg",
-    "static/media/edit-path-importable.svg": "/static/media/edit-path-importable.44e955ae8b010da788a9b233a684037c.svg",
-    "main.b2241b4e.css.map": "/static/css/main.b2241b4e.css.map",
-    "main.fb1479ce.js.map": "/static/js/main.fb1479ce.js.map"
+    "static/media/document-save-importable.svg": "/static/media/document-save-importable.9b44665c125b88c183ef3b29f4334491.svg",
+    "static/media/edit-path-importable.svg": "/static/media/edit-path-importable.5a7bd947b245eaeb3a5dea10a90c8d6f.svg",
+    "main.df2881b6.css.map": "/static/css/main.df2881b6.css.map",
+    "main.d5788e64.js.map": "/static/js/main.d5788e64.js.map"
   },
   "entrypoints": [
-    "static/css/main.b2241b4e.css",
-    "static/js/main.fb1479ce.js"
+    "static/css/main.df2881b6.css",
+    "static/js/main.d5788e64.js"
   ]
 }
