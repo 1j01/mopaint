@@ -53,7 +53,7 @@
 	},
 	"scripts": {
 		"lint-cspell": "cspell-cli lint .",
-		"lint-eslint": "eslint src/",
+		"lint-eslint": "eslint .",
 		"lint": "npm-run-all --continue-on-error --serial lint-*",
 		"start": "react-scripts start",
 		"build": "react-scripts build",
