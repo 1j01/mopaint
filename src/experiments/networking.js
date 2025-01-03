@@ -1,3 +1,4 @@
+import { makeListenable } from "../helpers.js";
 import { resolveMetaHistory } from "./meta-history.js";
 
 // Networking Prototype
@@ -48,15 +49,14 @@ export class Client {
 		/** @type {Operation[]} */
 		this.metaHistory = [];
 
-		// TODO: make events less verbose using EventTarget or something
-		/** @type {Set<((operation: Operation) => void)>} */
-		this.localOperationListeners = new Set();
-		/** @type {Set<((operation: Operation) => void)>} */
-		this.anyOperationListeners = new Set();
-		/** @type {Set<((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)>} */
-		this.localOperationUpdatedListeners = new Set();
-		/** @type {Set<((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)>} */
-		this.anyOperationUpdatedListeners = new Set();
+		/** @type {[((operation: Operation) => void), () => void]} */
+		[this.onLocalOperation, this.dispatchLocalOperation] = makeListenable();
+		/** @type {[((operation: Operation) => void), () => void]} */
+		[this.onAnyOperation, this.dispatchAnyOperation] = makeListenable();
+		/** @type {[((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void), () => void]} */
+		[this.onLocalOperationUpdated, this.dispatchLocalOperationUpdated] = makeListenable();
+		/** @type {[((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void), () => void]} */
+		[this.onAnyOperationUpdated, this.dispatchAnyOperationUpdated] = makeListenable();
 	}
 
 	computeLinearHistory() {
@@ -143,54 +143,6 @@ export class Client {
 			listener(operation, data);
 		}
 	}
-
-	/**
-	 * Listen for operations generated from this client.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
-	 */
-	onLocalOperation(listener) {
-		this.localOperationListeners.add(listener);
-		return () => {
-			this.localOperationListeners.delete(listener);
-		};
-	}
-
-	/**
-	 * Listen for operations from this client or other clients.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
-	 */
-	onAnyOperation(listener) {
-		this.anyOperationListeners.add(listener);
-		return () => {
-			this.anyOperationListeners.delete(listener);
-		};
-	}
-
-	/**
-	 * Listen for operations from this client being updated.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
-	 */
-	onLocalOperationUpdated(listener) {
-		this.localOperationUpdatedListeners.add(listener);
-		return () => {
-			this.localOperationUpdatedListeners.delete(listener);
-		};
-	}
-
-	/**
-	 * Listen for operations from this client or other clients being updated.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
-	 */
-	onAnyOperationUpdated(listener) {
-		this.anyOperationUpdatedListeners.add(listener);
-		return () => {
-			this.anyOperationUpdatedListeners.delete(listener);
-		};
-	}
 }
 
 /**
@@ -250,13 +202,9 @@ export class MopaintWebSocketClient {
 		this.ws.addEventListener("open", () => {
 			console.log("Connected to WebSocket server");
 			for (const message of pendingMessages) {
-				// console.log("Sending queued message:", message);
+				console.log("Sending queued message:", message);
 				this.ws.send(message);
 			}
-		});
-
-		this.ws.addEventListener("close", () => {
-			console.log("Disconnected from WebSocket server");
 		});
 
 		this.ws.addEventListener("message", (event) => {
@@ -278,10 +226,10 @@ export class MopaintWebSocketClient {
 			// Send local operations to the server
 			const message = JSON.stringify({ type: "operation", operation });
 			if (this.ws.readyState === WebSocket.OPEN) {
-				// console.log("Sending operation to server:", operation);
+				console.log("Sending operation to server:", operation);
 				this.ws.send(message);
 			} else {
-				// console.log("WebSocket not open, queueing message for operation:", operation);
+				console.log("WebSocket not open, queueing message for operation:", operation);
 				pendingMessages.push(message);
 			}
 		});
@@ -290,10 +238,10 @@ export class MopaintWebSocketClient {
 			// Send local operation updates to the server
 			const message = JSON.stringify({ type: "operationUpdate", operationId: operation.operationId, data });
 			if (this.ws.readyState === WebSocket.OPEN) {
-				// console.log("Sending operation update to server:", operation, data);
+				console.log("Sending operation update to server:", operation, data);
 				this.ws.send(message);
 			} else {
-				// console.log("WebSocket not open, queueing message for operation update:", operation, data);
+				console.log("WebSocket not open, queueing message for operation update:", operation, data);
 				pendingMessages.push(message);
 			}
 		});

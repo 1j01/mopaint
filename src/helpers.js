@@ -6,3 +6,33 @@ export const generateID = (length = 40) => {
 	crypto.getRandomValues(array);
 	return Array.from(array, byteToHex).join("");
 };
+
+
+/**
+ * @template {any[]} ArgsType
+ * @returns {[(callback: (...args: ArgsType) => void) => (() => void), (...args: ArgsType) => void]} [addListener, trigger]
+ */
+export const makeListenable = () => {
+	/** @type {Set<((...args: ArgsType) => void)>} */
+	let eventHandlers = [];
+
+	const addListener = (/** @type {(...args: ArgsType) => void} */ callback) => {
+		eventHandlers.add(callback);
+
+		const dispose = () => {
+			eventHandlers.delete(callback);
+		};
+
+		return dispose;
+	};
+
+	/**
+	 * @param {ArgsType} args
+	 */
+	const trigger = (...args) => {
+		for (const handler of eventHandlers) {
+			handler(...args);
+		}
+	};
+	return [addListener, trigger];
+};
