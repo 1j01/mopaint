@@ -255,6 +255,10 @@ export class MopaintWebSocketClient {
 			}
 		});
 
+		this.ws.addEventListener("close", () => {
+			console.log("Disconnected from WebSocket server");
+		});
+
 		this.ws.addEventListener("message", (event) => {
 			// Receive operations from the server
 			if (typeof event.data !== "string") {
