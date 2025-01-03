@@ -29,18 +29,18 @@ import { resolveMetaHistory } from "./meta-history.js";
 /**
  * @typedef {Object} Operation
  * @property {number} timestamp
- * @property {string} clientId
+ * @property {string} peerId
  * @property {string} operationId
  * @property {string} data
  * @property {string} metaLevel
  */
 
 
-let nextClientId = 1;
-export class Client {
+let nextPeerId = 1;
+export class Peer {
 
-	constructor({ clientId } = {}) {
-		this.clientId = clientId ?? nextClientId++;
+	constructor({ peerId } = {}) {
+		this.peerId = peerId ?? nextPeerId++;
 		this.metaHistory = [];
 		this.operationListeners = [];
 	}
@@ -53,7 +53,7 @@ export class Client {
 	 * @param {Operation} operation
 	 */
 	addOperation(operation) {
-		operation.clientId ??= this.clientId;
+		operation.peerId ??= this.peerId;
 		operation.timestamp ??= Date.now();
 
 		// Search backwards to find where to insert the operation
@@ -62,16 +62,16 @@ export class Client {
 			const otherOperation = this.metaHistory[i];
 			if (
 				otherOperation.timestamp < operation.timestamp ||
-				// use client ID as a tiebreaker for equal timestamps
+				// use peer ID as a tiebreaker for equal timestamps
 				// might need vector clocks or something more sophisticated in the future
-				(otherOperation.timestamp === operation.timestamp && otherOperation.clientId <= operation.clientId)
+				(otherOperation.timestamp === operation.timestamp && otherOperation.peerId <= operation.peerId)
 			) {
 				break;
 			}
 		}
 		this.metaHistory.splice(i + 1, 0, operation);
 
-		if (operation.clientId === this.clientId) {
+		if (operation.peerId === this.peerId) {
 			for (const listener of this.operationListeners) {
 				listener(operation);
 			}
@@ -79,7 +79,7 @@ export class Client {
 	}
 
 	/**
-	 * Listen for operations from other clients.
+	 * Listen for operations from other peers.
 	 * @param {(operation: Operation) => void} listener
 	 * @returns {() => void} function to remove the listener
 	 */
@@ -92,7 +92,7 @@ export class Client {
 }
 
 /**
- * Communicates between multiple clients in the same process.
+ * Communicates between multiple peers in the same process.
  */
 export class InProcessPeerParty {
 	constructor() {
@@ -101,7 +101,7 @@ export class InProcessPeerParty {
 	}
 
 	/**
-	 * @param {Client} peer
+	 * @param {Peer} peer
 	 */
 	addPeer(peer) {
 		this.peers.push(peer);
@@ -125,9 +125,9 @@ export class InProcessPeerParty {
  * Communicates with a WebSocket server. (See server.js)
  */
 export class WebSocketClient {
-	constructor(client, url) {
+	constructor(peer, url) {
 		this.ws = new WebSocket(url);
-		this.client = client;
+		this.peer = peer;
 
 		const pendingMessages = [];
 		this.ws.addEventListener("open", () => {
@@ -145,10 +145,10 @@ export class WebSocketClient {
 				return;
 			}
 			const operation = JSON.parse(event.data);
-			this.client.addOperation(operation);
+			this.peer.addOperation(operation);
 		});
 
-		this.client.onOperation((operation) => {
+		this.peer.onOperation((operation) => {
 			// Send local operations to the server
 			if (this.ws.readyState === WebSocket.OPEN) {
 				console.log("Sending operation to server:", operation);
