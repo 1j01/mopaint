@@ -43,10 +43,3 @@ export class WebSocketServer {
 		console.log("WebSocket server is closed");
 	}
 }
-
-// TODO: entry point for server
-// import.meta.main is proposed for ESM in Node.js https://github.com/nodejs/node/issues/49440
-// but there are workarounds, the simplest being to create a separate file that imports this one
-// if (require.main === module) {
-// 	new WebSocketServer({ port: 8080 });
-// }
