@@ -1,5 +1,5 @@
-import { Client, InProcessPeerParty, WebSocketClient } from "./networking.js";
-import { WebSocketServer } from "./server.js";
+import { Client, InProcessPeerParty, MopaintWebSocketClient } from "./networking.js";
+import { MopaintWebSocketServer } from "./server.js";
 
 describe("Client + InProcessPeerParty", () => {
 	it("should allow communication", () => {
@@ -85,15 +85,15 @@ const waitForSynchronization = (clients, expectedMetaHistoryLength) => {
 };
 
 
-describe("Client + WebSocketServer + WebSocketClient", () => {
+describe("Client + MopaintWebSocketServer + MopaintWebSocketClient", () => {
 	it("should allow communication", async () => {
-		const server = new WebSocketServer({ port: 8283 });
+		const server = new MopaintWebSocketServer({ port: 8283 });
 		try {
 			const clientA = new Client({ clientId: 1 });
 			const clientB = new Client({ clientId: 2 });
 			// TODO: dispose of these clients
-			new WebSocketClient(clientA, "ws://localhost:8283");
-			new WebSocketClient(clientB, "ws://localhost:8283");
+			new MopaintWebSocketClient(clientA, "ws://localhost:8283");
+			new MopaintWebSocketClient(clientB, "ws://localhost:8283");
 			clientA.addOperation({ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 0 });
 			clientB.addOperation({ id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green", timestamp: 1 });
 			await waitForSynchronization([clientA, clientB], 2);

@@ -1,8 +1,8 @@
-import WebSocket from "ws";
+import { WebSocketServer } from "ws";
 
-export class WebSocketServer {
+export class MopaintWebSocketServer {
 	constructor(webSocketServerOptions) {
-		this.server = new WebSocket.Server(webSocketServerOptions);
+		this.server = new WebSocketServer(webSocketServerOptions);
 		this.clients = new Set();
 
 		// Store messages to send to new clients.

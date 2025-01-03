@@ -124,7 +124,7 @@ export class InProcessPeerParty {
 /**
  * Communicates with a WebSocket server. (See server.js)
  */
-export class WebSocketClient {
+export class MopaintWebSocketClient {
 	constructor(client, url) {
 		this.ws = new WebSocket(url);
 		this.client = client;

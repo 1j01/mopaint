@@ -2,6 +2,15 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Experimental Websocket Server",
+			"program": "${workspaceFolder}/src/experiments/server-main.js",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "node"
+		},
+		{
 			"name": "Debug CRA Tests",
 			"type": "node",
 			"request": "launch",
