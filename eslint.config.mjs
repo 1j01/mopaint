@@ -11,6 +11,7 @@ export default [
 	{
 		languageOptions: {
 			globals: {
+				// TODO: exclude browser globals for server-side code
 				...globals.browser,
 				process: "readonly",
 			},

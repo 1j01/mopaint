@@ -1,4 +1,4 @@
-import { WebSocketServer } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 
 // TODO: ensure unique IDs for operations
 // TODO: ensure unique IDs for clients, and perhaps assign IDs server-side
@@ -9,6 +9,7 @@ export class MopaintWebSocketServer {
 	 */
 	constructor(webSocketServerOptions) {
 		this.server = new WebSocketServer(webSocketServerOptions);
+		/** @type {Set<WebSocket>} */
 		this.clients = new Set();
 
 		// Store messages to send to new clients.

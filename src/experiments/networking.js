@@ -49,6 +49,8 @@ export class Client {
 		this.metaHistory = [];
 		/** @type {((operation: Operation) => void)[]} */
 		this.operationListeners = [];
+		/** @type {((operation: Operation) => void)[]} */
+		this.anyOperationListeners = [];
 	}
 
 	computeLinearHistory() {
@@ -87,6 +89,9 @@ export class Client {
 				listener(operation);
 			}
 		}
+		for (const listener of this.anyOperationListeners) {
+			listener(operation);
+		}
 	}
 
 	/**
@@ -98,6 +103,19 @@ export class Client {
 		this.operationListeners.push(listener);
 		return () => {
 			this.operationListeners = this.operationListeners.filter((fn) => fn !== listener);
+		};
+	}
+
+	/**
+	 * Listen for operations from this client or other clients.
+	 * TODO: resolve stupid naming
+	 * @param {(operation: Operation) => void} listener
+	 * @returns {() => void} function to remove the listener
+	 */
+	onAnyOperation(listener) {
+		this.anyOperationListeners.push(listener);
+		return () => {
+			this.anyOperationListeners = this.anyOperationListeners.filter((fn) => fn !== listener);
 		};
 	}
 }

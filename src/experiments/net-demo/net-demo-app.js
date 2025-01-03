@@ -3,4 +3,29 @@ import { Client, MopaintWebSocketClient } from "../networking.js";
 const client = new Client();
 new MopaintWebSocketClient(client, `ws://localhost:${import.meta.env.PORT || 8080}`);
 
-client.addOperation({ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 0 });
+const root = document.getElementById("root");
+
+const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+svg.setAttribute("width", "100%");
+svg.setAttribute("height", "100%");
+root.appendChild(svg);
+
+svg.addEventListener("pointerdown", (event) => {
+	client.addOperation({
+		type: "pointerdown",
+		x: event.clientX,
+		y: event.clientY,
+	});
+});
+
+client.onAnyOperation((operation) => {
+	if (operation.type === "pointerdown") {
+		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle.setAttribute("cx", operation.x);
+		circle.setAttribute("cy", operation.y);
+		circle.setAttribute("r", 10);
+		circle.setAttribute("fill", "black");
+		svg.appendChild(circle);
+	}
+});
+
