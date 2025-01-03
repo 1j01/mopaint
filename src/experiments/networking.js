@@ -39,9 +39,15 @@ import { resolveMetaHistory } from "./meta-history.js";
 let nextClientId = 1;
 export class Client {
 
+	/**
+	 * @param {Object} options
+	 * @param {number} options.clientId
+	 */
 	constructor({ clientId } = {}) {
 		this.clientId = clientId ?? nextClientId++;
+		/** @type {Operation[]} */
 		this.metaHistory = [];
+		/** @type {((operation: Operation) => void)[]} */
 		this.operationListeners = [];
 	}
 
@@ -130,6 +136,10 @@ export class InProcessPeerParty {
  * Communicates with a WebSocket server. (See server.js)
  */
 export class MopaintWebSocketClient {
+	/**
+	 * @param {Client} client
+	 * @param {string} url
+	 */
 	constructor(client, url) {
 		this.ws = new WebSocket(url);
 		this.client = client;

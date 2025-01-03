@@ -4,6 +4,9 @@ import { WebSocketServer } from "ws";
 // TODO: ensure unique IDs for clients, and perhaps assign IDs server-side
 
 export class MopaintWebSocketServer {
+	/**
+	 * @param {WebSocket.ServerOptions} webSocketServerOptions
+	 */
 	constructor(webSocketServerOptions) {
 		this.server = new WebSocketServer(webSocketServerOptions);
 		this.clients = new Set();
