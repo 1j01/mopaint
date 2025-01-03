@@ -10,11 +10,24 @@ svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
 root.appendChild(svg);
 
+let tempPoint = svg.createSVGPoint();
+
+/**
+ * @param {MouseEvent} event
+ * @returns {SVGPoint} point in SVG coordinates
+ */
+function getCursorPoint(event) {
+	tempPoint.x = event.clientX;
+	tempPoint.y = event.clientY;
+	return tempPoint.matrixTransform(svg.getScreenCTM().inverse());
+}
+
 svg.addEventListener("pointerdown", (event) => {
+	const point = getCursorPoint(event);
 	client.addOperation({
 		type: "pointerdown",
-		x: event.clientX,
-		y: event.clientY,
+		x: point.x,
+		y: point.y,
 		color: `hsl(${Math.random() * 360}, 100%, 50%)`,
 	});
 });
