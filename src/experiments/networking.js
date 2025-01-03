@@ -1,3 +1,4 @@
+import { makeListenable } from "../helpers.js";
 import { resolveMetaHistory } from "./meta-history.js";
 
 // Networking Prototype
@@ -57,6 +58,9 @@ export class Client {
 		this.localOperationUpdatedListeners = [];
 		/** @type {((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)[]} */
 		this.anyOperationUpdatedListeners = [];
+
+		/** @type {[typeof win.onFocus, () => void]} */
+		const [onFocus, dispatch_focus] = makeListenable();
 	}
 
 	computeLinearHistory() {
