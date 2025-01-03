@@ -48,7 +48,7 @@ export class Client {
 		/** @type {Operation[]} */
 		this.metaHistory = [];
 		/** @type {((operation: Operation) => void)[]} */
-		this.operationListeners = [];
+		this.localOperationListeners = [];
 		/** @type {((operation: Operation) => void)[]} */
 		this.anyOperationListeners = [];
 	}
@@ -85,7 +85,7 @@ export class Client {
 		this.metaHistory.splice(i + 1, 0, operation);
 
 		if (!remote) {
-			for (const listener of this.operationListeners) {
+			for (const listener of this.localOperationListeners) {
 				listener(operation);
 			}
 		}
@@ -95,20 +95,19 @@ export class Client {
 	}
 
 	/**
-	 * Listen for operations from other clients.
+	 * Listen for operations generated from this client.
 	 * @param {(operation: Operation) => void} listener
 	 * @returns {() => void} function to remove the listener
 	 */
-	onOperation(listener) {
-		this.operationListeners.push(listener);
+	onLocalOperation(listener) {
+		this.localOperationListeners.push(listener);
 		return () => {
-			this.operationListeners = this.operationListeners.filter((fn) => fn !== listener);
+			this.localOperationListeners = this.localOperationListeners.filter((fn) => fn !== listener);
 		};
 	}
 
 	/**
 	 * Listen for operations from this client or other clients.
-	 * TODO: resolve stupid naming
 	 * @param {(operation: Operation) => void} listener
 	 * @returns {() => void} function to remove the listener
 	 */
@@ -134,7 +133,7 @@ export class InProcessPeerParty {
 	 */
 	addPeer(peer) {
 		this.peers.push(peer);
-		this.cleanupFns.push(peer.onOperation((operation) => {
+		this.cleanupFns.push(peer.onLocalOperation((operation) => {
 			for (const otherPeer of this.peers) {
 				if (otherPeer !== peer) {
 					otherPeer.addOperation(operation);
@@ -181,7 +180,7 @@ export class MopaintWebSocketClient {
 			this.client.addOperation(operation);
 		});
 
-		this.client.onOperation((operation) => {
+		this.client.onLocalOperation((operation) => {
 			// Send local operations to the server
 			if (this.ws.readyState === WebSocket.OPEN) {
 				console.log("Sending operation to server:", operation);
