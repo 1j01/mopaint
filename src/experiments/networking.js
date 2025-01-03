@@ -65,13 +65,11 @@ export class Client {
 
 	/**
 	 * @param {Operation} operation
+	 * @param {boolean} [remote=false] - whether the operation was received from the network or storage, rather than generated locally in this session
 	 */
-	addOperation(operation) {
-		// It's remote even if it's from the same client, since after a page refresh, prior operations are sent to the client.
-		// This is not very robust, but it's a start. In the future we'll have to deal with malicious peers sending messages
-		// with no clientId, or a spoofed clientId.
-		const remote = "clientId" in operation;
-
+	addOperation(operation, remote = false) {
+		// TODO: if remote, validate the operation has clientId and timestamp instead of filling them in
+		// and validate the operationId is unique
 		operation.clientId ??= this.clientId;
 		operation.timestamp ??= Date.now();
 
@@ -100,6 +98,11 @@ export class Client {
 		}
 	}
 
+	/**
+	 * @param {string} operationId
+	 * @param {Record<string, {x: number, y: number}[]>} data
+	 * @param {boolean} [remote=false] - whether the update was received from the network or storage, rather than generated locally in this session
+	 */
 	pushContinuousOperationData(operationId, data, remote = false) {
 		// I feel like I'm overstepping the bounds of what consists as an "operation", or rather,
 		// that these continuously appended buffers could be better divorced from the concept of an operation, for future use cases and/or clarity.
@@ -207,7 +210,7 @@ export class InProcessPeerParty {
 		this.cleanupFns.push(peer.onLocalOperation((operation) => {
 			for (const otherPeer of this.peers) {
 				if (otherPeer !== peer) {
-					otherPeer.addOperation(operation);
+					otherPeer.addOperation(operation, true);
 				}
 			}
 		}));
@@ -249,7 +252,7 @@ export class MopaintWebSocketClient {
 			}
 			const message = JSON.parse(event.data);
 			if (message.type === "operation") {
-				this.client.addOperation(message.operation);
+				this.client.addOperation(message.operation, true);
 			} else if (message.type === "operationUpdate") {
 				this.client.pushContinuousOperationData(message.operationId, message.data, true);
 			}
