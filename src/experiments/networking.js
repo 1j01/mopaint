@@ -198,7 +198,9 @@ export class Client {
  */
 export class InProcessPeerParty {
 	constructor() {
+		/** @type {Client[]} */
 		this.peers = [];
+		/** @type {(() => void)[]} */
 		this.cleanupFns = [];
 	}
 
@@ -210,14 +212,16 @@ export class InProcessPeerParty {
 		this.cleanupFns.push(peer.onLocalOperation((operation) => {
 			for (const otherPeer of this.peers) {
 				if (otherPeer !== peer) {
-					otherPeer.addOperation(JSON.parse(JSON.stringify(operation)), true);
+					const operationCopy = JSON.parse(JSON.stringify(operation));
+					otherPeer.addOperation(operationCopy, true);
 				}
 			}
 		}));
 		this.cleanupFns.push(peer.onLocalOperationUpdated((operation, data) => {
 			for (const otherPeer of this.peers) {
 				if (otherPeer !== peer) {
-					otherPeer.pushContinuousOperationData(operation.operationId, data, true);
+					const dataCopy = JSON.parse(JSON.stringify(data));
+					otherPeer.pushContinuousOperationData(operation.operationId, dataCopy, true);
 				}
 			}
 		}));

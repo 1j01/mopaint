@@ -68,6 +68,7 @@ describe("Client + InProcessPeerParty", () => {
 		]);
 		expect(clientB.metaHistory).not.toBe(clientA.metaHistory); // must not cheat by copying the reference
 		expect(clientB.metaHistory[0]).not.toBe(clientA.metaHistory[0]); // must not cheat by copying the reference
+		expect(clientB.metaHistory[0].points[1]).not.toBe(clientA.metaHistory[0].points[1]); // must not cheat by copying the reference
 		expect(clientB.metaHistory).toEqual(clientA.metaHistory); // should match though
 
 		// expect(clientA.computeLinearHistory()).toEqual([
@@ -161,9 +162,10 @@ describe("Client + MopaintWebSocketServer + MopaintWebSocketClient", () => {
 			expect(clientA.metaHistory).toEqual([
 				{ clientId: 1, operationId: "abc1", metaLevel: 0, type: "brush", name: "Brush", points: [{ x: 5, y: 5 }, { x: 10, y: 10 }], timestamp: 0 },
 			]);
-			expect(clientB.metaHistory).not.toBe(clientA.metaHistory); // must not cheat by copying the reference
-			expect(clientB.metaHistory[0]).not.toBe(clientA.metaHistory[0]); // must not cheat by copying the reference
-			expect(clientB.metaHistory).toEqual(clientA.metaHistory); // should match though
+			expect(clientB.metaHistory).not.toBe(clientA.metaHistory); // cheating here should be impossible, can't copy references across the network
+			expect(clientB.metaHistory[0]).not.toBe(clientA.metaHistory[0]); // cheating here should be impossible, can't copy references across the network
+			expect(clientB.metaHistory[0].points[1]).not.toBe(clientA.metaHistory[0].points[1]); // cheating here should be impossible, can't copy references across the network
+			expect(clientB.metaHistory).toEqual(clientA.metaHistory);
 		} finally {
 			server.dispose();
 		}
