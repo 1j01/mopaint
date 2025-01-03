@@ -15,6 +15,7 @@ svg.addEventListener("pointerdown", (event) => {
 		type: "pointerdown",
 		x: event.clientX,
 		y: event.clientY,
+		color: `hsl(${Math.random() * 360}, 100%, 50%)`,
 	});
 });
 
@@ -24,7 +25,7 @@ client.onAnyOperation((operation) => {
 		circle.setAttribute("cx", operation.x);
 		circle.setAttribute("cy", operation.y);
 		circle.setAttribute("r", 10);
-		circle.setAttribute("fill", "black");
+		circle.setAttribute("fill", operation.color);
 		svg.appendChild(circle);
 	}
 });
