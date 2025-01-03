@@ -55,6 +55,26 @@ describe("Client + InProcessPeerParty", () => {
 		expect(clientB.metaHistory).toEqual(clientA.metaHistory);
 		party.dispose();
 	});
+	it("should handle updates to continuous operations", () => {
+		const clientA = new Client({ clientId: 1 });
+		const clientB = new Client({ clientId: 2 });
+		const party = new InProcessPeerParty();
+		party.addPeer(clientA);
+		party.addPeer(clientB);
+		clientA.addOperation({ operationId: "abc1", metaLevel: 0, type: "brush", name: "Brush", points: [{ x: 5, y: 5 }], timestamp: 0 });
+		clientA.pushContinuousOperationData("abc1", { points: { x: 10, y: 10 } });
+		expect(clientA.metaHistory).toEqual([
+			{ clientId: 1, operationId: "abc1", metaLevel: 0, type: "brush", name: "Brush", points: [{ x: 5, y: 5 }, { x: 10, y: 10 }], timestamp: 0 },
+		]);
+		expect(clientB.metaHistory).not.toBe(clientA.metaHistory); // must not cheat by copying the reference
+		expect(clientB.metaHistory[0]).not.toBe(clientA.metaHistory[0]); // must not cheat by copying the reference
+		expect(clientB.metaHistory).toEqual(clientA.metaHistory); // should match though
+
+		// expect(clientA.computeLinearHistory()).toEqual([
+		// 	{ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "green", },
+		// ]);
+		party.dispose();
+	});
 });
 
 /**
@@ -122,6 +142,28 @@ describe("Client + MopaintWebSocketServer + MopaintWebSocketClient", () => {
 				{ clientId: 1, id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green", timestamp: 1 },
 			]);
 			expect(clientB.metaHistory).toEqual(clientA.metaHistory);
+		} finally {
+			server.dispose();
+		}
+	});
+	it("should handle updates to continuous operations", async () => {
+		const server = new MopaintWebSocketServer({ port: 8283 });
+		try {
+			const clientA = new Client({ clientId: 1 });
+			const clientB = new Client({ clientId: 2 });
+			// TODO: dispose of these clients
+			new MopaintWebSocketClient(clientA, "ws://localhost:8283");
+			new MopaintWebSocketClient(clientB, "ws://localhost:8283");
+			clientA.addOperation({ operationId: "abc1", metaLevel: 0, type: "brush", name: "Brush", points: [{ x: 5, y: 5 }], timestamp: 0 });
+			clientA.pushContinuousOperationData("abc1", { points: { x: 10, y: 10 } });
+			// is there a race condition here? should I wait for the histories to deeply match, not just their lengths?
+			await waitForSynchronization([clientA, clientB], 1);
+			expect(clientA.metaHistory).toEqual([
+				{ clientId: 1, operationId: "abc1", metaLevel: 0, type: "brush", name: "Brush", points: [{ x: 5, y: 5 }, { x: 10, y: 10 }], timestamp: 0 },
+			]);
+			expect(clientB.metaHistory).not.toBe(clientA.metaHistory); // must not cheat by copying the reference
+			expect(clientB.metaHistory[0]).not.toBe(clientA.metaHistory[0]); // must not cheat by copying the reference
+			expect(clientB.metaHistory).toEqual(clientA.metaHistory); // should match though
 		} finally {
 			server.dispose();
 		}
