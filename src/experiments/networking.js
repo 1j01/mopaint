@@ -250,7 +250,7 @@ export class MopaintWebSocketClient {
 		this.ws.addEventListener("open", () => {
 			console.log("Connected to WebSocket server");
 			for (const message of pendingMessages) {
-				console.log("Sending queued message:", message);
+				// console.log("Sending queued message:", message);
 				this.ws.send(message);
 			}
 		});
@@ -274,10 +274,10 @@ export class MopaintWebSocketClient {
 			// Send local operations to the server
 			const message = JSON.stringify({ type: "operation", operation });
 			if (this.ws.readyState === WebSocket.OPEN) {
-				console.log("Sending operation to server:", operation);
+				// console.log("Sending operation to server:", operation);
 				this.ws.send(message);
 			} else {
-				console.log("WebSocket not open, queueing message for operation:", operation);
+				// console.log("WebSocket not open, queueing message for operation:", operation);
 				pendingMessages.push(message);
 			}
 		});
@@ -286,10 +286,10 @@ export class MopaintWebSocketClient {
 			// Send local operation updates to the server
 			const message = JSON.stringify({ type: "operationUpdate", operationId: operation.operationId, data });
 			if (this.ws.readyState === WebSocket.OPEN) {
-				console.log("Sending operation update to server:", operation, data);
+				// console.log("Sending operation update to server:", operation, data);
 				this.ws.send(message);
 			} else {
-				console.log("WebSocket not open, queueing message for operation update:", operation, data);
+				// console.log("WebSocket not open, queueing message for operation update:", operation, data);
 				pendingMessages.push(message);
 			}
 		});

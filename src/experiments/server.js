@@ -28,7 +28,6 @@ export class MopaintWebSocketServer {
 				// Broadcast the received message to all other clients
 				for (const client of this.clients) {
 					if (client !== socket && client.readyState === WebSocket.OPEN) {
-						console.log(`Sending message along from 'socket' to 'client': ${message}`);
 						client.send(message, { binary: isBinary });
 					}
 				}
