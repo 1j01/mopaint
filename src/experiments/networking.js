@@ -210,7 +210,14 @@ export class InProcessPeerParty {
 		this.cleanupFns.push(peer.onLocalOperation((operation) => {
 			for (const otherPeer of this.peers) {
 				if (otherPeer !== peer) {
-					otherPeer.addOperation(operation, true);
+					otherPeer.addOperation(JSON.parse(JSON.stringify(operation)), true);
+				}
+			}
+		}));
+		this.cleanupFns.push(peer.onLocalOperationUpdated((operation, data) => {
+			for (const otherPeer of this.peers) {
+				if (otherPeer !== peer) {
+					otherPeer.pushContinuousOperationData(operation.operationId, data, true);
 				}
 			}
 		}));
