@@ -1,12 +1,17 @@
 
 # dependencies
-/node_modules
+node_modules/
 
 # testing
-/coverage
+coverage/
 
 # production
-/build
+build/
+
+# reserved
+out/
+dist/
+.cache/
 
 # Firebase
 .firebaserc
