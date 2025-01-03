@@ -42,11 +42,15 @@ export class MopaintWebSocketServer {
 		});
 
 		// TODO: get the actual address?
-		console.log(`WebSocket server is running on ws://localhost:${this.server.address().port}`);
+		if (this.server.options.noServer) {
+			console.log(`MopaintWebSocketServer is running in "noServer" mode`);
+		} else {
+			console.log(`MopaintWebSocketServer is running on ws://localhost:${this.server.address().port}`);
+		}
 	}
 
 	dispose() {
 		this.server.close();
-		console.log("WebSocket server is closed");
+		console.log("MopaintWebSocketServer is closed");
 	}
 }

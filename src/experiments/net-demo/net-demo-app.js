@@ -2,7 +2,7 @@ import { generateID } from "../../helpers.js";
 import { Client, MopaintWebSocketClient } from "../networking.js";
 
 const client = new Client();
-new MopaintWebSocketClient(client, `ws://localhost:${import.meta.env.PORT || 8080}`);
+new MopaintWebSocketClient(client, `${location.protocol.match(/s:$/) ? "wss://" : "ws://"}${location.host}`);
 
 const root = document.getElementById("root");
 

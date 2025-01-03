@@ -226,7 +226,7 @@ export class MopaintWebSocketClient {
 	 * @param {string} url
 	 */
 	constructor(client, url) {
-		this.ws = new WebSocket(url);
+		this.ws = new WebSocket(url, "mopaint-net-demo");
 		this.client = client;
 
 		const pendingMessages = [];
