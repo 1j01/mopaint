@@ -115,6 +115,9 @@ export class Client {
 		//
 		// That said again, not all operations may want to pack data in the same way, so the abstraction may be necessary anyway,
 		// and it may indeed be simpler, so it's worth exploring.
+		//
+		// Well, the other difference is that the continuous data may be considered to come from one client session,
+		// and perhaps can be assumed to be ordered, whereas the operations list needs explicit ordering.
 
 		// TODO: use a Map to look up the operation by ID in one step
 		const operation = this.metaHistory.find((op) => op.operationId === operationId);
