@@ -53,6 +53,11 @@ export class Client {
 	 * @param {Operation} operation
 	 */
 	addOperation(operation) {
+		// It's remote even if it's from the same client, since after a page refresh, prior operations are sent to the client.
+		// This is not very robust, but it's a start. In the future we'll have to deal with malicious peers sending messages
+		// with no clientId, or a spoofed clientId.
+		const remote = "clientId" in operation;
+
 		operation.clientId ??= this.clientId;
 		operation.timestamp ??= Date.now();
 
@@ -71,7 +76,7 @@ export class Client {
 		}
 		this.metaHistory.splice(i + 1, 0, operation);
 
-		if (operation.clientId === this.clientId) {
+		if (!remote) {
 			for (const listener of this.operationListeners) {
 				listener(operation);
 			}

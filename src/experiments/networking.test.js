@@ -106,4 +106,24 @@ describe("Client + MopaintWebSocketServer + MopaintWebSocketClient", () => {
 			server.dispose();
 		}
 	});
+	it("clients with the same ID should not rebroadcast each others' messages", async () => {
+		const server = new MopaintWebSocketServer({ port: 8283 });
+		try {
+			const clientA = new Client({ clientId: 1 });
+			const clientB = new Client({ clientId: 1 });
+			// TODO: dispose of these clients
+			new MopaintWebSocketClient(clientA, "ws://localhost:8283");
+			new MopaintWebSocketClient(clientB, "ws://localhost:8283");
+			clientA.addOperation({ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 0 });
+			clientB.addOperation({ id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green", timestamp: 1 });
+			await waitForSynchronization([clientA, clientB], 2);
+			expect(clientA.metaHistory).toEqual([
+				{ clientId: 1, id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue", timestamp: 0 },
+				{ clientId: 1, id: "abc2", metaLevel: 1, type: "recolor", name: "Edit Draw Line", target: "abc1", color: "green", timestamp: 1 },
+			]);
+			expect(clientB.metaHistory).toEqual(clientA.metaHistory);
+		} finally {
+			server.dispose();
+		}
+	});
 });
