@@ -50,6 +50,12 @@ svg.addEventListener("pointerdown", (event) => {
 	document.addEventListener("pointerup", pointerUpListener);
 });
 
+// Instead of adding a listener for each brush stroke to handle new points coming in,
+// we can use a map of operation IDs to update handlers.
+// This should be a little more efficient as the history gets long, being O(1) instead of O(n),
+// for the lookup, although the map is still growing indefinitely.
+// Who can say when a brush stroke has truly ended? (TODO: us, we can say)
+const updateHandlers = new Map();
 const operationHandlers = {
 	circle: (operation) => {
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -65,11 +71,8 @@ const operationHandlers = {
 		path.setAttribute("fill", "none");
 		path.setAttribute("d", `M ${operation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
 		svg.appendChild(path);
-		// HACK: TODO: don't add so many listeners indefinitely
-		client.onAnyOperationUpdated((updatedOperation, data) => {
-			if (updatedOperation.operationId === operation.operationId) {
-				path.setAttribute("d", `M ${operation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
-			}
+		updateHandlers.set(operation.operationId, (updatedOperation) => {
+			path.setAttribute("d", `M ${updatedOperation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
 		});
 	},
 };
@@ -79,6 +82,12 @@ client.onAnyOperation((operation) => {
 		operationHandlers[operation.type](operation);
 	} else {
 		console.warn(`Unknown operation type: ${operation.type}`);
+	}
+});
+
+client.onAnyOperationUpdated((operation, data) => {
+	if (updateHandlers.has(operation.operationId)) {
+		updateHandlers.get(operation.operationId)(operation, data);
 	}
 });
 
