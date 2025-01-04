@@ -94,6 +94,29 @@ export function resolveMetaHistory(metaHistory) {
 	return mutableMH;
 }
 
+// Simplified version:
+// function findTargetOp(metaHistory, targetID, metaOpMetaLevel, removals) {
+// 	for (const otherOp of metaHistory) {
+// 		if (otherOp.id === targetID && otherOp.metaLevel < metaOpMetaLevel) {
+// 			return otherOp;
+// 		}
+// 	}
+// }
+// export function resolveMetaHistoryInPlace(metaHistory) {
+// 	const maxMetaLevel = metaHistory.reduce((maxMetaLevel, op) => Math.max(maxMetaLevel, op.metaLevel), 0);
+// 	const removals = [];
+// 	for (let metaLevel = maxMetaLevel; metaLevel > 0; metaLevel--) {
+// 		for (const op of [...metaHistory]) {
+// 			if (op.metaLevel === metaLevel) {
+// 				handleOp(metaHistory, op, removals);
+// 				metaHistory.splice(metaHistory.indexOf(op), 1);
+// 				removals.push({ removedOp: op, removedByOp: null });
+// 			}
+// 		}
+// 	}
+// }
+
+// Complicated version:
 export class IncrementalMetaHistory {
 	constructor() {
 		/** @type {Operation[]} */
@@ -115,11 +138,23 @@ export class IncrementalMetaHistory {
 		this.historyByMetaLevel.set(op.metaLevel, opLevelHistory);
 		opLevelHistory.push(op);
 
-		// Update histories from op.metaLevel to 0.
-		for (let metaLevel = op.metaLevel; metaLevel >= 0; metaLevel--) {
+		// Update histories more concrete (less meta) than the operation.
+		for (let metaLevel = op.metaLevel - 1; metaLevel >= 0; metaLevel--) {
 			const history = this.historyByMetaLevel.get(metaLevel) || [];
-			// history.push(op);
 			this.historyByMetaLevel.set(metaLevel, history);
+
+			// if (op.type === "undo") {
+			// 	const targetOp = this.findTargetOp(op.target, op.metaLevel, removals);
+			// 	mutableMH.splice(mutableMH.indexOf(targetOp), 1);
+			// 	removals.push({ removedOp: targetOp, removedByOp: op });
+			// } else if (op.type === "recolor") {
+			// 	const targetOp = this.findTargetOp(op.target, op.metaLevel, removals);
+			// 	targetOp.color = op.color;
+			// } else if (op.type === "insert") {
+			// 	mutableMH.splice(op.insertIndex, 0, op.insertOp);
+			// } else {
+			// 	throw new Error(`unknown meta operation type '${op.type}'.`);
+			// }
 		}
 	}
 
