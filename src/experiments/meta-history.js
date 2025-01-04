@@ -103,7 +103,7 @@ export function resolveMetaHistory(metaHistory) {
 // 	}
 // }
 // export function resolveMetaHistoryInPlace(metaHistory) {
-// 	const maxMetaLevel = metaHistory.reduce((maxMetaLevel, op) => Math.max(maxMetaLevel, op.metaLevel), 0);
+// 	const maxMetaLevel = Math.max(...metaHistory.map((op) => op.metaLevel));
 // 	const removals = [];
 // 	for (let metaLevel = maxMetaLevel; metaLevel > 0; metaLevel--) {
 // 		for (const op of [...metaHistory]) {
