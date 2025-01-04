@@ -107,6 +107,12 @@ export class IncrementalMetaHistory {
 	addOperation(op) {
 		this.metaHistory.push(op);
 		this.maxMetaLevel = Math.max(this.maxMetaLevel, op.metaLevel);
+
+		// Add operation to history at its meta level.
+		const opLevelHistory = this.historyByMetaLevel.get(op.metaLevel) || [];
+		this.historyByMetaLevel.set(op.metaLevel, opLevelHistory);
+		opLevelHistory.push(op);
+
 		// Update histories from op.metaLevel to 0.
 		for (let metaLevel = op.metaLevel; metaLevel >= 0; metaLevel--) {
 			const history = this.historyByMetaLevel.get(metaLevel) || [];
