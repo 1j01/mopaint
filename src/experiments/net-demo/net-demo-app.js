@@ -50,15 +50,16 @@ svg.addEventListener("pointerdown", (event) => {
 	document.addEventListener("pointerup", pointerUpListener);
 });
 
-client.onAnyOperation((operation) => {
-	if (operation.type === "circle") {
+const operationHandlers = {
+	circle: (operation) => {
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle.setAttribute("cx", operation.x);
 		circle.setAttribute("cy", operation.y);
 		circle.setAttribute("r", 10);
 		circle.setAttribute("fill", operation.color);
 		svg.appendChild(circle);
-	} else if (operation.type === "brush") {
+	},
+	brush: (operation) => {
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("stroke", operation.color);
 		path.setAttribute("fill", "none");
@@ -67,10 +68,17 @@ client.onAnyOperation((operation) => {
 		// HACK: TODO: don't add so many listeners indefinitely
 		client.onAnyOperationUpdated((updatedOperation, data) => {
 			if (updatedOperation.operationId === operation.operationId) {
-				// operation.points.push(data.points); // already done by the Client class, I think
 				path.setAttribute("d", `M ${operation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
 			}
 		});
+	},
+};
+
+client.onAnyOperation((operation) => {
+	if (operationHandlers[operation.type]) {
+		operationHandlers[operation.type](operation);
+	} else {
+		console.warn(`Unknown operation type: ${operation.type}`);
 	}
 });
 
