@@ -98,14 +98,25 @@ export class IncrementalMetaHistory {
 	constructor() {
 		/** @type {Operation[]} */
 		this.metaHistory = [];
-		/** @type {Operation[][]} a list of histories in reverse order of meta level? maybe a map would be better */
-		this.downleveledHistories = [];
+		/** @type {Map<number, Operation[]>} */
+		this.historyByMetaLevel = new Map();
+		// this.historyByMetaLevel.set(0, []);
 		this.maxMetaLevel = 0;
 	}
 
 	addOperation(op) {
 		this.metaHistory.push(op);
 		this.maxMetaLevel = Math.max(this.maxMetaLevel, op.metaLevel);
+		// Update histories from op.metaLevel to 0.
+		for (let metaLevel = op.metaLevel; metaLevel >= 0; metaLevel--) {
+			const history = this.historyByMetaLevel.get(metaLevel) || [];
+			// history.push(op);
+			this.historyByMetaLevel.set(metaLevel, history);
+		}
+	}
+
+	getLinearHistory() {
+		return this.historyByMetaLevel.get(0) || [];
 	}
 }
 
