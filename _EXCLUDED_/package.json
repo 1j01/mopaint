@@ -1,0 +1,6 @@
+{
+	"name": "excluded",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Target for package.json overrides field to disable installing a package"
+}
