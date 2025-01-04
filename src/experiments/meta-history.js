@@ -109,6 +109,8 @@ export class IncrementalMetaHistory {
 		this.maxMetaLevel = Math.max(this.maxMetaLevel, op.metaLevel);
 
 		// Add operation to history at its meta level.
+		// (Hm, to match the resolveMetaHistory function, should it be added to everything with a higher meta level?)
+		// (And will it need to be added to new levels when increasing maxMetaLevel?)
 		const opLevelHistory = this.historyByMetaLevel.get(op.metaLevel) || [];
 		this.historyByMetaLevel.set(op.metaLevel, opLevelHistory);
 		opLevelHistory.push(op);
