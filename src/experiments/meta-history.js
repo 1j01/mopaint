@@ -94,6 +94,21 @@ export function resolveMetaHistory(metaHistory) {
 	return mutableMH;
 }
 
+export class IncrementalMetaHistory {
+	constructor() {
+		/** @type {Operation[]} */
+		this.metaHistory = [];
+		/** @type {Operation[][]} a list of histories in reverse order of meta level? maybe a map would be better */
+		this.downleveledHistories = [];
+		this.maxMetaLevel = 0;
+	}
+
+	addOperation(op) {
+		this.metaHistory.push(op);
+		this.maxMetaLevel = Math.max(this.maxMetaLevel, op.metaLevel);
+	}
+}
+
 // function compute({ program, cache, goalNode }) {
 // 	const steps = resolveMetaHistory(program);
 // 	for (const step of step) {
