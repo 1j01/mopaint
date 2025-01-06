@@ -49,14 +49,14 @@ export class Client {
 		this.metaHistory = [];
 
 		// TODO: make events less verbose using EventTarget or something
-		/** @type {((operation: Operation) => void)[]} */
-		this.localOperationListeners = [];
-		/** @type {((operation: Operation) => void)[]} */
-		this.anyOperationListeners = [];
-		/** @type {((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)[]} */
-		this.localOperationUpdatedListeners = [];
-		/** @type {((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)[]} */
-		this.anyOperationUpdatedListeners = [];
+		/** @type {Set<((operation: Operation) => void)>} */
+		this.localOperationListeners = new Set();
+		/** @type {Set<((operation: Operation) => void)>} */
+		this.anyOperationListeners = new Set();
+		/** @type {Set<((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)>} */
+		this.localOperationUpdatedListeners = new Set();
+		/** @type {Set<((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)>} */
+		this.anyOperationUpdatedListeners = new Set();
 	}
 
 	computeLinearHistory() {
@@ -150,9 +150,9 @@ export class Client {
 	 * @returns {() => void} function to remove the listener
 	 */
 	onLocalOperation(listener) {
-		this.localOperationListeners.push(listener);
+		this.localOperationListeners.add(listener);
 		return () => {
-			this.localOperationListeners = this.localOperationListeners.filter((fn) => fn !== listener);
+			this.localOperationListeners.delete(listener);
 		};
 	}
 
@@ -162,9 +162,9 @@ export class Client {
 	 * @returns {() => void} function to remove the listener
 	 */
 	onAnyOperation(listener) {
-		this.anyOperationListeners.push(listener);
+		this.anyOperationListeners.add(listener);
 		return () => {
-			this.anyOperationListeners = this.anyOperationListeners.filter((fn) => fn !== listener);
+			this.anyOperationListeners.delete(listener);
 		};
 	}
 
@@ -174,9 +174,9 @@ export class Client {
 	 * @returns {() => void} function to remove the listener
 	 */
 	onLocalOperationUpdated(listener) {
-		this.localOperationUpdatedListeners.push(listener);
+		this.localOperationUpdatedListeners.add(listener);
 		return () => {
-			this.localOperationUpdatedListeners = this.localOperationUpdatedListeners.filter((fn) => fn !== listener);
+			this.localOperationUpdatedListeners.delete(listener);
 		};
 	}
 
@@ -186,9 +186,9 @@ export class Client {
 	 * @returns {() => void} function to remove the listener
 	 */
 	onAnyOperationUpdated(listener) {
-		this.anyOperationUpdatedListeners.push(listener);
+		this.anyOperationUpdatedListeners.add(listener);
 		return () => {
-			this.anyOperationUpdatedListeners = this.anyOperationUpdatedListeners.filter((fn) => fn !== listener);
+			this.anyOperationUpdatedListeners.delete(listener);
 		};
 	}
 }
