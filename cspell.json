@@ -1,5 +1,6 @@
 {
 	"ignorePaths": [
+		"node_modules", // Don't want to spell check dependencies; by default only top-level node_modules is ignored
 		"icons", // Don't want to spell check SVG files (at least not path data...)
 		"images", // Reserved; don't want to spell check SVG files
 		"build", // Used by CRA's `react-scripts build`
