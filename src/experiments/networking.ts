@@ -67,8 +67,8 @@ export class Client {
 	metaHistory: Operation[] = [];
 	localOperationListeners: Set<(operation: Operation) => void> = new Set();
 	anyOperationListeners: Set<(operation: Operation) => void> = new Set();
-	localOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }>) => void> = new Set();
-	anyOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }>) => void> = new Set();
+	localOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, any>) => void> = new Set();
+	anyOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, any>) => void> = new Set();
 
 	constructor({ clientId }: { clientId?: number } = {}) {
 		this.clientId = clientId ?? nextClientId++;
