@@ -153,7 +153,10 @@ export class Client {
 		// TODO: record timestamp of each sample
 		// Also, this is pretty informal right now, just updating arbitrary keys in the operation object (and assuming they're arrays).
 		for (let key in data) {
-			// (operation as BrushOpData)[key as "points"]!.push(data[key as "points"]!);
+			if (!(operation.data[key] instanceof Array)) {
+				console.error("Operation data key is not an array:", key);
+				continue;
+			}
 			operation.data[key].push(data[key]);
 		}
 
