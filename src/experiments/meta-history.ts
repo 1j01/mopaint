@@ -25,7 +25,18 @@
 
 // See meta-history.test.js for examples of how this works.
 
-function findTargetOp(metaHistory, targetID, metaOpMetaLevel, removals) {
+interface MHOperation {
+	id: string;
+	metaLevel: number;
+	// application-specific data
+	type: "undo" | "recolor" | "insert";
+	target?: string;
+	color?: string;
+	insertIndex?: number;
+	insertOp?: MHOperation;
+}
+
+function findTargetOp(metaHistory: MHOperation[], targetID: string, metaOpMetaLevel: number, removals: { removedOp: MHOperation, removedByOp: MHOperation }[]) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
 	for (const otherOp of metaHistory) {
 		if (otherOp.id === targetID) {
@@ -52,10 +63,10 @@ function findTargetOp(metaHistory, targetID, metaOpMetaLevel, removals) {
 	throw new Error(`target operation '${targetID}' not found.`);
 }
 
-export function resolveMetaHistory(metaHistory) {
+export function resolveMetaHistory(metaHistory: MHOperation[]) {
 
 	const maxMetaLevel = metaHistory.reduce((maxMetaLevel, op) => Math.max(maxMetaLevel, op.metaLevel), 0);
-	const mutableMH = JSON.parse(JSON.stringify(metaHistory));
+	const mutableMH = JSON.parse(JSON.stringify(metaHistory)) as MHOperation[];
 	const removals = [];
 	// Prevent accidental mutation of the original metaHistory.
 	metaHistory = undefined;

@@ -1,4 +1,4 @@
-import { resolveMetaHistory } from "./meta-history.js";
+import { resolveMetaHistory } from "./meta-history.ts";
 
 // Networking Prototype
 // Goals:
