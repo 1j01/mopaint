@@ -32,6 +32,7 @@ export interface Operation {
 	operationId: string;
 	data: string;
 	metaLevel: string;
+	type: string;
 }
 
 
