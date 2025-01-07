@@ -36,6 +36,7 @@
 	"editor.formatOnSave": true,
 	"editor.insertSpaces": false,
 	"editor.detectIndentation": false,
+	"files.trimTrailingWhitespace": true,
 	"editor.codeActionsOnSave": {
 		"source.organizeImports": "always",
 	},
