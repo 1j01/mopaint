@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { draw } from "../engine.js";
-import { generateID } from "../helpers.js";
+import { generateID } from "../helpers.ts";
 import "./DrawingCanvas.css";
 import LoadingIndicator from "./LoadingIndicator.js";
 

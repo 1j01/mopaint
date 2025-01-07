@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import React from "react";
 import HistoryNode from "./HistoryNode.js";
-import { generateID } from "./helpers.js";
+import { generateID } from "./helpers.ts";
 import { getAllHistoryNodesSortedByTimestamp } from "./history.js";
 
 export const CURRENT_SERIALIZATION_VERSION = 0.5;

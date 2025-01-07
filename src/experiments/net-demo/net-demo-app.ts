@@ -1,4 +1,4 @@
-import { generateID } from "../../helpers.js";
+import { generateID } from "../../helpers.ts";
 import { Client, MopaintWebSocketClient, Operation } from "../networking.js";
 
 const client = new Client();

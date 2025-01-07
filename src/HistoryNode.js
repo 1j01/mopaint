@@ -1,4 +1,4 @@
-import { generateID } from "./helpers.js";
+import { generateID } from "./helpers.ts";
 
 export default class HistoryNode {
 	// NOTE: data may be freely changed after construction, this is basically just a struct
