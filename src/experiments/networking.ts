@@ -124,7 +124,8 @@ export class Client {
 	 */
 	pushContinuousOperationData<T extends OpData>(
 		operationId: string,
-		data: { [K in keyof T]: ElementOfArray<T[K]> },
+		// data: { [K in keyof T]: ElementOfArray<T[K]> },
+		data: { [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never },
 		remote = false
 	) {
 		// I feel like these continuously appended buffers MIGHT be better divorced from the concept of an operation, for future use cases and/or clarity.
