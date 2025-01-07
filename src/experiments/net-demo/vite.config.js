@@ -4,7 +4,7 @@ import { MopaintWebSocketServer } from "../server.js";
 export default defineConfig({
 	plugins: [
 		{
-			name: "vite-websocket-plugin",
+			name: "MopaintWebSocketServer",
 			configureServer(server) {
 				const mopaintServer = new MopaintWebSocketServer({ noServer: true });
 				// Integrate WebSocket server with Vite's HTTP server
