@@ -1,15 +1,13 @@
-import { WebSocket, WebSocketServer } from "ws";
+import { AddressInfo, ServerOptions, WebSocket, WebSocketServer } from "ws";
 
 // TODO: ensure unique IDs for operations
 // TODO: ensure unique IDs for clients, and perhaps assign IDs server-side
 
 export class MopaintWebSocketServer {
-	/**
-	 * @param {WebSocket.ServerOptions} webSocketServerOptions
-	 */
-	constructor(webSocketServerOptions) {
+	server: WebSocketServer;
+	clients: Set<WebSocket>;
+	constructor(webSocketServerOptions: ServerOptions) {
 		this.server = new WebSocketServer(webSocketServerOptions);
-		/** @type {Set<WebSocket>} */
 		this.clients = new Set();
 
 		// Store messages to send to new clients.
@@ -44,7 +42,7 @@ export class MopaintWebSocketServer {
 		if (this.server.options.noServer) {
 			console.log(`MopaintWebSocketServer is running in "noServer" mode`);
 		} else {
-			console.log(`MopaintWebSocketServer is running on ws://localhost:${this.server.address().port}`);
+			console.log(`MopaintWebSocketServer is running on ws://localhost:${(this.server.address() as AddressInfo).port}`);
 		}
 	}
 

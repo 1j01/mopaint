@@ -217,7 +217,7 @@ export class InProcessPeerParty {
 }
 
 /**
- * Communicates with a WebSocket server. (See server.js)
+ * Communicates with a WebSocket server. (See server.ts)
  */
 export class MopaintWebSocketClient {
 	ws: WebSocket;

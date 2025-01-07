@@ -1,5 +1,5 @@
 import { Client, InProcessPeerParty, MopaintWebSocketClient } from "./networking.ts";
-import { MopaintWebSocketServer } from "./server.js";
+import { MopaintWebSocketServer } from "./server.ts";
 
 describe("Client + InProcessPeerParty", () => {
 	it("should allow communication", () => {

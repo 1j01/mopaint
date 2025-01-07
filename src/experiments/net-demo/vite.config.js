@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import { MopaintWebSocketServer } from "../server.js";
+import { MopaintWebSocketServer } from "../server.ts";
 
 export default defineConfig({
 	plugins: [
