@@ -27,12 +27,16 @@ import { resolveMetaHistory } from "./meta-history.js";
 // A generative technology, as Jeff Lindsay puts it.)
 
 export interface Operation {
-	timestamp: number;
-	clientId: string | number;
+	timestamp?: number;
+	clientId?: string | number;
 	operationId: string;
-	data: string;
-	metaLevel: string;
-	type: string;
+	metaLevel?: string;
+	// application-specific data
+	type: "circle" | "brush";
+	points?: { x: number, y: number }[];
+	color?: string;
+	x?: number;
+	y?: number;
 }
 
 
@@ -121,7 +125,7 @@ export class Client {
 		// TODO: record timestamp of each sample
 		// Also, this is pretty informal right now, just updating arbitrary keys in the operation object (and assuming they're arrays).
 		for (let key in data) {
-			operation[key].push(data[key]);
+			operation[key as "points"].push(data[key as "points"]);
 		}
 
 		if (!remote) {
@@ -225,7 +229,7 @@ export class MopaintWebSocketClient {
 	constructor(public client: Client, url: string) {
 		this.ws = new WebSocket(url, "mopaint-net-demo");
 
-		const pendingMessages = [];
+		const pendingMessages: string[] = [];
 		this.ws.addEventListener("open", () => {
 			console.log("Connected to WebSocket server");
 			for (const message of pendingMessages) {

@@ -1,4 +1,4 @@
-import { AddressInfo, ServerOptions, WebSocket, WebSocketServer } from "ws";
+import { AddressInfo, RawData, ServerOptions, WebSocket, WebSocketServer } from "ws";
 
 // TODO: ensure unique IDs for operations
 // TODO: ensure unique IDs for clients, and perhaps assign IDs server-side
@@ -12,7 +12,7 @@ export class MopaintWebSocketServer {
 
 		// Store messages to send to new clients.
 		// This is essentially the "document state".
-		const messages = [];
+		const messages: { data: RawData; isBinary: boolean; }[] = [];
 
 		this.server.on("connection", (socket) => {
 			this.clients.add(socket);

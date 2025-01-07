@@ -1,5 +1,5 @@
 import { generateID } from "../../helpers.js";
-import { Client, MopaintWebSocketClient } from "../networking.js";
+import { Client, MopaintWebSocketClient, Operation } from "../networking.js";
 
 const client = new Client();
 new MopaintWebSocketClient(client, `${location.protocol.match(/s:$/) ? "wss://" : "ws://"}${location.host}`);
@@ -21,7 +21,7 @@ function getCursorPoint(event: MouseEvent): SVGPoint {
 	return tempPoint.matrixTransform(svg.getScreenCTM().inverse());
 }
 
-let activeOperation = null;
+let activeOperation: Operation = null;
 svg.addEventListener("pointerdown", (event) => {
 	const point = getCursorPoint(event);
 	activeOperation = {
@@ -32,7 +32,7 @@ svg.addEventListener("pointerdown", (event) => {
 	};
 	client.addOperation(activeOperation);
 
-	const pointerMoveListener = (event) => {
+	const pointerMoveListener = (event: MouseEvent) => {
 		const point = getCursorPoint(event);
 		client.pushContinuousOperationData(activeOperation.operationId, {
 			points: { x: point.x, y: point.y },
@@ -54,21 +54,21 @@ svg.addEventListener("pointerdown", (event) => {
 // Who can say when a brush stroke has truly ended? (TODO: us, we can say)
 const updateHandlers = new Map();
 const operationHandlers = {
-	circle: (operation) => {
+	circle: (operation: Operation) => {
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle.setAttribute("cx", operation.x);
-		circle.setAttribute("cy", operation.y);
+		circle.setAttribute("cx", String(operation.x));
+		circle.setAttribute("cy", String(operation.y));
 		circle.setAttribute("r", "10");
 		circle.setAttribute("fill", operation.color);
 		svg.appendChild(circle);
 	},
-	brush: (operation) => {
+	brush: (operation: Operation) => {
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("stroke", operation.color);
 		path.setAttribute("fill", "none");
 		path.setAttribute("d", `M ${operation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
 		svg.appendChild(path);
-		updateHandlers.set(operation.operationId, (updatedOperation) => {
+		updateHandlers.set(operation.operationId, (updatedOperation: Operation) => {
 			path.setAttribute("d", `M ${updatedOperation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
 		});
 	},
