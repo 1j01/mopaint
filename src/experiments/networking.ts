@@ -41,8 +41,8 @@ export class Client {
 	metaHistory: Operation[] = [];
 	localOperationListeners: Set<(operation: Operation) => void> = new Set();
 	anyOperationListeners: Set<(operation: Operation) => void> = new Set();
-	localOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }[]>) => void> = new Set();
-	anyOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }[]>) => void> = new Set();
+	localOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }>) => void> = new Set();
+	anyOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }>) => void> = new Set();
 
 	constructor({ clientId }: { clientId?: number } = {}) {
 		this.clientId = clientId ?? nextClientId++;
@@ -92,7 +92,7 @@ export class Client {
 	 * @param data
 	 * @param remote - whether the update was received from the network or storage, rather than generated locally in this session
 	 */
-	pushContinuousOperationData(operationId: string, data: Record<string, { x: number, y: number }[]>, remote = false) {
+	pushContinuousOperationData(operationId: string, data: Record<string, { x: number, y: number }>, remote = false) {
 		// I feel like I'm overstepping the bounds of what consists as an "operation", or rather,
 		// that these continuously appended buffers could be better divorced from the concept of an operation, for future use cases and/or clarity.
 		// I may even be able to treat the operations list and the brush stroke data similarly, if I structure it so,
@@ -162,7 +162,7 @@ export class Client {
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
-	onLocalOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }[]>) => void): () => void {
+	onLocalOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }>) => void): () => void {
 		this.localOperationUpdatedListeners.add(listener);
 		return () => {
 			this.localOperationUpdatedListeners.delete(listener);
@@ -174,7 +174,7 @@ export class Client {
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
-	onAnyOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }[]>) => void): () => void {
+	onAnyOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }>) => void): () => void {
 		this.anyOperationUpdatedListeners.add(listener);
 		return () => {
 			this.anyOperationUpdatedListeners.delete(listener);
