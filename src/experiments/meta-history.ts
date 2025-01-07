@@ -36,7 +36,7 @@ interface MHOperation {
 	insertOp?: MHOperation;
 }
 
-function findTargetOp(metaHistory: MHOperation[], targetID: string, metaOpMetaLevel: number, removals: { removedOp: MHOperation, removedByOp: MHOperation }[]) {
+function findTargetOp(metaHistory: MHOperation[], targetID: string, metaOpMetaLevel: number, removals: { removedOp: MHOperation, removedByOp: MHOperation | null }[]) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
 	for (const otherOp of metaHistory) {
 		if (otherOp.id === targetID) {
@@ -63,13 +63,11 @@ function findTargetOp(metaHistory: MHOperation[], targetID: string, metaOpMetaLe
 	throw new Error(`target operation '${targetID}' not found.`);
 }
 
-export function resolveMetaHistory(metaHistory: MHOperation[]) {
+export function resolveMetaHistory(metaHistory: readonly MHOperation[]) {
 
 	const maxMetaLevel = metaHistory.reduce((maxMetaLevel, op) => Math.max(maxMetaLevel, op.metaLevel), 0);
 	const mutableMH = JSON.parse(JSON.stringify(metaHistory)) as MHOperation[];
 	const removals = [];
-	// Prevent accidental mutation of the original metaHistory.
-	metaHistory = undefined;
 
 	// Note: stopping loop before metaLevel of 0, as at that point it should be resolved.
 	// (With most loops counting down you'd want >= 0.)
@@ -80,14 +78,14 @@ export function resolveMetaHistory(metaHistory: MHOperation[]) {
 		for (const op of frozenMH) {
 			if (op.metaLevel === metaLevel) {
 				if (op.type === "undo") {
-					const targetOp = findTargetOp(mutableMH, op.target, op.metaLevel, removals);
+					const targetOp = findTargetOp(mutableMH, op.target!, op.metaLevel, removals);
 					mutableMH.splice(mutableMH.indexOf(targetOp), 1);
 					removals.push({ removedOp: targetOp, removedByOp: op });
 				} else if (op.type === "recolor") {
-					const targetOp = findTargetOp(mutableMH, op.target, op.metaLevel, removals);
+					const targetOp = findTargetOp(mutableMH, op.target!, op.metaLevel, removals);
 					targetOp.color = op.color;
 				} else if (op.type === "insert") {
-					mutableMH.splice(op.insertIndex, 0, op.insertOp);
+					mutableMH.splice(op.insertIndex!, 0, op.insertOp!);
 				} else {
 					throw new Error(`unknown meta operation type '${op.type}'.`);
 				}

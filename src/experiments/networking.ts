@@ -25,18 +25,33 @@
 // (I am trying to build an operating system of sorts, similar to VS Code, or a web browser, or Blender.
 // A generative technology, as Jeff Lindsay puts it.)
 
-export interface Operation {
-	timestamp?: number;
-	clientId?: string | number;
-	operationId: string;
-	metaLevel?: string;
-	// application-specific data
-	type: "circle" | "brush";
-	points?: { x: number, y: number }[];
-	color?: string;
-	x?: number;
-	y?: number;
+
+export interface BrushOpData {
+	type: "brush";
+	points: { x: number, y: number }[];
+	color: string;
 }
+
+export interface CircleOpData {
+	type: "circle";
+	x: number;
+	y: number;
+	color: string;
+}
+
+export type OpData = BrushOpData | CircleOpData;
+
+export interface OpMetaData {
+	timestamp: number;
+	clientId: string | number;
+	operationId: string;
+	// metaLevel: string;
+}
+
+export type Operation = OpMetaData & OpData;
+// awkwardly making some fields optional with Partial and then some required again with Pick
+// could split OpMetaData into OpRequiredMetaData and OpAutoMetaData, or there might be a cleaner way to do this
+export type AddOperationOptions = OpData & Partial<OpMetaData> & Pick<OpMetaData, "operationId" /*| "metaLevel"*/>;
 
 
 let nextClientId = 1;
@@ -60,16 +75,18 @@ export class Client {
 	 * @param operation
 	 * @param remote - whether the operation was received from the network or storage, rather than generated locally in this session
 	 */
-	addOperation(operation: Operation, remote = false) {
+	addOperation(addOperationOptions: AddOperationOptions, remote = false): Operation {
 		// TODO: if remote, validate the operation has clientId and timestamp instead of filling them in
 		// and validate the operationId is unique
-		operation.clientId ??= this.clientId;
-		operation.timestamp ??= Date.now();
+		const operation: Operation = Object.assign({
+			timestamp: Date.now(),
+			clientId: this.clientId,
+		}, addOperationOptions);
 
 		// Search backwards to find where to insert the operation
 		let i = this.metaHistory.length - 1;
 		for (; i >= 0; i--) {
-			const otherOperation = this.metaHistory[i];
+			const otherOperation = this.metaHistory[i]!;
 			if (
 				otherOperation.timestamp < operation.timestamp ||
 				// use client ID as a tiebreaker for equal timestamps
@@ -89,6 +106,8 @@ export class Client {
 		for (const listener of this.anyOperationListeners) {
 			listener(operation);
 		}
+
+		return operation;
 	}
 
 	/**
@@ -124,7 +143,7 @@ export class Client {
 		// TODO: record timestamp of each sample
 		// Also, this is pretty informal right now, just updating arbitrary keys in the operation object (and assuming they're arrays).
 		for (let key in data) {
-			operation[key as "points"].push(data[key as "points"]);
+			(operation as BrushOpData)[key as "points"]!.push(data[key as "points"]!);
 		}
 
 		if (!remote) {
