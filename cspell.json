@@ -5,7 +5,8 @@
 		"images", // Reserved; don't want to spell check SVG files
 		"build", // Used by CRA's `react-scripts build`
 		"out", // Reserved; may be used for an Electron app in the future
-		"dist" // Reserved
+		"dist", // Reserved
+		"*.tsbuildinfo" // TypeScript incremental compilation cache
 	],
 	"words": [
 		"anypalette",

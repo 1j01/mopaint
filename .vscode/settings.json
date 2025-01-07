@@ -15,6 +15,7 @@
 		"**/build": true,
 		"**/lib": true,
 		"**/out": true,
+		"**/*.tsbuildinfo": true,
 		// The package lock files contain a lot of repetition, and are usually noise in search results.
 		// You can often search with `npm ls` if you want to check if a package is installed,
 		// and what depends on what.
