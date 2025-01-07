@@ -45,14 +45,19 @@ export interface OpMetaData {
 	timestamp: number;
 	clientId: string | number;
 	operationId: string;
-	// metaLevel: string;
+}
+export interface Operation<T extends OpData = OpData> extends OpMetaData {
+	data: T;
 }
 
-export type Operation = OpMetaData & OpData;
 // awkwardly making some fields optional with Partial and then some required again with Pick
 // could split OpMetaData into OpRequiredMetaData and OpAutoMetaData, or there might be a cleaner way to do this
-export type AddOperationOptions = OpData & Partial<OpMetaData> & Pick<OpMetaData, "operationId" /*| "metaLevel"*/>;
+// export type AddOperationOptions = { data: OpData } & Partial<OpMetaData> & Pick<OpMetaData, "operationId">;
 
+export interface AddOperationOptions<T extends OpData = OpData> extends Partial<OpMetaData> {
+	data: T;
+	operationId: string;
+}
 
 let nextClientId = 1;
 export class Client {
@@ -75,10 +80,10 @@ export class Client {
 	 * @param operation
 	 * @param remote - whether the operation was received from the network or storage, rather than generated locally in this session
 	 */
-	addOperation(addOperationOptions: AddOperationOptions, remote = false): Operation {
+	addOperation<T extends OpData>(addOperationOptions: AddOperationOptions<T>, remote = false): Operation<T> {
 		// TODO: if remote, validate the operation has clientId and timestamp instead of filling them in
 		// and validate the operationId is unique
-		const operation: Operation = Object.assign({
+		const operation: Operation<T> = Object.assign({
 			timestamp: Date.now(),
 			clientId: this.clientId,
 		}, addOperationOptions);
