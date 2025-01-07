@@ -61,6 +61,7 @@
 	"scripts": {
 		"lint-cspell": "cspell-cli lint .",
 		"lint-eslint": "eslint src/ eslint.config.mjs",
+		"lint-ts": "tsc --noEmit",
 		"lint": "npm-run-all --continue-on-error --serial lint-*",
 		"start": "react-scripts start",
 		"build": "react-scripts build",
