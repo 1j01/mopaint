@@ -10,7 +10,7 @@ export const generateID = (length = 40) => {
 
 /**
  * @template {any[]} ArgsType
- * @returns {[(callback: (...args: ArgsType) => void) => (() => void), (...args: ArgsType) => void]} [addListener, trigger]
+ * @returns {(callback: (...args: ArgsType) => void) => (() => void) & { trigger: (...args: ArgsType) => void }} addListener
  */
 export const makeListenable = () => {
 	/** @type {Set<((...args: ArgsType) => void)>} */
@@ -34,5 +34,5 @@ export const makeListenable = () => {
 			handler(...args);
 		}
 	};
-	return [addListener, trigger];
+	return Object.assign(addListener, { trigger });
 };

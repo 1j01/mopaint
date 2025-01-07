@@ -50,7 +50,8 @@ export class Client {
 		this.metaHistory = [];
 
 		/** @type {[((operation: Operation) => void), () => void]} */
-		[this.onLocalOperation, this.dispatchLocalOperation] = makeListenable();
+		// WTF is this not inferring the type at all, or giving an error if it doesn't match?
+		this.onLocalOperation = makeListenable();
 		/** @type {[((operation: Operation) => void), () => void]} */
 		[this.onAnyOperation, this.dispatchAnyOperation] = makeListenable();
 		/** @type {[((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void), () => void]} */
