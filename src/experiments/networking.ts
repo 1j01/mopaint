@@ -1,4 +1,3 @@
-import { resolveMetaHistory } from "./meta-history.ts";
 
 // Networking Prototype
 // Goals:
@@ -53,9 +52,9 @@ export class Client {
 		this.clientId = clientId ?? nextClientId++;
 	}
 
-	computeLinearHistory() {
-		return resolveMetaHistory(this.metaHistory);
-	}
+	// computeLinearHistory() {
+	// 	return resolveMetaHistory(this.metaHistory);
+	// }
 
 	/**
 	 * @param operation
