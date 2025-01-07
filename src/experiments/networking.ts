@@ -26,37 +26,26 @@ import { resolveMetaHistory } from "./meta-history.js";
 // (I am trying to build an operating system of sorts, similar to VS Code, or a web browser, or Blender.
 // A generative technology, as Jeff Lindsay puts it.)
 
-/**
- * @typedef {Object} Operation
- * @property {number} timestamp
- * @property {string} clientId
- * @property {string} operationId
- * @property {string} data
- * @property {string} metaLevel
- */
+export interface Operation {
+	timestamp: number;
+	clientId: string | number;
+	operationId: string;
+	data: string;
+	metaLevel: string;
+}
 
 
 let nextClientId = 1;
 export class Client {
+	clientId: number;
+	metaHistory: Operation[] = [];
+	localOperationListeners: Set<(operation: Operation) => void> = new Set();
+	anyOperationListeners: Set<(operation: Operation) => void> = new Set();
+	localOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }[]>) => void> = new Set();
+	anyOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }[]>) => void> = new Set();
 
-	/**
-	 * @param {Object} options
-	 * @param {number} options.clientId
-	 */
-	constructor({ clientId } = {}) {
+	constructor({ clientId }: { clientId?: number } = {}) {
 		this.clientId = clientId ?? nextClientId++;
-		/** @type {Operation[]} */
-		this.metaHistory = [];
-
-		// TODO: make events less verbose using EventTarget or something
-		/** @type {Set<((operation: Operation) => void)>} */
-		this.localOperationListeners = new Set();
-		/** @type {Set<((operation: Operation) => void)>} */
-		this.anyOperationListeners = new Set();
-		/** @type {Set<((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)>} */
-		this.localOperationUpdatedListeners = new Set();
-		/** @type {Set<((operation: Operation, data: Record<string, {x: number, y: number}[]>) => void)>} */
-		this.anyOperationUpdatedListeners = new Set();
 	}
 
 	computeLinearHistory() {
@@ -64,10 +53,10 @@ export class Client {
 	}
 
 	/**
-	 * @param {Operation} operation
-	 * @param {boolean} [remote=false] - whether the operation was received from the network or storage, rather than generated locally in this session
+	 * @param operation
+	 * @param remote - whether the operation was received from the network or storage, rather than generated locally in this session
 	 */
-	addOperation(operation, remote = false) {
+	addOperation(operation: Operation, remote = false) {
 		// TODO: if remote, validate the operation has clientId and timestamp instead of filling them in
 		// and validate the operationId is unique
 		operation.clientId ??= this.clientId;
@@ -99,11 +88,11 @@ export class Client {
 	}
 
 	/**
-	 * @param {string} operationId
-	 * @param {Record<string, {x: number, y: number}[]>} data
-	 * @param {boolean} [remote=false] - whether the update was received from the network or storage, rather than generated locally in this session
+	 * @param operationId
+	 * @param data
+	 * @param remote - whether the update was received from the network or storage, rather than generated locally in this session
 	 */
-	pushContinuousOperationData(operationId, data, remote = false) {
+	pushContinuousOperationData(operationId: string, data: Record<string, { x: number, y: number }[]>, remote = false) {
 		// I feel like I'm overstepping the bounds of what consists as an "operation", or rather,
 		// that these continuously appended buffers could be better divorced from the concept of an operation, for future use cases and/or clarity.
 		// I may even be able to treat the operations list and the brush stroke data similarly, if I structure it so,
@@ -146,10 +135,10 @@ export class Client {
 
 	/**
 	 * Listen for operations generated from this client.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
+	 * @param listener - The listener function to handle the operation.
+	 * @returns A function to remove the listener.
 	 */
-	onLocalOperation(listener) {
+	onLocalOperation(listener: (operation: Operation) => void): () => void {
 		this.localOperationListeners.add(listener);
 		return () => {
 			this.localOperationListeners.delete(listener);
@@ -158,10 +147,10 @@ export class Client {
 
 	/**
 	 * Listen for operations from this client or other clients.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
+	 * @param listener - The listener function to handle the operation.
+	 * @returns A function to remove the listener.
 	 */
-	onAnyOperation(listener) {
+	onAnyOperation(listener: (operation: Operation) => void): () => void {
 		this.anyOperationListeners.add(listener);
 		return () => {
 			this.anyOperationListeners.delete(listener);
@@ -170,10 +159,10 @@ export class Client {
 
 	/**
 	 * Listen for operations from this client being updated.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
+	 * @param listener - The listener function to handle the operation update.
+	 * @returns A function to remove the listener.
 	 */
-	onLocalOperationUpdated(listener) {
+	onLocalOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }[]>) => void): () => void {
 		this.localOperationUpdatedListeners.add(listener);
 		return () => {
 			this.localOperationUpdatedListeners.delete(listener);
@@ -182,10 +171,10 @@ export class Client {
 
 	/**
 	 * Listen for operations from this client or other clients being updated.
-	 * @param {(operation: Operation) => void} listener
-	 * @returns {() => void} function to remove the listener
+	 * @param listener - The listener function to handle the operation update.
+	 * @returns A function to remove the listener.
 	 */
-	onAnyOperationUpdated(listener) {
+	onAnyOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }[]>) => void): () => void {
 		this.anyOperationUpdatedListeners.add(listener);
 		return () => {
 			this.anyOperationUpdatedListeners.delete(listener);
@@ -197,17 +186,10 @@ export class Client {
  * Communicates between multiple clients in the same process.
  */
 export class InProcessPeerParty {
-	constructor() {
-		/** @type {Client[]} */
-		this.peers = [];
-		/** @type {(() => void)[]} */
-		this.cleanupFns = [];
-	}
+	peers: Client[] = [];
+	cleanupFns: (() => void)[] = [];
 
-	/**
-	 * @param {Client} peer
-	 */
-	addPeer(peer) {
+	addPeer(peer: Client) {
 		this.peers.push(peer);
 		this.cleanupFns.push(peer.onLocalOperation((operation) => {
 			for (const otherPeer of this.peers) {
@@ -238,13 +220,9 @@ export class InProcessPeerParty {
  * Communicates with a WebSocket server. (See server.js)
  */
 export class MopaintWebSocketClient {
-	/**
-	 * @param {Client} client
-	 * @param {string} url
-	 */
-	constructor(client, url) {
+	ws: WebSocket;
+	constructor(public client: Client, url: string) {
 		this.ws = new WebSocket(url, "mopaint-net-demo");
-		this.client = client;
 
 		const pendingMessages = [];
 		this.ws.addEventListener("open", () => {

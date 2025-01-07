@@ -1,5 +1,5 @@
 import { generateID } from "../../helpers.js";
-import { Client, MopaintWebSocketClient } from "../networking.js";
+import { Client, MopaintWebSocketClient } from "../networking.ts";
 
 const client = new Client();
 new MopaintWebSocketClient(client, `${location.protocol.match(/s:$/) ? "wss://" : "ws://"}${location.host}`);

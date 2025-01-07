@@ -1,4 +1,4 @@
-import { Client, InProcessPeerParty, MopaintWebSocketClient } from "./networking.js";
+import { Client, InProcessPeerParty, MopaintWebSocketClient } from "./networking.ts";
 import { MopaintWebSocketServer } from "./server.js";
 
 describe("Client + InProcessPeerParty", () => {
