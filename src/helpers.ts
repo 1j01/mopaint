@@ -6,3 +6,5 @@ export const generateID = (length = 40) => {
 	crypto.getRandomValues(array);
 	return Array.from(array, byteToHex).join("");
 };
+
+export type ElementOfArray<A> = A extends readonly (infer T)[] ? T : never;

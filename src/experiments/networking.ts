@@ -12,6 +12,8 @@
 //   - Conflict resolution can be ignored for now, as drawing operations can always be considered independently ordered
 // - In the future, sharing cache data using content-addressable storage
 
+import { ElementOfArray } from "../helpers.ts";
+
 // Should there be a message type separate from the operation type?
 // Probably, something like that.
 // Eventually we'll want to stream buffers of data like mouse movements, associated with a single operation,
@@ -120,7 +122,11 @@ export class Client {
 	 * @param data
 	 * @param remote - whether the update was received from the network or storage, rather than generated locally in this session
 	 */
-	pushContinuousOperationData(operationId: string, data: Record<string, { x: number, y: number }>, remote = false) {
+	pushContinuousOperationData<T extends OpData>(
+		operationId: string,
+		data: { [K in keyof T]: ElementOfArray<T[K]> },
+		remote = false
+	) {
 		// I feel like these continuously appended buffers MIGHT be better divorced from the concept of an operation, for future use cases and/or clarity.
 		// I may even be able to treat the operations list and the brush stroke data similarly, if I structure it so,
 		// both being append-only lists (in general, at least), and could potentially simplify the system that I'm developing.
@@ -147,7 +153,8 @@ export class Client {
 		// TODO: record timestamp of each sample
 		// Also, this is pretty informal right now, just updating arbitrary keys in the operation object (and assuming they're arrays).
 		for (let key in data) {
-			(operation as BrushOpData)[key as "points"]!.push(data[key as "points"]!);
+			// (operation as BrushOpData)[key as "points"]!.push(data[key as "points"]!);
+			operation.data[key].push(data[key]);
 		}
 
 		if (!remote) {
