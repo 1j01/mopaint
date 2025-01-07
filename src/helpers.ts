@@ -7,4 +7,6 @@ export const generateID = (length = 40) => {
 	return Array.from(array, byteToHex).join("");
 };
 
-export type ElementOfArray<A> = A extends readonly (infer T)[] ? T : never;
+export type ElementOfArray<ArrayType extends readonly unknown[]> =
+	ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
