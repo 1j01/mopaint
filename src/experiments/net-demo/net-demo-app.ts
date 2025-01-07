@@ -1,5 +1,5 @@
 import { generateID } from "../../helpers.js";
-import { Client, MopaintWebSocketClient } from "../networking.ts";
+import { Client, MopaintWebSocketClient } from "../networking.js";
 
 const client = new Client();
 new MopaintWebSocketClient(client, `${location.protocol.match(/s:$/) ? "wss://" : "ws://"}${location.host}`);
@@ -14,11 +14,8 @@ root.appendChild(svg);
 
 let tempPoint = svg.createSVGPoint();
 
-/**
- * @param {MouseEvent} event
- * @returns {SVGPoint} point in SVG coordinates
- */
-function getCursorPoint(event) {
+/** Get the cursor position in SVG coordinates */
+function getCursorPoint(event: MouseEvent): SVGPoint {
 	tempPoint.x = event.clientX;
 	tempPoint.y = event.clientY;
 	return tempPoint.matrixTransform(svg.getScreenCTM().inverse());
@@ -61,7 +58,7 @@ const operationHandlers = {
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle.setAttribute("cx", operation.x);
 		circle.setAttribute("cy", operation.y);
-		circle.setAttribute("r", 10);
+		circle.setAttribute("r", "10");
 		circle.setAttribute("fill", operation.color);
 		svg.appendChild(circle);
 	},
