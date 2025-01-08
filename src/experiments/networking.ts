@@ -116,15 +116,14 @@ export class Client {
 	 * @param remote - whether the update was received from the network or storage, rather than generated locally in this session
 	 */
 	pushContinuousOperationData(operationId: string, data: Record<string, { x: number, y: number }>, remote = false) {
-		// I feel like I'm overstepping the bounds of what consists as an "operation", or rather,
-		// that these continuously appended buffers could be better divorced from the concept of an operation, for future use cases and/or clarity.
+		// I feel like these continuously appended buffers MIGHT be better divorced from the concept of an operation, for future use cases and/or clarity.
 		// I may even be able to treat the operations list and the brush stroke data similarly, if I structure it so,
 		// both being append-only lists (in general, at least), and could potentially simplify the system that I'm developing.
 		// It would basically mean adding indirection to the operation's continuously updatable data buffer reference.
 		// It might be like a buffer ID, instead of using the operation's ID + a top-level key to identify the buffer for updating across the network.
 		//
 		// That said, the reason to have a separate buffer in the first place isn't a fundamental one, but rather for performance:
-		// If for every update it sent either the whole operation or an "update operation", the overhead of the operation objects would be significant.
+		// If for every update it sent either the whole operation or an "update operation" meta operation, the overhead of the operation objects would be significant.
 		// So if it's better for ergonomics to deal with whole operation objects and important for performance to use ArrayBuffer objects for stroke data,
 		// it may complicate a general system, and abstractions can have a performance cost as well.
 		//
