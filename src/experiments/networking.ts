@@ -74,8 +74,8 @@ export class Client {
 	metaHistory: Operation[] = [];
 	localOperationListeners: Set<(operation: Operation) => void> = new Set();
 	anyOperationListeners: Set<(operation: Operation) => void> = new Set();
-	localOperationUpdatedListeners: Set<(operation: Operation, data: ContinuousOperationUpdate) => void> = new Set();
-	anyOperationUpdatedListeners: Set<(operation: Operation, data: ContinuousOperationUpdate) => void> = new Set();
+	localOperationUpdatedListeners: Set<(operation: Operation, update: ContinuousOperationUpdate) => void> = new Set();
+	anyOperationUpdatedListeners: Set<(operation: Operation, update: ContinuousOperationUpdate) => void> = new Set();
 
 	constructor({ clientId }: { clientId?: number } = {}) {
 		this.clientId = clientId ?? nextClientId++;
@@ -126,12 +126,12 @@ export class Client {
 
 	/**
 	 * @param operationId
-	 * @param data - new samples to append to arrays in the operation's data; should look like { points: Point }, not { points: [Point] }
+	 * @param update - new samples to append to arrays in the operation's data; should look like { points: Point }, not { points: [Point] }
 	 * @param remote - whether the update was received from the network or storage, rather than generated locally in this session
 	 */
 	pushContinuousOperationData<T extends OpData>(
 		operationId: string,
-		data: ContinuousOperationUpdate<T>,
+		update: ContinuousOperationUpdate<T>,
 		remote = false
 	) {
 		// I feel like these continuously appended buffers MIGHT be better divorced from the concept of an operation, for future use cases and/or clarity.
@@ -162,21 +162,21 @@ export class Client {
 		// TODO: record timestamp of each sample
 		// Note: for-in loop looses track of the fact that the values are arrays; Object.entries is worse, because it gives `[string, any][]`, or requires a type parameter, which might be too complex, and `string` is already too general.
 		// for (const [key, value] of Object.entries<{ [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never }>(data)) {
-		for (let key in data) {
+		for (let key in update) {
 			if (!(operation.data[key] instanceof Array)) {
 				console.error("Operation data key is not an array:", key);
 				continue;
 			}
-			operation.data[key].push(data[key]);
+			operation.data[key].push(update[key]);
 		}
 
 		if (!remote) {
 			for (const listener of this.localOperationUpdatedListeners) {
-				listener(operation, data);
+				listener(operation, update);
 			}
 		}
 		for (const listener of this.anyOperationUpdatedListeners) {
-			listener(operation, data);
+			listener(operation, update);
 		}
 	}
 
@@ -209,7 +209,7 @@ export class Client {
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
-	onLocalOperationUpdated(listener: (operation: Operation, data: ContinuousOperationUpdate) => void): () => void {
+	onLocalOperationUpdated(listener: (operation: Operation, update: ContinuousOperationUpdate) => void): () => void {
 		this.localOperationUpdatedListeners.add(listener);
 		return () => {
 			this.localOperationUpdatedListeners.delete(listener);
@@ -221,7 +221,7 @@ export class Client {
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
-	onAnyOperationUpdated(listener: (operation: Operation, data: ContinuousOperationUpdate) => void): () => void {
+	onAnyOperationUpdated(listener: (operation: Operation, update: ContinuousOperationUpdate) => void): () => void {
 		this.anyOperationUpdatedListeners.add(listener);
 		return () => {
 			this.anyOperationUpdatedListeners.delete(listener);
@@ -246,11 +246,11 @@ export class InProcessPeerParty {
 				}
 			}
 		}));
-		this.cleanupFns.push(peer.onLocalOperationUpdated((operation, data) => {
+		this.cleanupFns.push(peer.onLocalOperationUpdated((operation, update) => {
 			for (const otherPeer of this.peers) {
 				if (otherPeer !== peer) {
-					const dataCopy = JSON.parse(JSON.stringify(data));
-					otherPeer.pushContinuousOperationData(operation.operationId, dataCopy, true);
+					const updateCopy = JSON.parse(JSON.stringify(update));
+					otherPeer.pushContinuousOperationData(operation.operationId, updateCopy, true);
 				}
 			}
 		}));
@@ -294,7 +294,7 @@ export class MopaintWebSocketClient {
 			if (message.type === "operation") {
 				this.client.addOperation(message.operation, true);
 			} else if (message.type === "operationUpdate") {
-				this.client.pushContinuousOperationData(message.operationId, message.data, true);
+				this.client.pushContinuousOperationData(message.operationId, message.update, true);
 			}
 		});
 
@@ -311,14 +311,14 @@ export class MopaintWebSocketClient {
 			}
 		});
 
-		this.client.onLocalOperationUpdated((operation, data) => {
+		this.client.onLocalOperationUpdated((operation, update) => {
 			// Send local operation updates to the server
-			const message = JSON.stringify({ type: "operationUpdate", operationId: operation.operationId, data });
+			const message = JSON.stringify({ type: "operationUpdate", operationId: operation.operationId, update });
 			if (this.ws.readyState === WebSocket.OPEN) {
-				// console.log("Sending operation update to server:", operation, data);
+				// console.log("Sending operation update to server:", operation, update);
 				this.ws.send(message);
 			} else {
-				// console.log("WebSocket not open, queueing message for operation update:", operation, data);
+				// console.log("WebSocket not open, queueing message for operation update:", operation, update);
 				pendingMessages.push(message);
 			}
 		});
