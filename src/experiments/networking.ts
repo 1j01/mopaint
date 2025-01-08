@@ -61,7 +61,7 @@ export interface AddOperationOptions<T extends OpData = OpData> extends Partial<
 	operationId: string;
 }
 
-export type ContinuousOperationUpdate<T extends OpData> =
+export type ContinuousOperationUpdate<T extends OpData = OpData> =
 	// Partial<T>, // would be { points: [Point] }, but we're using { points: Point } instead (and want to omit non-array fields)
 	// { [K in keyof T]: ElementOfArray<T[K]> },
 	// { [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never },
@@ -74,8 +74,8 @@ export class Client {
 	metaHistory: Operation[] = [];
 	localOperationListeners: Set<(operation: Operation) => void> = new Set();
 	anyOperationListeners: Set<(operation: Operation) => void> = new Set();
-	localOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, any>) => void> = new Set();
-	anyOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, any>) => void> = new Set();
+	localOperationUpdatedListeners: Set<(operation: Operation, update: ContinuousOperationUpdate) => void> = new Set();
+	anyOperationUpdatedListeners: Set<(operation: Operation, update: ContinuousOperationUpdate) => void> = new Set();
 
 	constructor({ clientId }: { clientId?: number } = {}) {
 		this.clientId = clientId ?? nextClientId++;

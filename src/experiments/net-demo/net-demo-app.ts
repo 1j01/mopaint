@@ -50,7 +50,7 @@ svg.addEventListener("pointerdown", (event) => {
 // This should be a little more efficient as the history gets long, being O(1) instead of O(n),
 // for the lookup, although the map is still growing indefinitely.
 // Who can say when a brush stroke has truly ended? (TODO: us, we can say)
-const updateHandlers = new Map<string, (operation: Operation, data: ContinuousOperationUpdate<any>) => void>();
+const updateHandlers = new Map<string, (operation: Operation, data: ContinuousOperationUpdate) => void>();
 const operationHandlers = {
 	circle: (operation: Operation<CircleOpData>) => {
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
