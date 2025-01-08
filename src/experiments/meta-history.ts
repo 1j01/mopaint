@@ -29,7 +29,8 @@ interface MHOperation {
 	id: string;
 	metaLevel: number;
 	// application-specific data
-	type: "undo" | "recolor" | "insert";
+	type: "undo" | "recolor" | "insert" | "line" | "circle" | "triangle";
+	name: string;
 	target?: string;
 	color?: string;
 	insertIndex?: number;
