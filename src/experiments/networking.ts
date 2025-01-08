@@ -12,7 +12,7 @@
 //   - Conflict resolution can be ignored for now, as drawing operations can always be considered independently ordered
 // - In the future, sharing cache data using content-addressable storage
 
-import { ElementOfArray } from "../helpers.ts";
+import { ElementOfArray, OmitNever } from "../helpers.ts";
 
 // Should there be a message type separate from the operation type?
 // Probably, something like that.
@@ -60,6 +60,13 @@ export interface AddOperationOptions<T extends OpData = OpData> extends Partial<
 	data: T;
 	operationId: string;
 }
+
+export type ContinuousOperationUpdate<T extends OpData> =
+	// Partial<T>, // would be { points: [Point] }, but we're using { points: Point } instead (and want to omit non-array fields)
+	// { [K in keyof T]: ElementOfArray<T[K]> },
+	// { [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never },
+	OmitNever<{ [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never }>;
+
 
 let nextClientId = 1;
 export class Client {
@@ -124,9 +131,7 @@ export class Client {
 	 */
 	pushContinuousOperationData<T extends OpData>(
 		operationId: string,
-		// data: { [K in keyof T]: ElementOfArray<T[K]> },
-		data: { [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never },
-		// data: Partial<T>, // would be { points: [Point] }, but we're using { points: Point } instead
+		data: ContinuousOperationUpdate<T>,
 		remote = false
 	) {
 		// I feel like these continuously appended buffers MIGHT be better divorced from the concept of an operation, for future use cases and/or clarity.
