@@ -119,13 +119,14 @@ export class Client {
 
 	/**
 	 * @param operationId
-	 * @param data
+	 * @param data - new samples to append to arrays in the operation's data; should look like { points: Point }, not { points: [Point] }
 	 * @param remote - whether the update was received from the network or storage, rather than generated locally in this session
 	 */
 	pushContinuousOperationData<T extends OpData>(
 		operationId: string,
 		// data: { [K in keyof T]: ElementOfArray<T[K]> },
 		data: { [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never },
+		// data: Partial<T>, // would be { points: [Point] }, but we're using { points: Point } instead
 		remote = false
 	) {
 		// I feel like these continuously appended buffers MIGHT be better divorced from the concept of an operation, for future use cases and/or clarity.
@@ -146,13 +147,16 @@ export class Client {
 		// and perhaps can be assumed to be ordered, whereas the operations list needs explicit ordering.
 
 		// TODO: use a Map to look up the operation by ID in one step
-		const operation = this.metaHistory.find((op) => op.operationId === operationId);
+		// or take Operation as a parameter instead of operationId? could avoid this type assertion, but MIGHT be less flexible
+		// I mean, I guess one could always do the lookup externally if needed, so it should be fine.
+		const operation = this.metaHistory.find((op) => op.operationId === operationId) as Operation<T> | undefined;
 		if (!operation) {
 			console.error("Operation not found:", operationId);
 			return;
 		}
 		// TODO: record timestamp of each sample
-		// Also, this is pretty informal right now, just updating arbitrary keys in the operation object (and assuming they're arrays).
+		// Note: for-in loop looses track of the fact that the values are arrays; Object.entries is worse, because it gives `[string, any][]`, or requires a type parameter, which might be too complex, and `string` is already too general.
+		// for (const [key, value] of Object.entries<{ [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never }>(data)) {
 		for (let key in data) {
 			if (!(operation.data[key] instanceof Array)) {
 				console.error("Operation data key is not an array:", key);
