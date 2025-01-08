@@ -12,6 +12,8 @@
 //   - Conflict resolution can be ignored for now, as drawing operations can always be considered independently ordered
 // - In the future, sharing cache data using content-addressable storage
 
+import { ElementOfArray, OmitNever } from "../helpers.ts";
+
 // Should there be a message type separate from the operation type?
 // Probably, something like that.
 // Eventually we'll want to stream buffers of data like mouse movements, associated with a single operation,
@@ -45,13 +47,25 @@ export interface OpMetaData {
 	timestamp: number;
 	clientId: string | number;
 	operationId: string;
-	// metaLevel: string;
+}
+export interface Operation<T extends OpData = OpData> extends OpMetaData {
+	data: T;
 }
 
-export type Operation = OpMetaData & OpData;
 // awkwardly making some fields optional with Partial and then some required again with Pick
 // could split OpMetaData into OpRequiredMetaData and OpAutoMetaData, or there might be a cleaner way to do this
-export type AddOperationOptions = OpData & Partial<OpMetaData> & Pick<OpMetaData, "operationId" /*| "metaLevel"*/>;
+// export type AddOperationOptions = { data: OpData } & Partial<OpMetaData> & Pick<OpMetaData, "operationId">;
+
+export interface AddOperationOptions<T extends OpData = OpData> extends Partial<OpMetaData> {
+	data: T;
+	operationId: string;
+}
+
+export type ContinuousOperationUpdate<T extends OpData = OpData> =
+	// Partial<T>, // would be { points: [Point] }, but we're using { points: Point } instead (and want to omit non-array fields)
+	// { [K in keyof T]: ElementOfArray<T[K]> },
+	// { [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never },
+	OmitNever<{ [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never }>;
 
 
 let nextClientId = 1;
@@ -60,8 +74,8 @@ export class Client {
 	metaHistory: Operation[] = [];
 	localOperationListeners: Set<(operation: Operation) => void> = new Set();
 	anyOperationListeners: Set<(operation: Operation) => void> = new Set();
-	localOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }>) => void> = new Set();
-	anyOperationUpdatedListeners: Set<(operation: Operation, data: Record<string, { x: number, y: number }>) => void> = new Set();
+	localOperationUpdatedListeners: Set<(operation: Operation, data: ContinuousOperationUpdate) => void> = new Set();
+	anyOperationUpdatedListeners: Set<(operation: Operation, data: ContinuousOperationUpdate) => void> = new Set();
 
 	constructor({ clientId }: { clientId?: number } = {}) {
 		this.clientId = clientId ?? nextClientId++;
@@ -75,10 +89,10 @@ export class Client {
 	 * @param operation
 	 * @param remote - whether the operation was received from the network or storage, rather than generated locally in this session
 	 */
-	addOperation(addOperationOptions: AddOperationOptions, remote = false): Operation {
+	addOperation<T extends OpData>(addOperationOptions: AddOperationOptions<T>, remote = false): Operation<T> {
 		// TODO: if remote, validate the operation has clientId and timestamp instead of filling them in
 		// and validate the operationId is unique
-		const operation: Operation = Object.assign({
+		const operation: Operation<T> = Object.assign({
 			timestamp: Date.now(),
 			clientId: this.clientId,
 		}, addOperationOptions);
@@ -112,10 +126,14 @@ export class Client {
 
 	/**
 	 * @param operationId
-	 * @param data
+	 * @param data - new samples to append to arrays in the operation's data; should look like { points: Point }, not { points: [Point] }
 	 * @param remote - whether the update was received from the network or storage, rather than generated locally in this session
 	 */
-	pushContinuousOperationData(operationId: string, data: Record<string, { x: number, y: number }>, remote = false) {
+	pushContinuousOperationData<T extends OpData>(
+		operationId: string,
+		data: ContinuousOperationUpdate<T>,
+		remote = false
+	) {
 		// I feel like these continuously appended buffers MIGHT be better divorced from the concept of an operation, for future use cases and/or clarity.
 		// I may even be able to treat the operations list and the brush stroke data similarly, if I structure it so,
 		// both being append-only lists (in general, at least), and could potentially simplify the system that I'm developing.
@@ -134,15 +152,22 @@ export class Client {
 		// and perhaps can be assumed to be ordered, whereas the operations list needs explicit ordering.
 
 		// TODO: use a Map to look up the operation by ID in one step
-		const operation = this.metaHistory.find((op) => op.operationId === operationId);
+		// or take Operation as a parameter instead of operationId? could avoid this type assertion, but MIGHT be less flexible
+		// I mean, I guess one could always do the lookup externally if needed, so it should be fine.
+		const operation = this.metaHistory.find((op) => op.operationId === operationId) as Operation<T> | undefined;
 		if (!operation) {
 			console.error("Operation not found:", operationId);
 			return;
 		}
 		// TODO: record timestamp of each sample
-		// Also, this is pretty informal right now, just updating arbitrary keys in the operation object (and assuming they're arrays).
+		// Note: for-in loop looses track of the fact that the values are arrays; Object.entries is worse, because it gives `[string, any][]`, or requires a type parameter, which might be too complex, and `string` is already too general.
+		// for (const [key, value] of Object.entries<{ [K in keyof T]: T[K] extends readonly unknown[] ? ElementOfArray<T[K]> : never }>(data)) {
 		for (let key in data) {
-			(operation as BrushOpData)[key as "points"]!.push(data[key as "points"]!);
+			if (!(operation.data[key] instanceof Array)) {
+				console.error("Operation data key is not an array:", key);
+				continue;
+			}
+			operation.data[key].push(data[key]);
 		}
 
 		if (!remote) {
@@ -184,7 +209,7 @@ export class Client {
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
-	onLocalOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }>) => void): () => void {
+	onLocalOperationUpdated(listener: (operation: Operation, data: ContinuousOperationUpdate) => void): () => void {
 		this.localOperationUpdatedListeners.add(listener);
 		return () => {
 			this.localOperationUpdatedListeners.delete(listener);
@@ -196,7 +221,7 @@ export class Client {
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
-	onAnyOperationUpdated(listener: (operation: Operation, data: Record<string, { x: number, y: number }>) => void): () => void {
+	onAnyOperationUpdated(listener: (operation: Operation, data: ContinuousOperationUpdate) => void): () => void {
 		this.anyOperationUpdatedListeners.add(listener);
 		return () => {
 			this.anyOperationUpdatedListeners.delete(listener);

@@ -1,5 +1,5 @@
 import { generateID } from "../../helpers.ts";
-import { BrushOpData, CircleOpData, Client, MopaintWebSocketClient, Operation } from "../networking.js";
+import { BrushOpData, CircleOpData, Client, ContinuousOperationUpdate, MopaintWebSocketClient, Operation } from "../networking.js";
 
 const client = new Client();
 new MopaintWebSocketClient(client, `${location.protocol.match(/s:$/) ? "wss://" : "ws://"}${location.host}`);
@@ -25,11 +25,12 @@ svg.addEventListener("pointerdown", (event) => {
 	const point = getCursorPoint(event);
 	const activeOperation = client.addOperation({
 		operationId: generateID(),
-		type: "brush",
-		points: [{ x: point.x, y: point.y }],
-		color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+		data: {
+			type: "brush",
+			points: [{ x: point.x, y: point.y }],
+			color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+		},
 	});
-
 	const pointerMoveListener = (event: MouseEvent) => {
 		const point = getCursorPoint(event);
 		client.pushContinuousOperationData(activeOperation.operationId, {
@@ -49,48 +50,41 @@ svg.addEventListener("pointerdown", (event) => {
 // This should be a little more efficient as the history gets long, being O(1) instead of O(n),
 // for the lookup, although the map is still growing indefinitely.
 // Who can say when a brush stroke has truly ended? (TODO: us, we can say)
-const updateHandlers = new Map();
+const updateHandlers = new Map<string, (operation: Operation, data: ContinuousOperationUpdate) => void>();
 const operationHandlers = {
-	circle: (operation: Operation & CircleOpData) => {
+	circle: (operation: Operation<CircleOpData>) => {
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle.setAttribute("cx", String(operation.x));
-		circle.setAttribute("cy", String(operation.y));
+		circle.setAttribute("cx", String(operation.data.x));
+		circle.setAttribute("cy", String(operation.data.y));
 		circle.setAttribute("r", "10");
-		circle.setAttribute("fill", operation.color);
+		circle.setAttribute("fill", operation.data.color);
 		svg.appendChild(circle);
 	},
-	brush: (operation: Operation & BrushOpData) => {
+	brush: (operation: Operation<BrushOpData>) => {
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		path.setAttribute("stroke", operation.color);
+		path.setAttribute("stroke", operation.data.color);
 		path.setAttribute("fill", "none");
-		path.setAttribute("d", `M ${operation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
+		path.setAttribute("d", `M ${operation.data.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
 		svg.appendChild(path);
-		updateHandlers.set(operation.operationId, (updatedOperation: Operation & BrushOpData) => {
-			path.setAttribute("d", `M ${updatedOperation.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
+		updateHandlers.set(operation.operationId, (updatedOperation, data) => {
+			// @ts-ignore
+			path.setAttribute("d", `M ${updatedOperation.data.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
 		});
 	},
 };
 
 client.onAnyOperation((operation) => {
-	if (operationHandlers[operation.type]) {
-		// operationHandlers[operation.type](operation); // not typescript-friendly
-		// (though I'm sure there's a way to avoid this switch while being type-safe)
-		switch (operation.type) {
-			case "circle":
-				operationHandlers[operation.type](operation);
-				break;
-			case "brush":
-				operationHandlers[operation.type](operation);
-				break;
-		}
+	if (operationHandlers[operation.data.type]) {
+		// @ts-ignore
+		operationHandlers[operation.data.type](operation);
 	} else {
-		console.warn(`Unknown operation type: ${operation.type}`);
+		console.warn(`Unknown operation type: ${operation.data.type}`);
 	}
 });
 
 client.onAnyOperationUpdated((operation, data) => {
 	if (updateHandlers.has(operation.operationId)) {
-		updateHandlers.get(operation.operationId)(operation, data);
+		updateHandlers.get(operation.operationId)!(operation, data);
 	}
 });
 

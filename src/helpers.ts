@@ -6,3 +6,9 @@ export const generateID = (length = 40) => {
 	crypto.getRandomValues(array);
 	return Array.from(array, byteToHex).join("");
 };
+
+export type ElementOfArray<ArrayType extends readonly unknown[]> =
+	ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
+export type OmitNever<T> = { [K in keyof T as T[K] extends never ? never : K]: T[K] };
+
