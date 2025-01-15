@@ -23,7 +23,6 @@ let selectionStart: Point | null = null;
 let selectionEnd: Point | null = null;
 
 // History management
-const maxHistoryStates = 50;
 let historyStates: HistoryState[] = [];
 let currentEditIndex = -1;
 let currentViewIndex = -1;
@@ -38,11 +37,6 @@ function saveState(actionName: string) {
 		actionName: actionName,
 		timestamp: new Date().toLocaleTimeString()
 	});
-
-	// Limit history size
-	if (historyStates.length > maxHistoryStates) {
-		historyStates.shift();
-	}
 
 	currentEditIndex = historyStates.length - 1;
 	currentViewIndex = currentEditIndex;
