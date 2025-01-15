@@ -1,8 +1,8 @@
 import { generateID } from "../../helpers.ts";
-import { BrushOpData, CircleOpData, Client, ContinuousOperationUpdate, MopaintWebSocketClient, Operation } from "../networking.js";
+import { BrushOpData, CircleOpData, ContinuousOperationUpdate, HistoryStore, MopaintWebSocketClient, Operation } from "../networking.js";
 
-const client = new Client();
-new MopaintWebSocketClient(client, `${location.protocol.match(/s:$/) ? "wss://" : "ws://"}${location.host}`);
+const store = new HistoryStore();
+new MopaintWebSocketClient(store, `${location.protocol.match(/s:$/) ? "wss://" : "ws://"}${location.host}`);
 
 const root = document.getElementById("root")!;
 
@@ -23,7 +23,7 @@ function getCursorPoint(event: MouseEvent): SVGPoint {
 
 svg.addEventListener("pointerdown", (event) => {
 	const point = getCursorPoint(event);
-	const activeOperation = client.addOperation({
+	const activeOperation = store.addOperation({
 		operationId: generateID(),
 		data: {
 			type: "brush",
@@ -33,7 +33,7 @@ svg.addEventListener("pointerdown", (event) => {
 	});
 	const pointerMoveListener = (event: MouseEvent) => {
 		const point = getCursorPoint(event);
-		client.pushContinuousOperationData(activeOperation.operationId, {
+		store.pushContinuousOperationData(activeOperation.operationId, {
 			points: { x: point.x, y: point.y },
 		});
 	};
@@ -73,7 +73,7 @@ const operationHandlers = {
 	},
 };
 
-client.onAnyOperation((operation) => {
+store.onAnyOperation((operation) => {
 	if (operationHandlers[operation.data.type]) {
 		// @ts-ignore
 		operationHandlers[operation.data.type](operation);
@@ -82,7 +82,7 @@ client.onAnyOperation((operation) => {
 	}
 });
 
-client.onAnyOperationUpdated((operation, data) => {
+store.onAnyOperationUpdated((operation, data) => {
 	if (updateHandlers.has(operation.operationId)) {
 		updateHandlers.get(operation.operationId)!(operation, data);
 	}

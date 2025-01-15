@@ -69,7 +69,7 @@ export type ContinuousOperationUpdate<T extends OpData = OpData> =
 
 
 let nextClientId = 1;
-export class Client {
+export class HistoryStore {
 	clientId: number;
 	metaHistory: Operation[] = [];
 	localOperationListeners: Set<(operation: Operation) => void> = new Set();
@@ -181,7 +181,7 @@ export class Client {
 	}
 
 	/**
-	 * Listen for operations generated from this client.
+	 * Listen for operations generated from the local client session.
 	 * @param listener - The listener function to handle the operation.
 	 * @returns A function to remove the listener.
 	 */
@@ -193,7 +193,7 @@ export class Client {
 	}
 
 	/**
-	 * Listen for operations from this client or other clients.
+	 * Listen for operations from any client, local or remote.
 	 * @param listener - The listener function to handle the operation.
 	 * @returns A function to remove the listener.
 	 */
@@ -205,7 +205,7 @@ export class Client {
 	}
 
 	/**
-	 * Listen for operations from this client being updated.
+	 * Listen for updates to locally-generated continuous operations.
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
@@ -217,7 +217,7 @@ export class Client {
 	}
 
 	/**
-	 * Listen for operations from this client or other clients being updated.
+	 * Listen for updates to continuous operations from any client, local or remote.
 	 * @param listener - The listener function to handle the operation update.
 	 * @returns A function to remove the listener.
 	 */
@@ -230,13 +230,13 @@ export class Client {
 }
 
 /**
- * Communicates between multiple clients in the same process.
+ * Communicates between multiple history stores in the same process.
  */
 export class InProcessPeerParty {
-	peers: Client[] = [];
+	peers: HistoryStore[] = [];
 	cleanupFns: (() => void)[] = [];
 
-	addPeer(peer: Client) {
+	addPeer(peer: HistoryStore) {
 		this.peers.push(peer);
 		this.cleanupFns.push(peer.onLocalOperation((operation) => {
 			for (const otherPeer of this.peers) {
@@ -268,7 +268,7 @@ export class InProcessPeerParty {
  */
 export class MopaintWebSocketClient {
 	ws: WebSocket;
-	constructor(public client: Client, url: string) {
+	constructor(public store: HistoryStore, url: string) {
 		this.ws = new WebSocket(url, "mopaint-net-demo");
 
 		const pendingMessages: string[] = [];
@@ -292,14 +292,14 @@ export class MopaintWebSocketClient {
 			}
 			const message = JSON.parse(event.data);
 			if (message.type === "operation") {
-				this.client.addOperation(message.operation, true);
+				this.store.addOperation(message.operation, true);
 			} else if (message.type === "operationUpdate") {
-				this.client.pushContinuousOperationData(message.operationId, message.update, true);
+				this.store.pushContinuousOperationData(message.operationId, message.update, true);
 			}
 		});
 
 		// TODO: DRY
-		this.client.onLocalOperation((operation) => {
+		this.store.onLocalOperation((operation) => {
 			// Send local operations to the server
 			const message = JSON.stringify({ type: "operation", operation });
 			if (this.ws.readyState === WebSocket.OPEN) {
@@ -311,7 +311,7 @@ export class MopaintWebSocketClient {
 			}
 		});
 
-		this.client.onLocalOperationUpdated((operation, update) => {
+		this.store.onLocalOperationUpdated((operation, update) => {
 			// Send local operation updates to the server
 			const message = JSON.stringify({ type: "operationUpdate", operationId: operation.operationId, update });
 			if (this.ws.readyState === WebSocket.OPEN) {
