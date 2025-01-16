@@ -27,7 +27,7 @@ let currentEditIndex = -1;
 let currentViewIndex = -1;
 
 function addOperation(name: string, applyFunction: () => void) {
-	historyOperations = historyOperations.slice(0, currentEditIndex + 1);
+	// historyOperations = historyOperations.slice(0, currentEditIndex + 1);
 
 	const operation: Operation = {
 		name: name,
@@ -35,7 +35,7 @@ function addOperation(name: string, applyFunction: () => void) {
 		apply: applyFunction
 	};
 
-	historyOperations.push(operation);
+	historyOperations.splice(currentEditIndex + 1, 0, operation);
 	currentEditIndex = historyOperations.length - 1;
 	currentViewIndex = currentEditIndex;
 	updateHistoryList();
