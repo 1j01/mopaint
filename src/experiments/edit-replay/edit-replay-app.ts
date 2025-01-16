@@ -4,11 +4,10 @@ interface Point {
 	y: number;
 }
 
-// TODO: operations instead of snapshots
-interface HistoryState {
-	imageData: ImageData;
-	actionName: string;
+interface Operation {
+	name: string;
 	timestamp: string;
+	apply: () => void;
 }
 
 const historyList = document.getElementById('historyList')!;
@@ -23,22 +22,21 @@ let selectionStart: Point | null = null;
 let selectionEnd: Point | null = null;
 
 // History management
-let historyStates: HistoryState[] = [];
+let historyOperations: Operation[] = [];
 let currentEditIndex = -1;
 let currentViewIndex = -1;
 
-function saveState(actionName: string) {
-	// Remove any states after current edit index
-	historyStates = historyStates.slice(0, currentEditIndex + 1);
+function addOperation(name: string, applyFunction: () => void) {
+	historyOperations = historyOperations.slice(0, currentEditIndex + 1);
 
-	// Add new state
-	historyStates.push({
-		imageData: ctx.getImageData(0, 0, drawingCanvas.width, drawingCanvas.height),
-		actionName: actionName,
-		timestamp: new Date().toLocaleTimeString()
-	});
+	const operation: Operation = {
+		name: name,
+		timestamp: new Date().toLocaleTimeString(),
+		apply: applyFunction
+	};
 
-	currentEditIndex = historyStates.length - 1;
+	historyOperations.push(operation);
+	currentEditIndex = historyOperations.length - 1;
 	currentViewIndex = currentEditIndex;
 	updateHistoryList();
 	updateCanvas();
@@ -47,7 +45,7 @@ function saveState(actionName: string) {
 function updateHistoryList() {
 	historyList.innerHTML = '';
 
-	historyStates.forEach((state, index) => {
+	historyOperations.forEach((operation, index) => {
 		const item = document.createElement('div');
 		item.className = `history-item ${index === currentEditIndex ? 'active-edit' : ''} ${index === currentViewIndex ? 'active-view' : ''}`;
 
@@ -61,7 +59,7 @@ function updateHistoryList() {
 
 		const textSpan = document.createElement('span');
 		textSpan.className = 'history-text';
-		textSpan.textContent = `${state.actionName} (${state.timestamp})`;
+		textSpan.textContent = `${operation.name} (${operation.timestamp})`;
 
 		item.appendChild(editButton);
 		item.appendChild(textSpan);
@@ -71,13 +69,13 @@ function updateHistoryList() {
 }
 
 function setEditPoint(index: number) {
-	if (index < 0 || index >= historyStates.length) return;
+	if (index < 0 || index >= historyOperations.length) return;
 	currentEditIndex = index;
 	updateHistoryList();
 }
 
 function setBothPoints(index: number) {
-	if (index < 0 || index >= historyStates.length) return;
+	if (index < 0 || index >= historyOperations.length) return;
 	currentEditIndex = index;
 	currentViewIndex = index;
 	updateHistoryList();
@@ -85,9 +83,9 @@ function setBothPoints(index: number) {
 }
 
 function updateCanvas() {
-	if (currentViewIndex < 0 || currentViewIndex >= historyStates.length) return;
-
-	ctx.putImageData(historyStates[currentViewIndex]!.imageData, 0, 0);
+	for (let i = 0; i <= currentViewIndex; i++) {
+		historyOperations[i]!.apply();
+	}
 }
 
 function undo() {
@@ -100,7 +98,7 @@ function undo() {
 }
 
 function redo() {
-	if (currentViewIndex < historyStates.length - 1) {
+	if (currentViewIndex < historyOperations.length - 1) {
 		currentViewIndex++;
 		currentEditIndex = currentViewIndex;
 		updateHistoryList();
@@ -113,15 +111,8 @@ function resizeCanvas() {
 	drawingCanvas.height = window.innerHeight;
 	selectionCanvas.width = drawingCanvas.width;
 	selectionCanvas.height = drawingCanvas.height;
-	ctx.fillStyle = 'white';
-	ctx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-	if (historyStates.length === 0) {
-		saveState('New Document');
-	}
+	updateCanvas();
 }
-
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
 // Toolbar
 document.querySelectorAll('.tool').forEach(button => {
@@ -145,9 +136,6 @@ document.querySelectorAll('.tool').forEach(button => {
 	});
 });
 
-// Drawing functions
-let currentPath = [];
-
 function startDrawing(event: MouseEvent) {
 	isDrawing = true;
 	const rect = drawingCanvas.getBoundingClientRect();
@@ -155,40 +143,60 @@ function startDrawing(event: MouseEvent) {
 	const y = event.clientY - rect.top;
 
 	if (currentTool === 'pencil') {
-		currentPath = [{ x, y }];
-		ctx.beginPath();
-		ctx.moveTo(x, y);
-		ctx.strokeStyle = 'black';
-		ctx.lineWidth = 2;
-		ctx.lineCap = 'round';
+		const path: Point[] = [{ x, y }];
+
+		const renderPath = () => {
+			ctx.strokeStyle = 'black';
+			ctx.lineWidth = 2;
+			ctx.lineCap = 'round';
+			ctx.beginPath();
+			ctx.moveTo(path[0]!.x, path[0]!.y);
+			for (let i = 1; i < path.length; i++) {
+				ctx.lineTo(path[i]!.x, path[i]!.y);
+			}
+			ctx.stroke();
+		};
+
+		const moveHandler = (event: MouseEvent) => {
+			if (!isDrawing) return; // what is this for?
+			const rect = drawingCanvas.getBoundingClientRect();
+			const newX = event.clientX - rect.left;
+			const newY = event.clientY - rect.top;
+			path.push({ x: newX, y: newY });
+			if (path.length === 2) {
+				addOperation('Draw', renderPath);
+			} else {
+				updateCanvas();
+			}
+		};
+
+		const stopHandler = () => {
+			drawingCanvas.removeEventListener('mousemove', moveHandler);
+			document.removeEventListener('mouseup', stopHandler);
+			isDrawing = false;
+		};
+
+		drawingCanvas.addEventListener('mousemove', moveHandler);
+		document.addEventListener('mouseup', stopHandler);
 	} else if (currentTool === 'select') {
 		selectionStart = { x, y };
-		selectionEnd = { x, y };
-	}
-}
+		const moveHandler = (event: MouseEvent) => {
+			if (!isDrawing) return;
+			const rect = drawingCanvas.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+			selectionEnd = { x, y };
+			drawSelectionPreview();
+		};
 
-function draw(event: MouseEvent) {
-	if (!isDrawing) return;
-	const rect = drawingCanvas.getBoundingClientRect();
-	const x = event.clientX - rect.left;
-	const y = event.clientY - rect.top;
+		const stopHandler = () => {
+			drawingCanvas.removeEventListener('mousemove', moveHandler);
+			document.removeEventListener('mouseup', stopHandler);
+		};
 
-	if (currentTool === 'pencil') {
-		currentPath.push({ x, y });
-		ctx.lineTo(x, y);
-		ctx.stroke();
-	} else if (currentTool === 'select') {
-		selectionEnd = { x, y };
-		drawSelectionPreview();
+		drawingCanvas.addEventListener('mousemove', moveHandler);
+		document.addEventListener('mouseup', stopHandler);
 	}
-}
-
-function stopDrawing() {
-	if (isDrawing && currentTool === 'pencil' && currentPath.length > 1) {
-		saveState('Draw');
-	}
-	isDrawing = false;
-	currentPath = [];
 }
 
 function drawSelectionPreview() {
@@ -225,26 +233,25 @@ function getSelectionBounds() {
 function deleteSelection() {
 	const bounds = getSelectionBounds();
 	if (!bounds) return;
-	ctx.clearRect(bounds.x, bounds.y, bounds.width, bounds.height);
 	clearSelection();
-	saveState('Delete selection');
+	addOperation('Delete selection', () => ctx.clearRect(bounds.x, bounds.y, bounds.width, bounds.height));
 }
 
 function invertSelection() {
 	const bounds = getSelectionBounds();
 	if (!bounds) return;
-	const imageData = ctx.getImageData(bounds.x, bounds.y, bounds.width, bounds.height);
-	for (let i = 0; i < imageData.data.length; i += 4) {
-		imageData.data[i] = 255 - imageData.data[i]!;
-		imageData.data[i + 1] = 255 - imageData.data[i + 1]!;
-		imageData.data[i + 2] = 255 - imageData.data[i + 2]!;
-	}
-	ctx.putImageData(imageData, bounds.x, bounds.y);
 	clearSelection();
-	saveState('Invert selection');
+	addOperation('Invert selection', () => {
+		const imageData = ctx.getImageData(bounds.x, bounds.y, bounds.width, bounds.height);
+		for (let i = 0; i < imageData.data.length; i += 4) {
+			imageData.data[i] = 255 - imageData.data[i]!;
+			imageData.data[i + 1] = 255 - imageData.data[i + 1]!;
+			imageData.data[i + 2] = 255 - imageData.data[i + 2]!;
+		}
+		ctx.putImageData(imageData, bounds.x, bounds.y);
+	});
 }
 
-// Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
 	if (e.ctrlKey || e.metaKey) {
 		if (e.key === 'z') {
@@ -261,8 +268,11 @@ document.addEventListener('keydown', (e) => {
 	}
 });
 
-// Event listeners
 drawingCanvas.addEventListener('mousedown', startDrawing);
-drawingCanvas.addEventListener('mousemove', draw);
-document.addEventListener('mouseup', stopDrawing);
-drawingCanvas.addEventListener('mouseout', stopDrawing);
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+addOperation('New Document', () => {
+	ctx.fillStyle = 'white';
+	ctx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+});
