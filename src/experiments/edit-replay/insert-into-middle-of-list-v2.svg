@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="insert-into-middle-of-list-v2.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="true"
+     inkscape:zoom="8"
+     inkscape:cx="46.125"
+     inkscape:cy="27.9375"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       id="grid1"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="8"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path4"
+       style="fill:none;stroke:#1e90ff;stroke-width:2;stroke-opacity:1;-inkscape-stroke:none"
+       d="M 12.415708,9.8899315 21,16 12.511947,22.055264"
+       sodipodi:nodetypes="ccc" />
+    <path
+       id="path8"
+       style="fill:none;stroke:#1e90ff;stroke-width:2;stroke-opacity:1;-inkscape-stroke:none"
+       d="m 19,27 h 2 m -2,-6 h 2 M 19,5 h 2 m -2,6 h 2"
+       sodipodi:nodetypes="cccccccc" />
+    <path
+       id="path8-6"
+       style="fill:none;stroke:#1e90ff;stroke-width:2;stroke-opacity:1;-inkscape-stroke:none"
+       d="m 23,27 h 8 m -8,-6 h 8 M 23,5 h 8 m -8,6 h 8"
+       sodipodi:nodetypes="cccccccc" />
+    <g
+       id="g9"
+       transform="translate(2)">
+      <path
+         style="fill:none;stroke:#1e90ff;stroke-width:2;stroke-opacity:1;-inkscape-stroke:none"
+         d="M 2,16 H 12"
+         id="path1"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;stroke:#1e90ff;stroke-width:2;stroke-opacity:1;-inkscape-stroke:none"
+         d="M 7,11 V 21"
+         id="path2"
+         sodipodi:nodetypes="cc" />
+      <circle
+         style="fill:none;stroke:#1e90ff;stroke-width:2;stroke-opacity:1;-inkscape-stroke:none"
+         id="path9"
+         cx="7"
+         cy="16"
+         r="7" />
+    </g>
+  </g>
+</svg>
