@@ -57,7 +57,7 @@ Limitations:
 	- "Draw some trees next to the house... All around it... About fifty... No, that's too many... Make them fir trees."
 	- Integrate speech recognition disambiguation (similar sounding words and phrases the computer mixes up) with command disambiguation. Similarly for typo correction and abbreviation expansion ("fuzzy matching").
 	- It can show you different options for comparison (using the aforementioned views feature), for you to pick between. Since everything is non-destructive, this can even include previewing arbitrary operations
-	- For artistic and exploratory purposes, "surprise me" should be a valid option. In fact I imagine a simple AI that randomly adds to the document, or even modifies the history non-destructively (i.e. creates alternative histories). These modified documents/histories can be thought of as having a similar genome, and could be not just picked between but bread together.
+	- For artistic and exploratory purposes, "surprise me" should be a valid option. In fact I imagine a simple AI that randomly adds to the document, or even modifies the history non-destructively (i.e. creates alternative histories). These modified documents/histories can be thought of as having a similar genome, and could be not just picked between but bred together.
 
 (This is just a handful of ideas; *so many* ideas come out when you flip around the editing model, and think critically about what UI can be...)
 
