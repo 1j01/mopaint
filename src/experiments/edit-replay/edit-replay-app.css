@@ -1,0 +1,117 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: #f0f0f0;
+}
+
+.toolbar {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	background: white;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	z-index: 3;
+}
+
+.tool {
+	padding: 8px 16px;
+	margin: 0 5px;
+	background: #eee;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.tool.active {
+	background: #007bff;
+	color: white;
+}
+
+canvas {
+	cursor: crosshair;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#drawingCanvas {
+	z-index: 1;
+}
+
+#selectionCanvas {
+	z-index: 2;
+	pointer-events: none;
+}
+
+.button-group {
+	margin-left: 20px;
+	display: inline-block;
+}
+
+.history-panel {
+	position: fixed;
+	right: 10px;
+	top: 10px;
+	background: white;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	max-height: 400px;
+	overflow-y: auto;
+	z-index: 3;
+}
+
+.history-item {
+	padding: 5px 10px;
+	cursor: pointer;
+	border-bottom: 1px solid #eee;
+	display: flex;
+	align-items: center;
+}
+
+.history-item:hover {
+	background: #f0f0f0;
+}
+
+.history-item.active-edit {
+	border-left: 3px solid #007bff;
+}
+
+.history-item.active-view {
+	background: #e0e0e0;
+}
+
+.shortcut {
+	color: #666;
+	font-size: 0.8em;
+	margin-left: 5px;
+}
+
+.history-text {
+	flex-grow: 1;
+}
+
+.edit-button {
+	padding: 2px 6px;
+	margin-right: 8px;
+	background: #eee;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.edit-button:hover {
+	background: #ddd;
+}
+
+.history-indicators {
+	margin-top: 5px;
+	font-size: 0.8em;
+	color: #666;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta name="theme-color" content="#000000" />
+	<link rel="icon" href="edit-replay-icon-by-chatgpt.svg" />
+	<title>Mopaint: Edit Replay Demo</title>
+	<link rel="stylesheet" href="./edit-replay-app.css" />
+</head>
+
+<body>
+	<noscript>You need to enable JavaScript to run this app.</noscript>
+
+	<div class="toolbar">
+		<button class="tool active" id="pencil">✏️ Pencil</button>
+		<button class="tool" id="select">◻️ Select</button>
+		<div class="button-group">
+			<button class="tool" id="delete">🗑️ Delete</button>
+			<button class="tool" id="invert">🔄 Invert</button>
+		</div>
+		<div class="button-group">
+			<button class="tool" id="undo">↩️ Undo <span class="shortcut">(Ctrl+Z)</span></button>
+			<button class="tool" id="redo">↪️ Redo <span class="shortcut">(Ctrl+Y)</span></button>
+		</div>
+	</div>
+
+	<div class="history-panel">
+		<h3>History</h3>
+		<div class="history-indicators">
+			Edit point: 🖊️ | View point: 👁️
+		</div>
+		<div id="historyList"></div>
+	</div>
+
+	<canvas id="drawingCanvas"></canvas>
+	<canvas id="selectionCanvas"></canvas>
+
+	<script src="./edit-replay-app.ts" type="module"></script>
+</body>
