@@ -71,6 +71,7 @@ canvas {
 	padding: 5px 10px;
 	cursor: pointer;
 	border-bottom: 1px solid #eee;
+	border-left: 3px solid transparent;
 	display: flex;
 	align-items: center;
 }
@@ -80,7 +81,7 @@ canvas {
 }
 
 .history-item.active-edit {
-	border-left: 3px solid #007bff;
+	border-left-color: #007bff;
 }
 
 .history-item.active-view {

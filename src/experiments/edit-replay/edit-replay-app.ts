@@ -1,22 +1,34 @@
-const drawingCanvas = document.getElementById('drawingCanvas');
-const selectionCanvas = document.getElementById('selectionCanvas');
-const ctx = drawingCanvas.getContext('2d');
-const selectionCtx = selectionCanvas.getContext('2d');
+
+interface Point {
+	x: number;
+	y: number;
+}
+
+// TODO: operations instead of snapshots
+interface HistoryState {
+	imageData: ImageData;
+	actionName: string;
+	timestamp: string;
+}
+
+const historyList = document.getElementById('historyList')!;
+const drawingCanvas = document.getElementById('drawingCanvas') as HTMLCanvasElement;
+const selectionCanvas = document.getElementById('selectionCanvas') as HTMLCanvasElement;
+const ctx = drawingCanvas.getContext('2d')!;
+const selectionCtx = selectionCanvas.getContext('2d')!;
+
 let isDrawing = false;
 let currentTool = 'pencil';
-let selectionStart = null;
-let selectionEnd = null;
+let selectionStart: Point | null = null;
+let selectionEnd: Point | null = null;
 
 // History management
 const maxHistoryStates = 50;
-let historyStates = [];
+let historyStates: HistoryState[] = [];
 let currentEditIndex = -1;
 let currentViewIndex = -1;
-let isPerformingAction = false;
 
-function saveState(actionName) {
-	if (isPerformingAction) return;
-
+function saveState(actionName: string) {
 	// Remove any states after current edit index
 	historyStates = historyStates.slice(0, currentEditIndex + 1);
 
@@ -39,7 +51,6 @@ function saveState(actionName) {
 }
 
 function updateHistoryList() {
-	const historyList = document.getElementById('historyList');
 	historyList.innerHTML = '';
 
 	historyStates.forEach((state, index) => {
@@ -65,13 +76,13 @@ function updateHistoryList() {
 	});
 }
 
-function setEditPoint(index) {
+function setEditPoint(index: number) {
 	if (index < 0 || index >= historyStates.length) return;
 	currentEditIndex = index;
 	updateHistoryList();
 }
 
-function setBothPoints(index) {
+function setBothPoints(index: number) {
 	if (index < 0 || index >= historyStates.length) return;
 	currentEditIndex = index;
 	currentViewIndex = index;
@@ -82,9 +93,7 @@ function setBothPoints(index) {
 function updateCanvas() {
 	if (currentViewIndex < 0 || currentViewIndex >= historyStates.length) return;
 
-	isPerformingAction = true;
-	ctx.putImageData(historyStates[currentViewIndex].imageData, 0, 0);
-	isPerformingAction = false;
+	ctx.putImageData(historyStates[currentViewIndex]!.imageData, 0, 0);
 }
 
 function undo() {
@@ -105,26 +114,22 @@ function redo() {
 	}
 }
 
-// Rest of the code remains the same, just replace any direct canvas updates
-// with calls to saveState() which will handle the history management
-
-// Previous functions remain unchanged
 function resizeCanvas() {
 	drawingCanvas.width = window.innerWidth;
 	drawingCanvas.height = window.innerHeight;
-	selectionCanvas.width = window.innerWidth;
-	selectionCanvas.height = window.innerHeight;
+	selectionCanvas.width = drawingCanvas.width;
+	selectionCanvas.height = drawingCanvas.height;
 	ctx.fillStyle = 'white';
 	ctx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
 	if (historyStates.length === 0) {
-		saveState('Initial canvas');
+		saveState('New Document');
 	}
 }
 
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Tool selection
+// Toolbar
 document.querySelectorAll('.tool').forEach(button => {
 	button.addEventListener('click', () => {
 		if (button.id === 'pencil' || button.id === 'select') {
@@ -134,9 +139,9 @@ document.querySelectorAll('.tool').forEach(button => {
 			if (currentTool === 'pencil') {
 				clearSelection();
 			}
-		} else if (button.id === 'delete' && selectionStart && selectionEnd) {
+		} else if (button.id === 'delete') {
 			deleteSelection();
-		} else if (button.id === 'invert' && selectionStart && selectionEnd) {
+		} else if (button.id === 'invert') {
 			invertSelection();
 		} else if (button.id === 'undo') {
 			undo();
@@ -149,11 +154,11 @@ document.querySelectorAll('.tool').forEach(button => {
 // Drawing functions
 let currentPath = [];
 
-function startDrawing(e) {
+function startDrawing(event: MouseEvent) {
 	isDrawing = true;
 	const rect = drawingCanvas.getBoundingClientRect();
-	const x = e.clientX - rect.left;
-	const y = e.clientY - rect.top;
+	const x = event.clientX - rect.left;
+	const y = event.clientY - rect.top;
 
 	if (currentTool === 'pencil') {
 		currentPath = [{ x, y }];
@@ -168,11 +173,11 @@ function startDrawing(e) {
 	}
 }
 
-function draw(e) {
+function draw(event: MouseEvent) {
 	if (!isDrawing) return;
 	const rect = drawingCanvas.getBoundingClientRect();
-	const x = e.clientX - rect.left;
-	const y = e.clientY - rect.top;
+	const x = event.clientX - rect.left;
+	const y = event.clientY - rect.top;
 
 	if (currentTool === 'pencil') {
 		currentPath.push({ x, y });
@@ -214,6 +219,7 @@ function clearSelection() {
 }
 
 function getSelectionBounds() {
+	if (!selectionStart || !selectionEnd) return null;
 	return {
 		x: Math.min(selectionStart.x, selectionEnd.x),
 		y: Math.min(selectionStart.y, selectionEnd.y),
@@ -223,21 +229,21 @@ function getSelectionBounds() {
 }
 
 function deleteSelection() {
-	if (!selectionStart || !selectionEnd) return;
 	const bounds = getSelectionBounds();
+	if (!bounds) return;
 	ctx.clearRect(bounds.x, bounds.y, bounds.width, bounds.height);
 	clearSelection();
 	saveState('Delete selection');
 }
 
 function invertSelection() {
-	if (!selectionStart || !selectionEnd) return;
 	const bounds = getSelectionBounds();
+	if (!bounds) return;
 	const imageData = ctx.getImageData(bounds.x, bounds.y, bounds.width, bounds.height);
 	for (let i = 0; i < imageData.data.length; i += 4) {
-		imageData.data[i] = 255 - imageData.data[i];
-		imageData.data[i + 1] = 255 - imageData.data[i + 1];
-		imageData.data[i + 2] = 255 - imageData.data[i + 2];
+		imageData.data[i] = 255 - imageData.data[i]!;
+		imageData.data[i + 1] = 255 - imageData.data[i + 1]!;
+		imageData.data[i + 2] = 255 - imageData.data[i + 2]!;
 	}
 	ctx.putImageData(imageData, bounds.x, bounds.y);
 	clearSelection();
@@ -264,5 +270,5 @@ document.addEventListener('keydown', (e) => {
 // Event listeners
 drawingCanvas.addEventListener('mousedown', startDrawing);
 drawingCanvas.addEventListener('mousemove', draw);
-drawingCanvas.addEventListener('mouseup', stopDrawing);
+document.addEventListener('mouseup', stopDrawing);
 drawingCanvas.addEventListener('mouseout', stopDrawing);
