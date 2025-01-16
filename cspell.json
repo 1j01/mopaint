@@ -2,7 +2,14 @@
 	"ignorePaths": [
 		"node_modules", // Don't want to spell check dependencies; by default only top-level node_modules is ignored
 		"icons", // Don't want to spell check SVG files (at least not path data...)
-		"images", // Reserved; don't want to spell check SVG files
+		"*.svg", // Don't want to spell check SVG files (at least not path data...)
+		"*.png", // Don't want to spell check binary files
+		"*.jpg", // Don't want to spell check binary files
+		"*.jpeg", // Don't want to spell check binary files
+		"*.gif", // Don't want to spell check binary files
+		"*.webp", // Don't want to spell check binary files
+		"*.ico", // Don't want to spell check binary files
+		"images", // Reserved; don't want to spell check SVG files or binary files
 		"build", // Used by CRA's `react-scripts build`
 		"out", // Reserved; may be used for an Electron app in the future
 		"dist", // Reserved
@@ -59,6 +66,7 @@
 		"subresources",
 		"undos",
 		"UPNG",
-		"webfonts"
+		"webfonts",
+		"webp"
 	]
 }
