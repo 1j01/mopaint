@@ -61,6 +61,24 @@ Limitations:
 
 (This is just a handful of ideas; *so many* ideas come out when you flip around the editing model, and think critically about what UI can be...)
 
+#### Foundations
+
+Aside from prototyping the  are several things that are important to prototype early on:
+- Networking, for collaboration (and for features like multiple views on a document, in separate windows or panes)
+- Sharding, for infinite canvases / game worlds, and general performance (You don't want to be like google docs taking 5 minutes to load a novel page-by-page)
+- File format with forward and backward compatibility
+- 3D rather than 2D basis, for 3D modeling/texturing, and for sharing code between 2D and 3D for features like infinite/tessellating canvases
+- More theoretical:
+  - How it can fit into an existing ecosystem of tools, being part of a larger system?
+  - Since the system will be turing-complete, it's worth examining how it fundamentally differs from a programming language, what it would look like it if it were treated more like a programming language
+    - Could the UI be one representation of a program that can also be viewed/edited/exported as code, math, circuit diagrams, flow charts?
+      - This sort of multi-representational system has been prototyped in the past, I think as a Microsoft research project, but I can't find it now.
+    - When adding new tools/commands, it can be useful to compose them, e.g. "draw octagon -> draw regular polygon -> draw polygon"; this is very natural in code, and should hopefully be natural in the UI, but if we can dissolve this barrier it might be ideal.
+      - This might mean having the UI able to show code constructs that it doesn't understand, such that the whole app can be "within" the purview of the app's own editing model.
+  - Constraint solving
+    - I see a path to implementing this in a procedural style ("add constraint" operations followed by "solve constraints"), where you can edit before the "solve constraints" so that it's automatically applied when making changes, but typically you'd want to be editing the geometry via the most updated version from the solver, not some unconstrained version. Will the constraint solver need to edit history to do this? It's not necessarily a problem, with the design of the overall system being about non-destructive history editing, but if I had an exact answer to how this should work, I don't remember it at the moment.
+    - This ties into exploring the relation to programming languages. There are "constraint based programming languages", which implies there may be utility in integrating constraints at a more fundamental level, rather than a set of operations.
+
 #### What is in a name?
 
 What might we stand to gain?
