@@ -1,4 +1,3 @@
-
 // Networking Prototype
 // Goals:
 // - Transport agnostic.
@@ -328,4 +327,3 @@ export class MopaintWebSocketClient {
 		this.ws.close();
 	}
 }
-
