@@ -64,11 +64,40 @@ export class DocView {
 				path.setAttribute("stroke", operation.data.color);
 				path.setAttribute("fill", "none");
 				path.setAttribute("d", `M ${operation.data.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
+				path.setAttribute("data-operation-id", operation.operationId);
+				operation.data.points.map(point => sketchyEffect(point));
 				svg.appendChild(path);
+				let lastEffectAppliedIndex = operation.data.points.length - 1;
 				updateHandlers.set(operation.operationId, (updatedOperation, _update) => {
 					// @ts-ignore
 					path.setAttribute("d", `M ${updatedOperation.data.points.map((point) => `${point.x} ${point.y}`).join(" L ")}`);
+					for (let i = lastEffectAppliedIndex + 1; i < updatedOperation.data.points.length; i++) {
+						sketchyEffect(updatedOperation.data.points[i]);
+					}
+					lastEffectAppliedIndex = updatedOperation.data.points.length - 1;
 				});
+				function sketchyEffect(point: { x: number; y: number }) {
+					const otherPaths = Array.from(svg.querySelectorAll(`path[data-operation-id]:not([data-operation-id="${operation.operationId}"])`));
+					for (const otherPath of otherPaths) {
+						const d = otherPath.getAttribute("d");
+						if (!d) continue;
+						const points = d.slice(2).split(" L ").map(str => {
+							const [x, y] = str.split(" ").map(Number);
+							return { x, y };
+						});
+						for (let i = 0; i < points.length; i += ~~(Math.random() * 70)) {
+							if (i > points.length - 1) continue;
+							if (Math.hypot(points[i].x - point.x, points[i].y - point.y) < 50) {
+								const newLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+								newLine.setAttribute("stroke", operation.data.color);
+								newLine.setAttribute("opacity", "0.5");
+								// newLine.setAttribute("fill", "none");
+								newLine.setAttribute("d", `M ${point.x} ${point.y} L ${points[i].x} ${points[i].y}`);
+								svg.appendChild(newLine);
+							}
+						}
+					}
+				}
 			},
 		};
 
