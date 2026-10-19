@@ -25,16 +25,28 @@
 
 // See meta-history.test.js for examples of how this works.
 
-interface MHOperation {
+interface MHOperationBase {
 	id: string;
 	metaLevel: number;
-	// application-specific data
-	type: "undo" | "recolor" | "insert";
-	target?: string;
-	color?: string;
-	insertIndex?: number;
-	insertOp?: MHOperation;
 }
+// Extend the MHOperationBase type with application-specific operation types.
+// Note that the "recolor" operation could be replaced with a more general "edit operation" operation,
+// but it's kept simple to avoid the implication that there's a fundamental set of possible meta operations.
+// For instance, you could have an "AI please refactor my history" operation, which would be a meta operation,
+// but very much not a fundamental one, as it would involve millions of biases.
+type MHOperation = MHOperationBase & ({
+	type: "undo";
+	target: string;
+} | {
+	type: "recolor";
+	target: string;
+	color: string;
+} | {
+	type: "insert";
+	insertIndex: number;
+	insertOp: MHOperation;
+});
+
 
 function findTargetOp(metaHistory: MHOperation[], targetID: string, metaOpMetaLevel: number, removals: { removedOp: MHOperation, removedByOp: MHOperation | null }[]) {
 	// Makes sure it matches a target, and the target is less meta than the meta operation.
@@ -83,11 +95,14 @@ export function resolveMetaHistory(metaHistory: readonly MHOperation[]) {
 					removals.push({ removedOp: targetOp, removedByOp: op });
 				} else if (op.type === "recolor") {
 					const targetOp = findTargetOp(mutableMH, op.target!, op.metaLevel, removals);
+					if (!("color" in targetOp)) {
+						throw new Error(`target operation '${targetOp.id}' does not have a color property.`);
+					}
 					targetOp.color = op.color;
 				} else if (op.type === "insert") {
 					mutableMH.splice(op.insertIndex!, 0, op.insertOp!);
 				} else {
-					throw new Error(`unknown meta operation type '${op.type}'.`);
+					throw new Error(`unknown meta operation type '${(op as MHOperation).type}'.`);
 				}
 				mutableMH.splice(mutableMH.indexOf(op), 1);
 				removals.push({ removedOp: op, removedByOp: null });
