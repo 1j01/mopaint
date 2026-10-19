@@ -78,6 +78,8 @@ findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLeve
             else
               targetOp
 
+without (list :: [MHOperation]) (elem :: MHOperation) = filter (/= elem) list
+
 resolveMetaHistory (metaHistory :: [MHOperation]) = do
   let maxMetaLevel = maximum (0 : [op.metaLevel | op <- metaHistory])
   let opsOfMaxMetaLevel = [op | op <- metaHistory, op.metaLevel == maxMetaLevel]
@@ -86,26 +88,16 @@ resolveMetaHistory (metaHistory :: [MHOperation]) = do
     then
       metaHistory
     else do
-      -- TODO: remove nextOp from history and track removals for better error reporting
-      let metaHistory' = applyMetaOperation (fromJust nextOp).opData metaHistory
+      -- TODO: track removals for better error reporting (maybe)
+      let metaHistory' = applyMetaOperation (fromJust nextOp).opData (metaHistory `without` (fromJust nextOp))
       resolveMetaHistory (metaHistory')
 
 applyMetaOperation :: MHOperationData -> [MHOperation] -> [MHOperation]
-applyMetaOperation Undo {target = target} metaHistory = do
-  error "todo"
--- 					const targetOp = findTargetOp(mutableMH, op.target!, op.metaLevel, removals);
--- 					mutableMH.splice(mutableMH.indexOf(targetOp), 1);
--- 					removals.push({ removedOp: targetOp, removedByOp: op });
-
-applyMetaOperation Recolor {target = target, color = color} metaHistory = do
-  error "todo"
--- 					const targetOp = findTargetOp(mutableMH, op.target!, op.metaLevel, removals);
--- 					if (!("color" in targetOp)) {
--- 						throw new Error(`target operation '${targetOp.id}' does not have a color property.`);
--- 					}
--- 					targetOp.color = op.color;
-
+-- TODO: track removals for better error reporting (maybe)
+applyMetaOperation Undo {target = targetID} metaHistory =
+  metaHistory `without` (findTargetOp targetID)
+applyMetaOperation Recolor {target = targetID, color = newColor} metaHistory = do
+  let targetOp = findTargetOp metaHistory targetID op.metaLevel removals
+  [if op == targetOp then op {opData = op.opData {color = newColor}} else op | op <- metaHistory]
 applyMetaOperation Insert {insertIndex = insertIndex, insertOp = insertOp} metaHistory = do
-  error "todo"
-
--- 					mutableMH.splice(op.insertIndex!, 0, op.insertOp!);
+  take insertIndex metaHistory ++ (insertOp : drop insertIndex metaHistory)
