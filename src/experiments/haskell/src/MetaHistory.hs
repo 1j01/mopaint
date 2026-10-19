@@ -15,6 +15,7 @@ import Data.Maybe (fromJust, listToMaybe)
 
 data MHOperation = MHOperation
   { id :: String,
+    name :: String,
     metaLevel :: Int,
     opData :: MHOperationData
   }
@@ -30,6 +31,16 @@ data MHOperationData
   | Insert
       { insertIndex :: Int,
         insertOp :: MHOperation
+      }
+  | -- TODO: separate into HOperationData for non-meta operations?
+    Circle
+      { color :: String
+      }
+  | Triangle
+      { color :: String
+      }
+  | Line
+      { color :: String
       }
   deriving (Show, Eq)
 
