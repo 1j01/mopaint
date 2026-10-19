@@ -58,7 +58,7 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  MyLib
+    exposed-modules:  MetaHistory
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -100,4 +100,6 @@ test-suite mopaint-haskell-test
     -- Test dependencies.
     build-depends:
         base ^>=4.20.2.0,
+        hspec,
+        hspec-contrib,
         mopaint-haskell
