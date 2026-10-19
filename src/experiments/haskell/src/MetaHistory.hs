@@ -95,9 +95,10 @@ resolveMetaHistory (metaHistory :: [MHOperation]) = do
 applyMetaOperation :: MHOperationData -> [MHOperation] -> [MHOperation]
 -- TODO: track removals for better error reporting (maybe)
 applyMetaOperation Undo {target = targetID} metaHistory =
-  metaHistory `without` (findTargetOp targetID)
+  -- metaHistory `without` (findTargetOp targetID)
+  filter (\op -> op.id /= targetID) metaHistory
 applyMetaOperation Recolor {target = targetID, color = newColor} metaHistory = do
-  let targetOp = findTargetOp metaHistory targetID op.metaLevel removals
-  [if op == targetOp then op {opData = op.opData {color = newColor}} else op | op <- metaHistory]
+  -- let targetOp = findTargetOp metaHistory targetID op.metaLevel removals
+  [if op.id == targetID then op {opData = op.opData {color = newColor}} else op | op <- metaHistory]
 applyMetaOperation Insert {insertIndex = insertIndex, insertOp = insertOp} metaHistory = do
   take insertIndex metaHistory ++ (insertOp : drop insertIndex metaHistory)
