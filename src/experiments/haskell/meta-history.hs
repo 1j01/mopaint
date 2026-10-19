@@ -40,9 +40,9 @@ findTargetOp :: [MHOperation] -> String -> Int -> [Removal] -> MHOperation
 findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLevel :: Int) (removals :: [Removal]) = do
   --  Makes sure it matches a target, and the target is less meta than the meta operation.
   let isTargetOp op = op.id == targetID
-  let targetOp = find isTargetOp metaHistory
-  if targetOp == Nothing
-    then
+  let targetOpMaybe = find isTargetOp metaHistory
+  case targetOpMaybe of
+    Nothing -> do
       -- TODO: check removals
       -- for (const { removedOp, removedByOp } of removals) {
       -- 	if (removedOp.id === targetID) {
@@ -54,16 +54,16 @@ findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLeve
       -- 	}
       -- }
       error ("target operation '" ++ targetID ++ "' not found.")
-    else
-      if (fromJust targetOp).metaLevel == metaOpMetaLevel
+    Just targetOp -> do
+      if targetOp.metaLevel == metaOpMetaLevel
         then error ("target operation '" ++ targetID ++ "' has equal meta level to the meta operation. Meta operations must only target operations less meta than themselves.")
         else
-          if (fromJust targetOp).metaLevel > metaOpMetaLevel
+          if targetOp.metaLevel > metaOpMetaLevel
             -- This may never happen, since operations will be removed upon application,
             -- so it will get the "already applied and thus can't be affected" error instead.
             then error ("target operation '" ++ targetID ++ "' has greater meta level than the meta operation. Meta operations must only target operations less meta than themselves.")
             else
-              fromJust targetOp
+              targetOp
 
 resolveMetaHistory (metaHistory :: [MHOperation]) = do
   let maxMetaLevel = maximum (0 : [op.metaLevel | op <- metaHistory])
