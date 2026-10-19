@@ -11,6 +11,10 @@
 		"*.ico", // Don't want to spell check binary files
 		"images", // Reserved; don't want to spell check SVG files or binary files
 		"build", // Used by CRA's `react-scripts build`
+		"dist-newstyle", // Used by Cabal for build artifacts (Haskell)
+		".stack-work", // Used by Stack for build artifacts (Haskell)
+		"*.out", // TLA+
+		"*.toolbox", // TLA+
 		"out", // Reserved; may be used for an Electron app in the future
 		"dist", // Reserved
 		"*.tsbuildinfo" // TypeScript incremental compilation cache
@@ -27,6 +31,7 @@
 		"DDDBD",
 		"discontiguous",
 		"Emscripten",
+		"exitcode",
 		"expandables",
 		"flaticons",
 		"freedo",
@@ -35,6 +40,7 @@
 		"HNID",
 		"HNIDs",
 		"homescreen",
+		"Hspec",
 		"Inkscape",
 		"IPFS",
 		"jspaint",
@@ -47,6 +53,7 @@
 		"Mopaint",
 		"multiism",
 		"multilines",
+		"newstyle",
 		"nonblock",
 		"nonwords",
 		"noopener",
