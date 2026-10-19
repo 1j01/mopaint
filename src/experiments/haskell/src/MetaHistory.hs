@@ -82,15 +82,18 @@ without (list :: [MHOperation]) (elem :: MHOperation) = filter (/= elem) list
 
 resolveMetaHistory (metaHistory :: [MHOperation]) = do
   let maxMetaLevel = maximum (0 : [op.metaLevel | op <- metaHistory])
-  let opsOfMaxMetaLevel = [op | op <- metaHistory, op.metaLevel == maxMetaLevel]
-  let nextOp = listToMaybe opsOfMaxMetaLevel
-  if nextOp == Nothing || maxMetaLevel == 0
-    then
-      metaHistory
+  if maxMetaLevel == 0
+    then metaHistory
     else do
-      -- TODO: track removals for better error reporting (maybe)
-      let metaHistory' = applyMetaOperation (fromJust nextOp).opData (metaHistory `without` (fromJust nextOp))
-      resolveMetaHistory (metaHistory')
+      let opsOfMaxMetaLevel = filter (\op -> op.metaLevel == maxMetaLevel) metaHistory
+      let nextOpMaybe = listToMaybe opsOfMaxMetaLevel
+      case nextOpMaybe of
+        Nothing -> metaHistory -- should this be an error?
+        Just nextOp -> do
+          -- TODO: track removals for better error reporting (maybe)
+          -- TODO: does removal order matter here, maybe for insert op type's insertIndex?
+          let metaHistory' = applyMetaOperation nextOp.opData (metaHistory `without` nextOp)
+          resolveMetaHistory (metaHistory')
 
 applyMetaOperation :: MHOperationData -> [MHOperation] -> [MHOperation]
 -- TODO: track removals for better error reporting (maybe)
