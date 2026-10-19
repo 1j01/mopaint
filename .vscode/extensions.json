@@ -1,6 +1,7 @@
 {
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
+		"haskell.haskell",
 		"streetsidesoftware.code-spell-checker"
 	]
 }

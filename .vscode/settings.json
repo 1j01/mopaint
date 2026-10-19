@@ -43,6 +43,10 @@
 	},
 	"js/ts.preferences.importModuleSpecifierEnding": "js",
 	"html.format.unformattedContentDelimiter": "<!--no_format-->",
+	"[haskell]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2
+	},
 	// npm respects different indent styles, but always adds a newline at the end of package.json/package-lock.json,
 	// so this avoids ping-ponging changes in git.
 	"files.insertFinalNewline": true,
