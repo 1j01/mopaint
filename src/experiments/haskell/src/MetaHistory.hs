@@ -81,7 +81,11 @@ findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLeve
 without :: (Eq a) => [a] -> a -> [a]
 without list elem = filter (/= elem) list -- name only makes sense infix, not when partially applied
 
-resolveMetaHistory (metaHistory :: [MHOperation]) = do
+resolveMetaHistory :: [MHOperation] -> [MHOperation]
+resolveMetaHistory metaHistory = resolveMetaHistory' (metaHistory, [])
+
+resolveMetaHistory' :: ([MHOperation], [Removal]) -> [MHOperation]
+resolveMetaHistory' (metaHistory, removals) = do
   let maxMetaLevel = maximum (0 : [op.metaLevel | op <- metaHistory])
   if maxMetaLevel == 0
     then metaHistory
@@ -93,16 +97,25 @@ resolveMetaHistory (metaHistory :: [MHOperation]) = do
         Just nextOp -> do
           -- TODO: track removals for better error reporting (maybe)
           -- TODO: does removal order matter here, maybe for insert op type's insertIndex?
-          let metaHistory' = applyMetaOperation nextOp.opData (metaHistory `without` nextOp)
-          resolveMetaHistory (metaHistory')
+          let (metaHistory', removals') = applyMetaOperation nextOp.opData (metaHistory `without` nextOp, removals)
+          resolveMetaHistory' (metaHistory', removals')
 
-applyMetaOperation :: MHOperationData -> [MHOperation] -> [MHOperation]
+applyMetaOperation :: MHOperationData -> ([MHOperation], [Removal]) -> ([MHOperation], [Removal])
 -- TODO: track removals for better error reporting (maybe)
-applyMetaOperation Undo {target = targetID} metaHistory =
+applyMetaOperation Undo {target = targetID} (metaHistory, removals) =
   -- metaHistory `without` (findTargetOp targetID)
-  filter (\op -> op.id /= targetID) metaHistory
-applyMetaOperation Recolor {target = targetID, color = newColor} metaHistory = do
+  (filter (\op -> op.id /= targetID) metaHistory, removals)
+applyMetaOperation Recolor {target = targetID, color = newColor} (metaHistory, removals) = do
   -- let targetOp = findTargetOp metaHistory targetID op.metaLevel removals
-  [if op.id == targetID then op {opData = op.opData {color = newColor}} else op | op <- metaHistory]
-applyMetaOperation Insert {insertIndex = insertIndex, insertOp = insertOp} metaHistory = do
-  take insertIndex metaHistory ++ (insertOp : drop insertIndex metaHistory)
+  ([if op.id == targetID then op {opData = op.opData {color = newColor}} else op | op <- metaHistory], removals)
+applyMetaOperation Insert {insertIndex = insertIndex, insertOp = insertOp} (metaHistory, removals) = do
+  (take insertIndex metaHistory ++ (insertOp : drop insertIndex metaHistory), removals)
+
+-- Simple versions:
+-- applyMetaOperation :: MHOperationData -> [MHOperation] -> [MHOperation]
+-- applyMetaOperation Undo {target = targetID} metaHistory =
+--   filter (\op -> op.id /= targetID) metaHistory
+-- applyMetaOperation Recolor {target = targetID, color = newColor} metaHistory = do
+--   [if op.id == targetID then op {opData = op.opData {color = newColor}} else op | op <- metaHistory]
+-- applyMetaOperation Insert {insertIndex = insertIndex, insertOp = insertOp} metaHistory = do
+--   take insertIndex metaHistory ++ (insertOp : drop insertIndex metaHistory)
