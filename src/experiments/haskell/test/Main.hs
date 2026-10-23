@@ -37,7 +37,7 @@ main = hspec $ do
             [ MHOperation {id = "so-meta", metaLevel = 1, name = "Undo Self!?", opData = Undo {target = "so-meta"}}
             ]
         )
-        `shouldThrow` errorCall "target operation 'so-meta' has equal meta level to the meta operation"
+        `shouldThrow` errorCall "target operation 'so-meta' has equal meta level to the meta operation. Meta operations must only target operations less meta than themselves."
     it "should throw error if target operation has higher meta level to meta operation" $ do
       evaluate
         ( resolveMetaHistory
@@ -47,7 +47,7 @@ main = hspec $ do
               MHOperation {id = "abc4", metaLevel = 2, name = "Undo Undo Edit Draw Line", opData = Undo {target = "abc3"}} -- AKA Redo
             ]
         )
-        `shouldThrow` errorCall "target operation 'abc4' was already applied and thus can't be affected"
+        `shouldThrow` errorCall "target operation 'abc4' was already applied and thus can't be affected."
     it "should throw error if target operation has equal meta level to meta operation" $ do
       evaluate
         ( resolveMetaHistory
@@ -67,7 +67,7 @@ main = hspec $ do
               MHOperation {id = "abc3", metaLevel = 2, name = "Undo Undo Edit Draw Line", opData = Undo {target = "abc2"}} -- AKA Redo
             ]
         )
-        `shouldThrow` errorCall "target operation 'abc3' has equal meta level to the meta operation"
+        `shouldThrow` errorCall "target operation 'abc3' has equal meta level to the meta operation. Meta operations must only target operations less meta than themselves."
     it "should throw error if target operation not found" $ do
       evaluate
         ( resolveMetaHistory
@@ -75,4 +75,4 @@ main = hspec $ do
               MHOperation {id = "abc3", metaLevel = 2, name = "Undo Edit Draw Line", opData = Undo {target = "abc2"}}
             ]
         )
-        `shouldThrow` errorCall "target operation 'abc2' not found"
+        `shouldThrow` errorCall "target operation 'abc2' not found."

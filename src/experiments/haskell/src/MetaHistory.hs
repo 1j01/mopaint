@@ -11,7 +11,7 @@ module MetaHistory
 where
 
 import Data.List (find)
-import Data.Maybe (fromJust, listToMaybe)
+import Data.Maybe (listToMaybe)
 
 data MHOperation = MHOperation
   { id :: String,
@@ -97,8 +97,9 @@ resolveMetaHistory' (metaHistory, removals) = do
         Just nextOp -> do
           -- TODO: track removals for better error reporting (maybe)
           -- TODO: does removal order matter here, maybe for insert op type's insertIndex?
-          let (metaHistory', removals') = applyMetaOperation nextOp.opData nextOp.metaLevel (metaHistory `without` nextOp, removals)
-          resolveMetaHistory' (metaHistory', removals')
+          -- let (metaHistory', removals') = applyMetaOperation nextOp.opData nextOp.metaLevel (metaHistory `without` nextOp, removals)
+          let (metaHistory', removals') = applyMetaOperation nextOp.opData nextOp.metaLevel (metaHistory, removals)
+          resolveMetaHistory' (metaHistory' `without` nextOp, removals')
 
 applyMetaOperation :: MHOperationData -> Int -> ([MHOperation], [Removal]) -> ([MHOperation], [Removal])
 -- TODO: track removals for better error reporting (maybe)
