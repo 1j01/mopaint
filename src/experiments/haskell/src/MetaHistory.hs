@@ -78,7 +78,8 @@ findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLeve
             else
               targetOp
 
-without (list :: [MHOperation]) (elem :: MHOperation) = filter (/= elem) list
+without :: (Eq a) => [a] -> a -> [a]
+without list elem = filter (/= elem) list -- name only makes sense infix, not when partially applied
 
 resolveMetaHistory (metaHistory :: [MHOperation]) = do
   let maxMetaLevel = maximum (0 : [op.metaLevel | op <- metaHistory])
