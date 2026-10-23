@@ -97,18 +97,17 @@ resolveMetaHistory' (metaHistory, removals) = do
         Just nextOp -> do
           -- TODO: track removals for better error reporting (maybe)
           -- TODO: does removal order matter here, maybe for insert op type's insertIndex?
-          let (metaHistory', removals') = applyMetaOperation nextOp.opData (metaHistory `without` nextOp, removals)
+          let (metaHistory', removals') = applyMetaOperation nextOp.opData nextOp.metaLevel (metaHistory `without` nextOp, removals)
           resolveMetaHistory' (metaHistory', removals')
 
-applyMetaOperation :: MHOperationData -> ([MHOperation], [Removal]) -> ([MHOperation], [Removal])
+applyMetaOperation :: MHOperationData -> Int -> ([MHOperation], [Removal]) -> ([MHOperation], [Removal])
 -- TODO: track removals for better error reporting (maybe)
-applyMetaOperation Undo {target = targetID} (metaHistory, removals) =
-  -- metaHistory `without` (findTargetOp targetID)
-  (filter (\op -> op.id /= targetID) metaHistory, removals)
-applyMetaOperation Recolor {target = targetID, color = newColor} (metaHistory, removals) = do
-  -- let targetOp = findTargetOp metaHistory targetID op.metaLevel removals
-  ([if op.id == targetID then op {opData = op.opData {color = newColor}} else op | op <- metaHistory], removals)
-applyMetaOperation Insert {insertIndex = insertIndex, insertOp = insertOp} (metaHistory, removals) = do
+applyMetaOperation Undo {target = targetID} metaLevel (metaHistory, removals) =
+  (metaHistory `without` (findTargetOp metaHistory targetID metaLevel removals), removals)
+applyMetaOperation Recolor {target = targetID, color = newColor} metaLevel (metaHistory, removals) = do
+  let targetOp = findTargetOp metaHistory targetID metaLevel removals
+  ([if op == targetOp then op {opData = op.opData {color = newColor}} else op | op <- metaHistory], removals)
+applyMetaOperation Insert {insertIndex = insertIndex, insertOp = insertOp} metaLevel (metaHistory, removals) = do
   (take insertIndex metaHistory ++ (insertOp : drop insertIndex metaHistory), removals)
 
 -- Simple versions:
