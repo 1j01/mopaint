@@ -11,7 +11,7 @@ module MetaHistory
 where
 
 import Data.List (find)
-import Data.Maybe (listToMaybe)
+import Data.Maybe (fromJust, listToMaybe)
 
 data MHOperation = MHOperation
   { id :: String,
@@ -56,17 +56,13 @@ findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLeve
   let targetOpMaybe = find isTargetOp metaHistory
   case targetOpMaybe of
     Nothing -> do
-      -- TODO: check removals
-      -- for (const { removedOp, removedByOp } of removals) {
-      -- 	if (removedOp.id === targetID) {
-      -- 		if (removedByOp) {
-      -- 			throw new Error(`target operation '${targetID}' was already removed by operation '${removedByOp.id}'.`);
-      -- 		} else {
-      -- 			throw new Error(`target operation '${targetID}' was already applied and thus can't be affected.`);
-      -- 		}
-      -- 	}
-      -- }
-      error ("target operation '" ++ targetID ++ "' not found.")
+      let removalMaybe = find (\removal -> removal.removedOp.id == targetID) removals
+      case removalMaybe of
+        Just removal ->
+          if removal.removedByOp /= Nothing
+            then error ("target operation '" ++ targetID ++ "' was already removed by operation '" ++ (fromJust removal.removedByOp).id ++ "'.")
+            else error ("target operation '" ++ targetID ++ "' was already applied and thus can't be affected.")
+        Nothing -> error ("target operation '" ++ targetID ++ "' not found.")
     Just targetOp -> do
       if targetOp.metaLevel == metaOpMetaLevel
         then error ("target operation '" ++ targetID ++ "' has equal meta level to the meta operation. Meta operations must only target operations less meta than themselves.")
@@ -75,8 +71,7 @@ findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLeve
             -- This may never happen, since operations will be removed upon application,
             -- so it will get the "already applied and thus can't be affected" error instead.
             then error ("target operation '" ++ targetID ++ "' has greater meta level than the meta operation. Meta operations must only target operations less meta than themselves.")
-            else
-              targetOp
+            else targetOp
 
 without :: (Eq a) => [a] -> a -> [a]
 without list elem = filter (/= elem) list -- name only makes sense infix, not when partially applied
@@ -96,15 +91,14 @@ resolveMetaHistory' (metaHistory, removals) = do
         Nothing -> metaHistory -- should this be an error?
         Just nextOp -> do
           -- TODO: track removals for better error reporting (maybe)
-          -- TODO: does removal order matter here, maybe for insert op type's insertIndex?
-          -- let (metaHistory', removals') = applyMetaOperation nextOp.opData nextOp.metaLevel (metaHistory `without` nextOp, removals)
           let (metaHistory', removals') = applyMetaOperation nextOp.opData nextOp.metaLevel (metaHistory, removals)
           resolveMetaHistory' (metaHistory' `without` nextOp, removals')
 
 applyMetaOperation :: MHOperationData -> Int -> ([MHOperation], [Removal]) -> ([MHOperation], [Removal])
 -- TODO: track removals for better error reporting (maybe)
-applyMetaOperation Undo {target = targetID} metaLevel (metaHistory, removals) =
-  (metaHistory `without` (findTargetOp metaHistory targetID metaLevel removals), removals)
+applyMetaOperation Undo {target = targetID} metaLevel (metaHistory, removals) = do
+  let targetOp = findTargetOp metaHistory targetID metaLevel removals
+  (metaHistory `without` targetOp, removals)
 applyMetaOperation Recolor {target = targetID, color = newColor} metaLevel (metaHistory, removals) = do
   let targetOp = findTargetOp metaHistory targetID metaLevel removals
   ([if op == targetOp then op {opData = op.opData {color = newColor}} else op | op <- metaHistory], removals)
