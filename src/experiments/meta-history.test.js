@@ -68,4 +68,11 @@ describe("resolveMetaHistory", () => {
 			{ id: "abc3", metaLevel: 2, type: "undo", name: "Undo Edit Draw Line", target: "abc2" },
 		])).toThrowError("target operation 'abc2' not found");
 	});
+	it("should throw error if target operation was already removed by another meta-operation", () => {
+		expect(() => resolveMetaHistory([
+			{ id: "abc1", metaLevel: 0, type: "line", name: "Draw Line", color: "blue" },
+			{ id: "abc2", metaLevel: 1, type: "undo", name: "Undo Draw Line", target: "abc1" },
+			{ id: "abc3", metaLevel: 2, type: "undo", name: "Undo Draw Line Again", target: "abc1" },
+		])).toThrowError("target operation 'abc1' was already removed by operation 'abc3'.");
+	});
 });

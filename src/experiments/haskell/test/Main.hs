@@ -76,3 +76,12 @@ main = hspec $ do
             ]
         )
         `shouldThrow` errorCall "target operation 'abc2' not found."
+    it "should throw error if target operation was already removed by another meta-operation" $ do
+      evaluate
+        ( resolveMetaHistory
+            [ MHOperation {id = "abc1", metaLevel = 0, name = "Draw Line", opData = Line {color = "blue"}},
+              MHOperation {id = "abc2", metaLevel = 1, name = "Undo Draw Line", opData = Undo {target = "abc1"}},
+              MHOperation {id = "abc3", metaLevel = 2, name = "Undo Draw Line Again", opData = Undo {target = "abc1"}}
+            ]
+        )
+        `shouldThrow` errorCall "target operation 'abc1' was already removed by operation 'abc3'."
