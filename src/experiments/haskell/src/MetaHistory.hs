@@ -74,7 +74,7 @@ findTargetOp (metaHistory :: [MHOperation]) (targetID :: String) (metaOpMetaLeve
             else targetOp
 
 without :: (Eq a) => [a] -> a -> [a]
-without list elem = filter (/= elem) list -- name only makes sense infix, not when partially applied
+list `without` elem = filter (/= elem) list -- name only makes sense infix, not when partially applied
 
 resolveMetaHistory :: [MHOperation] -> [MHOperation]
 resolveMetaHistory metaHistory = resolveMetaHistory' (metaHistory, [])
