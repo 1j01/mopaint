@@ -90,14 +90,14 @@ resolveMetaHistory' (metaHistory, removals) = do
       case nextOpMaybe of
         Nothing -> metaHistory -- should this be an error?
         Just nextOp -> do
-          -- TODO: track removals for better error reporting (maybe)
           let (metaHistory', removals') = applyMetaOperation nextOp.opData nextOp.metaLevel (metaHistory, removals)
-          resolveMetaHistory' (metaHistory' `without` nextOp, removals')
+          resolveMetaHistory' (metaHistory' `without` nextOp, removals' ++ [Removal {removedOp = nextOp, removedByOp = Nothing}])
 
 applyMetaOperation :: MHOperationData -> Int -> ([MHOperation], [Removal]) -> ([MHOperation], [Removal])
--- TODO: track removals for better error reporting (maybe)
 applyMetaOperation Undo {target = targetID} metaLevel (metaHistory, removals) = do
   let targetOp = findTargetOp metaHistory targetID metaLevel removals
+  -- TODO: add a removal record (we need the operation ID for the removal record btw; currently these functions are passed only MHOperationData, not the full MHOperation)
+  -- BTW, why does no test fail for this? seems like a gap in coverage.
   (metaHistory `without` targetOp, removals)
 applyMetaOperation Recolor {target = targetID, color = newColor} metaLevel (metaHistory, removals) = do
   let targetOp = findTargetOp metaHistory targetID metaLevel removals
